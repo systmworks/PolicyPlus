@@ -38,11 +38,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Some converted code (My.* namespace plumbing) still calls into the VB runtime. -->
-    <Reference Include="Microsoft.VisualBasic" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="My Project\MyNamespace.Dynamic.Designer.cs" />
     <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
     <Compile Include="My Project\MyNamespace.Static.2.Designer.cs" />

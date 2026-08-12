@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.00000.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PolicyPlus", "PolicyPlus.vbproj", "{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolicyPlus", "PolicyPlus.csproj", "{5D36440F-A532-4DA9-826E-2F8DF2FDAEAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D36440F-A532-4DA9-826E-2F8DF2FDAEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D36440F-A532-4DA9-826E-2F8DF2FDAEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D36440F-A532-4DA9-826E-2F8DF2FDAEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D36440F-A532-4DA9-826E-2F8DF2FDAEAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
