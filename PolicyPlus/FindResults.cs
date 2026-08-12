@@ -12,8 +12,8 @@ namespace PolicyPlus
     {
         private AdmxBundle AdmxWorkspace;
         private Func<PolicyPlusPolicy, bool> SearchFunc;
-        private bool CancelingSearch = false;
-        private bool CancelDueToFormClose = false;
+        private volatile bool CancelingSearch = false;
+        private volatile bool CancelDueToFormClose = false;
         private bool SearchPending = false;
         private bool HasSearched;
         private int LastSelectedIndex;
@@ -86,9 +86,7 @@ namespace PolicyPlus
             };
             foreach (var policy in Workspace.Policies)
             {
-                object localVolatileRead() { object argaddress = CancelingSearch; var ret = System.Threading.Thread.VolatileRead(ref argaddress); CancelingSearch = Conversions.ToBoolean(argaddress); return ret; }
-
-                if (Conversions.ToBoolean(localVolatileRead()))
+                if (CancelingSearch)
                 {
                     stoppedByCancel = true;
                     break;
@@ -110,11 +108,7 @@ namespace PolicyPlus
                         });
                 }
             }
-            object localVolatileRead1() { object argaddress1 = CancelDueToFormClose; var ret = System.Threading.Thread.VolatileRead(ref argaddress1); CancelDueToFormClose = Conversions.ToBoolean(argaddress1); return ret; }
-
-            object localVolatileRead2() { object argaddress2 = CancelDueToFormClose; var ret = System.Threading.Thread.VolatileRead(ref argaddress2); CancelDueToFormClose = Conversions.ToBoolean(argaddress2); return ret; }
-
-            if (stoppedByCancel && Conversions.ToBoolean(localVolatileRead2()))
+            if (stoppedByCancel && CancelDueToFormClose)
                 return; // Avoid accessing a disposed object
             Invoke(() =>
                 {
@@ -127,12 +121,8 @@ namespace PolicyPlus
         }
         public void StopSearch(bool Force)
         {
-            object argaddress = CancelingSearch;
-            System.Threading.Thread.VolatileWrite(ref argaddress, true);
-            CancelingSearch = Conversions.ToBoolean(argaddress);
-            object argaddress1 = CancelDueToFormClose;
-            System.Threading.Thread.VolatileWrite(ref argaddress1, Force);
-            CancelDueToFormClose = Conversions.ToBoolean(argaddress1);
+            CancelingSearch = true;
+            CancelDueToFormClose = Force;
         }
         private void FindResults_Shown(object sender, EventArgs e)
         {

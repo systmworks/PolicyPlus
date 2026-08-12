@@ -222,7 +222,7 @@ public class PolicyProcessing
                             var entries = new Dictionary<string, string>();
                             foreach (var value in PolicySource.GetValueNames(elemKey))
                             {
-                                entries.Add(value, (string)PolicySource.GetValue(elemKey, value));
+                                entries.Add(value, Convert.ToString(PolicySource.GetValue(elemKey, value)));
                             }
                             state.Add(elem.ID, entries);
                         }
@@ -234,7 +234,7 @@ public class PolicyProcessing
                                 int n = 1;
                                 while (PolicySource.ContainsValue(elemKey, elem.RegistryValue + n))
                                 {
-                                    entries.Add((string)PolicySource.GetValue(elemKey, elem.RegistryValue + n));
+                                    entries.Add(Convert.ToString(PolicySource.GetValue(elemKey, elem.RegistryValue + n)));
                                     n += 1;
                                 }
                             }
@@ -318,11 +318,10 @@ public class PolicyProcessing
     // This function handles both GetReferencedRegistryValues and ForgetPolicy because they require searching through the same things
     private static List<RegistryKeyValuePair> WalkPolicyRegistry(IPolicySource PolicySource, PolicyPlusPolicy Policy, bool Forget)
     {
-        var entries = new List<RegistryKeyValuePair>();
+        var entries = new HashSet<RegistryKeyValuePair>();
         void addReg(string Key, string Value)
         {
-            var rkvp = new RegistryKeyValuePair { Key = Key, Value = Value };
-            if (!entries.Contains(rkvp)) entries.Add(rkvp);
+            entries.Add(new RegistryKeyValuePair { Key = Key, Value = Value });
         }
 
         // Get all Registry values affected by this policy
@@ -388,7 +387,7 @@ public class PolicyProcessing
                 PolicySource.ForgetValue(e.Key, e.Value);
             }
         }
-        return entries;
+        return entries.ToList();
     }
 
     // Write a full policy state to the policy source

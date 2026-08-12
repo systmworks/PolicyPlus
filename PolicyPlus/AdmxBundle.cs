@@ -193,6 +193,7 @@ public class AdmxBundle
             {
                 string parentProductId = QualifyName(product.RawProduct.Parent.ID, product.RawProduct.DefinedIn); // Child products can't be defined in other files
                 var parentProduct = findProductById(parentProductId);
+                if (parentProduct is null) continue; // In case the parent product doesn't exist
                 parentProduct.Children.Add(product);
                 product.Parent = parentProduct;
             }

@@ -624,6 +624,16 @@ namespace PolicyPlus
                         foreach (var valName in Key.GetValueNames())
                         {
                             var valData = Key.GetValue(valName, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+                            // Reinterpret signed Int32/Int64 as unsigned, matching RegistryPolicyProxy.GetValue,
+                            // so DWORD/QWORD values with the high bit set (e.g. 0xFFFFFFFF) don't overflow when saved
+                            if (valData is int i)
+                            {
+                                valData = new ReinterpretableDword { Signed = i }.Unsigned;
+                            }
+                            else if (valData is long l)
+                            {
+                                valData = new ReinterpretableQword { Signed = l }.Unsigned;
+                            }
                             pol.SetValue(PathRoot, valName, valData, Key.GetValueKind(valName));
                         }
                         foreach (var subkeyName in Key.GetSubKeyNames())
