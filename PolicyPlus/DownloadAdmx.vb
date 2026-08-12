@@ -1,4 +1,6 @@
 ﻿Imports System.ComponentModel
+Imports System.IO
+Imports System.Security.AccessControl
 Public Class DownloadAdmx
     Const MicrosoftMsiDownloadLink As String = "https://download.microsoft.com/download/f35d3000-b6c9-4ca6-bedc-5e4ec15a6b7a/Administrative%20Templates%20(admx)%20for%20Windows%2011%20Sep%202025%20Update.msi"
     Const PolicyDefinitionsMsiSubdirectory As String = "\Microsoft Group Policy\Windows 11 Sep 2025 Update (25H2)\PolicyDefinitions"
@@ -40,14 +42,15 @@ Public Class DownloadAdmx
             isAdmin = New Security.Principal.WindowsPrincipal(identity).IsInRole(Security.Principal.WindowsBuiltInRole.Administrator)
         End Using
         Dim takeOwnership = Sub(Folder As String)
-                                Dim dacl = IO.Directory.GetAccessControl(Folder)
+                                Dim folderInfo = New IO.DirectoryInfo(Folder)
+                                Dim dacl = folderInfo.GetAccessControl()
                                 Dim adminSid As New Security.Principal.SecurityIdentifier(Security.Principal.WellKnownSidType.BuiltinAdministratorsSid, Nothing)
                                 dacl.SetOwner(adminSid)
-                                IO.Directory.SetAccessControl(Folder, dacl)
-                                dacl = IO.Directory.GetAccessControl(Folder)
+                                folderInfo.SetAccessControl(dacl)
+                                dacl = folderInfo.GetAccessControl()
                                 Dim allowRule As New Security.AccessControl.FileSystemAccessRule(adminSid, Security.AccessControl.FileSystemRights.FullControl, Security.AccessControl.AccessControlType.Allow)
                                 dacl.AddAccessRule(allowRule)
-                                IO.Directory.SetAccessControl(Folder, dacl)
+                                folderInfo.SetAccessControl(dacl)
                             End Sub
         Dim moveFilesInDir = Sub(Source As String, Dest As String, InheritAcl As Boolean)
                                  Dim creatingNew = Not IO.Directory.Exists(Dest)
@@ -56,7 +59,8 @@ Public Class DownloadAdmx
                                      If creatingNew And InheritAcl Then
                                          Dim dirAcl = New Security.AccessControl.DirectorySecurity()
                                          dirAcl.SetAccessRuleProtection(False, True)
-                                         IO.Directory.SetAccessControl(Dest, dirAcl)
+                                         Dim destInfo = New IO.DirectoryInfo(Dest)
+                                         destInfo.SetAccessControl(dirAcl)
                                      ElseIf Not creatingNew Then
                                          takeOwnership(Dest)
                                      End If
@@ -69,7 +73,8 @@ Public Class DownloadAdmx
                                      If isAdmin Then
                                          Dim fileAcl = New Security.AccessControl.FileSecurity()
                                          fileAcl.SetAccessRuleProtection(False, True)
-                                         IO.File.SetAccessControl(newName, fileAcl)
+                                         Dim newFileInfo = New IO.FileInfo(newName)
+                                         newFileInfo.SetAccessControl(fileAcl)
                                      End If
                                  Next
                              End Sub

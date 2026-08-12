@@ -1,34 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E52E1E6-4FCF-403D-A84C-9C5CB0EDC739}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <StartupObject>PolicyPlus.My.MyApplication</StartupObject>
     <RootNamespace>PolicyPlus</RootNamespace>
     <AssemblyName>Policy Plus</AssemblyName>
-    <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+
+    <!-- Preserve the curated item lists below (DependentUpon/SubType metadata the
+         WinForms designer relies on) instead of SDK-style implicit globbing. -->
+    <EnableDefaultItems>false</EnableDefaultItems>
+
+    <!-- AssemblyInfo.vb already declares these attributes explicitly; keep it authoritative
+         instead of letting the SDK auto-generate a conflicting set. -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>Policy Plus.xml</DocumentationFile>
     <NoWarn>41999,42016</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
     <WarningsAsErrors>42017,42018,42019,42020,42021,42022,42030,42032,42036,42104,42108,42109</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
@@ -36,32 +41,9 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>Policy Plus.xml</DocumentationFile>
     <NoWarn>41999,42016</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
     <WarningsAsErrors>42017,42018,42019,42020,42021,42022,42030,42032,42036,42104,42108,42109</WarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup>
-    <OptionExplicit>On</OptionExplicit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionCompare>Binary</OptionCompare>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionStrict>Off</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionInfer>On</OptionInfer>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-  </ItemGroup>
+
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
@@ -73,6 +55,7 @@
     <Import Include="System.Linq" />
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="AdmlFile.vb" />
     <Compile Include="AdmxBundle.vb" />
@@ -322,6 +305,7 @@
     <Compile Include="Version.vb" />
     <Compile Include="XmlExtensions.vb" />
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="DetailAdmx.resx">
       <DependentUpon>DetailAdmx.vb</DependentUpon>
@@ -435,6 +419,7 @@
       <DependentUpon>OpenUserRegistry.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
     <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
@@ -446,14 +431,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="App.config" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

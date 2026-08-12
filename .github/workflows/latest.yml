@@ -20,20 +20,22 @@ jobs:
           cd $env:GITHUB_WORKSPACE
           cmd /c version.bat
 
-      - name: Set up MSBuild
-        uses: microsoft/setup-msbuild@v1.0.2
-        
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
       - name: Compile
-        run: msbuild.exe $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.sln /p:platform="Any CPU" /p:configuration="Release"
+        run: dotnet build $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.sln -c Release
 
       - name: Compute hash
-        run: Get-FileHash "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\Policy Plus.exe"
-        
+        run: Get-FileHash "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\net10.0-windows\Policy Plus.exe"
+
       - name: Upload to S3
         uses: stcalica/s3-upload@0.0.1
         with:
           bucket: ${{ secrets.AWS_S3_BUCKET }}
-          package: PolicyPlus\bin\Release\Policy Plus.exe
+          package: PolicyPlus\bin\Release\net10.0-windows\Policy Plus.exe
           key: PolicyPlusLatest.exe
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_SECRET_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
