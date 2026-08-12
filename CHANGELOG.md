@@ -13,15 +13,79 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
-## [1.8] - Fixed 5 of 10 findings from a full code review (IN PROGRESS)
+## [1.8] - Fixed 6 of 10 findings from a full code review; 3 deferred by decision
 
 Ran a high-effort code review (9 finder angles) against the whole C# port. Fixed the 4
-correctness findings plus 1 easy efficiency fix (see commit `57e093a` for full detail);
-5 more findings remain open — see [the plan file](C:\Users\darre\.claude\plans\i-have-just-created-purring-reddy.md)'s
-"Code review findings to fix" section for the complete list, reasoning, and priority
-order. Stopped here due to session budget, not because the remaining work is done.
-**Not yet re-smoke-tested by launching the app** after these fixes — do that first next
-session before anything else.
+correctness findings plus 2 efficiency/simplification fixes (see commit `57e093a` for the
+first 5, this session for the 6th — finding #7). The remaining 4 findings (#6, #8, #9, plus
+#5 not yet attempted) are documented in [the plan file](C:\Users\darre\.claude\plans\i-have-just-created-purring-reddy.md)'s
+"Code review findings to fix" section.
+
+**Finding #7** (`PolicyProcessing.cs`): the `string.IsNullOrEmpty(elem.RegistryKey) ?
+rawpol.RegistryKey : elem.RegistryKey` fallback idiom (an element's own Registry key
+override, falling back to its containing policy/list's key when unset) was inlined at 13
+call sites (not the review's originally-estimated 8 — a repo-wide check during this
+session's exploration found the actual count). Extracted to one private static
+`ResolveElementKey(string OwnKey, string FallbackKey)` helper; purely mechanical, no
+behavior change.
+
+**Finding #6 deferred, not fixed** — and this is worth explaining, since a naive read of
+the review's write-up ("O(n) linear scan... hot path during list population") makes it
+sound like an obvious win. Two things changed that assessment this session:
+
+1. The review's premise was already stale: `PolFile.Entries` (`PolicySource.cs`) is a
+   `SortedDictionary`, not a `List` — `ContainsValue`/`GetValue` are already O(log n). The
+   actual O(n) cost lives in `WillDeleteValue` (called by both), which does a full
+   `.Where(StartsWith(...))` scan over every entry in the loaded POL file on every call.
+2. Two independent design proposals (via separate agent sessions, deliberately not shown
+   each other's work) converged on a workable fix — a secondary per-registry-key index,
+   kept in sync with `Entries` at every mutation site, provably preserving the sort-order
+   invariant the class depends on (`PolicySource.cs:23-24`: clearing entries are prefixed
+   `**` so they sort before, and must be processed before, the real values under the same
+   key — this is how the file format disambiguates "clear then set" from "set then clear"
+   with no separate sequence field). Both designs were correct in isolation, but both also
+   independently estimated the real-world win at low milliseconds for a typical POL file —
+   the cost only compounds because `WillDeleteValue` runs once per policy element during
+   list population, not because any single call is slow, and this was never actually
+   profiled (the original review flagged it "PLAUSIBLE", not measured).
+
+Weighed against building and maintaining a synced auxiliary structure inside a class with a
+non-obvious, load-bearing ordering invariant and zero automated test coverage, for an
+unmeasured cost — the decision was to leave `WillDeleteValue`/`PolFile` untouched. Don't
+revisit without first profiling an actual slow case against a real large POL file/ADMX
+catalog to confirm there's a problem worth the risk.
+
+**Findings #8 and #9 also deferred**, for reasons specific to each rather than a generic
+"lower priority" label (re-verified against the actual code this session, not just the
+review's write-up):
+
+- **#8** (unify `EditPol.cs`'s `addKey`/`removeKey` and `Main.cs`'s `addSubtree` into one
+  shared key-tree-walking helper): the three aren't interchangeable. `addKey` walks a
+  `PolFile` while fusing in WinForms `ListViewItem` construction; `removeKey` walks the same
+  `PolFile` but destructively, ending each frame with `ClearKey`+`ForgetKeyClearance` — the
+  same `PolFile` machinery just declined above for #6; `addSubtree` walks a live
+  `Microsoft.Win32.RegistryKey`, not a `PolFile` at all, and `IPolicySource` doesn't declare
+  `GetKeyNames`. A shared helper needs a new abstraction across two different underlying
+  types and would touch the same destructive path #6 avoided.
+- **#9** (replace `Interaction.MsgBox`/`MsgBoxStyle`/`MsgBoxResult` with
+  `MessageBox.Show`/`MessageBoxButtons`/`DialogResult`): confirmed 61 call sites across 15
+  files (bigger than the review's original ~39/6 estimate). Zero functional or performance
+  upside — pure dependency cleanliness. VB's `MsgBoxStyle` bundles button set, icon, and
+  default button into one flags enum with no 1:1 mapping onto WinForms' separate
+  `MessageBoxButtons`/`MessageBoxIcon` parameters, and `MsgBoxResult`/`DialogResult` differ
+  in member naming; getting one of 61 translations wrong changes what a dialog shows, and
+  real verification means manually triggering all 61 (several are error paths — ADMX load
+  failures, download errors — not reachable by a normal smoke test).
+
+**Re-smoke-tested by launching the app** after all of the above (the #1-4/#10 fixes from
+last session, plus this session's #7): the main three-pane window opened and populated
+normally, and a full write-path round trip was exercised live — toggled "Disable Quiet
+Hours" from Not Configured to Enabled, saved, then back to Not Configured, saved again —
+with no crash. This is exactly the clear-then-reconfigure sequence relevant to `PolFile`'s
+deletion-tracking logic discussed above (setting a value, then later deleting it), though
+not the more specific clear-then-*re-set-in-the-same-session* sequence that finding #6's
+sort-order invariant is about. Find Results search and `.reg`/`.pol` export (which
+specifically exercise fixes #2 and #4) were not covered this pass.
 
 ## [1.7] - Fixed a real runtime bug: VB's `Nothing = ""` vs C#'s `null == ""`
 

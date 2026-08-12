@@ -5,6 +5,10 @@ using Microsoft.Win32;
 
 public class PolicyProcessing
 {
+    // An element's own Registry key override, falling back to its containing policy/list's key when unset
+    private static string ResolveElementKey(string OwnKey, string FallbackKey) =>
+        string.IsNullOrEmpty(OwnKey) ? FallbackKey : OwnKey;
+
     // Determine the basic state of a policy
     public static PolicyState GetPolicyState(IPolicySource PolicySource, PolicyPlusPolicy Policy)
     {
@@ -21,10 +25,10 @@ public class PolicyProcessing
         void checkValList(PolicyRegistrySingleList ValList, string DefaultKey, ref decimal EvidenceVar)
         {
             if (ValList is null) return;
-            string listKey = string.IsNullOrEmpty(ValList.DefaultRegistryKey) ? DefaultKey : ValList.DefaultRegistryKey;
+            string listKey = ResolveElementKey(ValList.DefaultRegistryKey, DefaultKey);
             foreach (var regVal in ValList.AffectedValues)
             {
-                string entryKey = string.IsNullOrEmpty(regVal.RegistryKey) ? listKey : regVal.RegistryKey;
+                string entryKey = ResolveElementKey(regVal.RegistryKey, listKey);
                 checkOneVal(regVal.Value, entryKey, regVal.RegistryValue, ref EvidenceVar);
             }
         }
@@ -59,7 +63,7 @@ public class PolicyProcessing
             decimal presentElements = 0;
             foreach (var elem in rawpol.Elements)
             {
-                string elemKey = string.IsNullOrEmpty(elem.RegistryKey) ? rawpol.RegistryKey : elem.RegistryKey;
+                string elemKey = ResolveElementKey(elem.RegistryKey, rawpol.RegistryKey);
                 if (elem.ElementType == "list")
                 {
                     int neededValues = 0;
@@ -161,10 +165,10 @@ public class PolicyProcessing
     // Determine whether all the values in a value list are in the Registry data
     private static bool ValueListPresent(PolicyRegistrySingleList ValueList, IPolicySource Source, string Key, string ValueName)
     {
-        string sublistKey = string.IsNullOrEmpty(ValueList.DefaultRegistryKey) ? Key : ValueList.DefaultRegistryKey;
+        string sublistKey = ResolveElementKey(ValueList.DefaultRegistryKey, Key);
         return ValueList.AffectedValues.All(e =>
         {
-            string entryKey = string.IsNullOrEmpty(e.RegistryKey) ? sublistKey : e.RegistryKey;
+            string entryKey = ResolveElementKey(e.RegistryKey, sublistKey);
             return ValuePresent(e.Value, Source, entryKey, e.RegistryValue);
         });
     }
@@ -199,7 +203,7 @@ public class PolicyProcessing
         if (Policy.RawPolicy.Elements is null) return state;
         foreach (var elem in Policy.RawPolicy.Elements)
         {
-            string elemKey = string.IsNullOrEmpty(elem.RegistryKey) ? Policy.RawPolicy.RegistryKey : elem.RegistryKey;
+            string elemKey = ResolveElementKey(elem.RegistryKey, Policy.RawPolicy.RegistryKey);
             switch (elem.ElementType)
             {
                 case "decimal":
@@ -332,10 +336,10 @@ public class PolicyProcessing
         {
             if (SingleList is null) return;
             string defaultKey = OverrideKey == "" ? rawpol.RegistryKey : OverrideKey;
-            string listKey = string.IsNullOrEmpty(SingleList.DefaultRegistryKey) ? defaultKey : SingleList.DefaultRegistryKey;
+            string listKey = ResolveElementKey(SingleList.DefaultRegistryKey, defaultKey);
             foreach (var e in SingleList.AffectedValues)
             {
-                string entryKey = string.IsNullOrEmpty(e.RegistryKey) ? listKey : e.RegistryKey;
+                string entryKey = ResolveElementKey(e.RegistryKey, listKey);
                 addReg(entryKey, e.RegistryValue);
             }
         }
@@ -346,7 +350,7 @@ public class PolicyProcessing
         {
             foreach (var elem in rawpol.Elements)
             {
-                string elemKey = string.IsNullOrEmpty(elem.RegistryKey) ? rawpol.RegistryKey : elem.RegistryKey;
+                string elemKey = ResolveElementKey(elem.RegistryKey, rawpol.RegistryKey);
                 if (elem.ElementType != "list") addReg(elemKey, elem.RegistryValue);
                 switch (elem.ElementType)
                 {
@@ -413,10 +417,10 @@ public class PolicyProcessing
         void setSingleList(PolicyRegistrySingleList SingleList, string DefaultKey)
         {
             if (SingleList is null) return;
-            string listKey = string.IsNullOrEmpty(SingleList.DefaultRegistryKey) ? DefaultKey : SingleList.DefaultRegistryKey;
+            string listKey = ResolveElementKey(SingleList.DefaultRegistryKey, DefaultKey);
             foreach (var e in SingleList.AffectedValues)
             {
-                string itemKey = string.IsNullOrEmpty(e.RegistryKey) ? listKey : e.RegistryKey;
+                string itemKey = ResolveElementKey(e.RegistryKey, listKey);
                 setValue(itemKey, e.RegistryValue, e.Value);
             }
         }
@@ -446,7 +450,7 @@ public class PolicyProcessing
                 {
                     foreach (var elem in rawpol.Elements)
                     {
-                        string elemKey = string.IsNullOrEmpty(elem.RegistryKey) ? rawpol.RegistryKey : elem.RegistryKey;
+                        string elemKey = ResolveElementKey(elem.RegistryKey, rawpol.RegistryKey);
                         if (!Options.ContainsKey(elem.ID)) continue;
                         var optionData = Options[elem.ID];
                         switch (elem.ElementType)
@@ -535,7 +539,7 @@ public class PolicyProcessing
                 {
                     foreach (var elem in rawpol.Elements)
                     {
-                        string elemKey = string.IsNullOrEmpty(elem.RegistryKey) ? rawpol.RegistryKey : elem.RegistryKey;
+                        string elemKey = ResolveElementKey(elem.RegistryKey, rawpol.RegistryKey);
                         if (elem.ElementType == "list")
                         {
                             PolicySource.ClearKey(elemKey);
