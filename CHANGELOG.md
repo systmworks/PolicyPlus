@@ -13,6 +13,16 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.8] - Fixed 5 of 10 findings from a full code review (IN PROGRESS)
+
+Ran a high-effort code review (9 finder angles) against the whole C# port. Fixed the 4
+correctness findings plus 1 easy efficiency fix (see commit `57e093a` for full detail);
+5 more findings remain open — see [the plan file](C:\Users\darre\.claude\plans\i-have-just-created-purring-reddy.md)'s
+"Code review findings to fix" section for the complete list, reasoning, and priority
+order. Stopped here due to session budget, not because the remaining work is done.
+**Not yet re-smoke-tested by launching the app** after these fixes — do that first next
+session before anything else.
+
 ## [1.7] - Fixed a real runtime bug: VB's `Nothing = ""` vs C#'s `null == ""`
 
 **First real functional smoke test of the C# build** (1.6 was build-clean but never actually
