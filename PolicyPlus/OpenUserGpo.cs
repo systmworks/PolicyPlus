@@ -1,7 +1,6 @@
 using System;
 using System.Security.Principal;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace PolicyPlus
 {
@@ -24,7 +23,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("The name could not be translated to a SID.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The name could not be translated to a SID.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         private void OkButton_Click(object sender, EventArgs e)
@@ -43,7 +42,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("The SID is not valid. Enter a SID in the lower box, or enter a username in the top box and press Search to translate.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The SID is not valid. Enter a SID in the lower box, or enter a username in the top box and press Search to translate.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             SelectedSid = SidTextbox.Text;

@@ -1,7 +1,6 @@
 using System;
 using System.DirectoryServices.ActiveDirectory;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace PolicyPlus
 {
@@ -68,7 +67,7 @@ namespace PolicyPlus
             }
             else
             {
-                Interaction.MsgBox("The folder you specified does not exist.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The folder you specified does not exist.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         private void ButtonBrowse_Click(object sender, EventArgs e)

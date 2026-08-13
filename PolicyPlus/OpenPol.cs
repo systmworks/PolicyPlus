@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace PolicyPlus
 {
@@ -151,7 +150,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("The computer policy loader could not be created. " + ex.Message, MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The computer policy loader could not be created. " + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             try
@@ -183,7 +182,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("The user policy loader could not be created. " + ex.Message, MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The user policy loader could not be created. " + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             DialogResult = DialogResult.OK;

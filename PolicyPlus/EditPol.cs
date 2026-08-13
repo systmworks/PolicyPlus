@@ -168,13 +168,13 @@ namespace PolicyPlus
                 return;
             if (!IsKeyNameValid(keyName))
             {
-                Interaction.MsgBox("The key name is not valid.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The key name is not valid.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             string containerKey = Conversions.ToString(LsvPol.SelectedItems.Count > 0 ? LsvPol.SelectedItems[0].Tag : "");
             if (!IsKeyNameAvailable(containerKey, keyName))
             {
-                Interaction.MsgBox("The key name is already taken.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The key name is already taken.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             string newPath = string.IsNullOrEmpty(containerKey) ? keyName : containerKey + @"\" + keyName;
@@ -219,7 +219,7 @@ namespace PolicyPlus
             }
             else
             {
-                Interaction.MsgBox("This value kind is not supported.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("This value kind is not supported.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return null;
             }
         }
@@ -307,7 +307,7 @@ namespace PolicyPlus
             var tag = LsvPol.SelectedItems[0].Tag;
             if (tag is string)
             {
-                if (Interaction.MsgBox("Are you sure you want to remove this key and all its contents?", MsgBoxStyle.Exclamation | MsgBoxStyle.YesNo) == MsgBoxResult.No)
+                if (MsgBoxCompat.Show("Are you sure you want to remove this key and all its contents?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
                     return;
                 string keyPath = Conversions.ToString(tag);
                 if (keyPath.Contains(@"\"))

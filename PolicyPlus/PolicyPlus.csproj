@@ -231,6 +231,7 @@
       <DependentUpon>Main.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MsgBoxCompat.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
     <Compile Include="My Project\Application.Designer.cs">
       <AutoGen>True</AutoGen>

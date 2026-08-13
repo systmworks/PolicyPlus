@@ -25,12 +25,12 @@ namespace PolicyPlus
             string valName = ValueTextbox.Text.ToLowerInvariant();
             if (string.IsNullOrEmpty(keyName) & string.IsNullOrEmpty(valName))
             {
-                Interaction.MsgBox("Please enter search terms.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Please enter search terms.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             if (new[] { @"HKLM\", @"HKCU\", @"HKEY_LOCAL_MACHINE\", @"HKEY_CURRENT_USER\" }.Any(bad => keyName.StartsWith(bad, StringComparison.InvariantCultureIgnoreCase)))
             {
-                Interaction.MsgBox("Policies' root keys are determined only by their section. Remove the root key from the search terms and try again.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Policies' root keys are determined only by their section. Remove the root key from the search terms and try again.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             Searcher = new Func<PolicyPlusPolicy, bool>((Policy) =>

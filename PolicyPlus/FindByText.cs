@@ -31,7 +31,7 @@ namespace PolicyPlus
             string text = StringTextbox.Text;
             if (string.IsNullOrEmpty(text))
             {
-                Interaction.MsgBox("Please enter search terms.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Please enter search terms.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             bool checkTitle = TitleCheckbox.Checked;
@@ -39,7 +39,7 @@ namespace PolicyPlus
             bool checkComment = CommentCheckbox.Checked;
             if (!(checkTitle | checkDesc | checkComment))
             {
-                Interaction.MsgBox("At least one attribute must be searched. Check one of the boxes and try again.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("At least one attribute must be searched. Check one of the boxes and try again.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             Searcher = new Func<PolicyPlusPolicy, bool>((Policy) =>

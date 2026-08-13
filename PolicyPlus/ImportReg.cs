@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace PolicyPlus
 {
@@ -34,11 +33,11 @@ namespace PolicyPlus
                         var reg = RegFile.Load(ofd.FileName, "");
                         TextRoot.Text = reg.GuessPrefix();
                         if (reg.HasDefaultValues())
-                            Interaction.MsgBox("This REG file contains data for default values, which cannot be applied to all policy sources.", MsgBoxStyle.Exclamation);
+                            MsgBoxCompat.Show("This REG file contains data for default values, which cannot be applied to all policy sources.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                     catch (Exception ex)
                     {
-                        Interaction.MsgBox("An error occurred while trying to guess the prefix.", MsgBoxStyle.Exclamation);
+                        MsgBoxCompat.Show("An error occurred while trying to guess the prefix.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
             }
@@ -52,12 +51,12 @@ namespace PolicyPlus
         {
             if (string.IsNullOrEmpty(TextReg.Text))
             {
-                Interaction.MsgBox("Please specify a REG file to import.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Please specify a REG file to import.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             if (string.IsNullOrEmpty(TextRoot.Text))
             {
-                Interaction.MsgBox("Please specify the prefix used to fully qualify paths in the REG file.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Please specify the prefix used to fully qualify paths in the REG file.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             try
@@ -68,7 +67,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("Failed to import the REG file.", MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("Failed to import the REG file.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }

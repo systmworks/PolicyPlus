@@ -5,7 +5,6 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace PolicyPlus
 {
@@ -160,7 +159,7 @@ namespace PolicyPlus
                         Invoke(() =>
   {
                             SetIsBusy(false);
-                            if (Interaction.MsgBox("ADMX files downloaded successfully. Open them now?", MsgBoxStyle.YesNo | MsgBoxStyle.Question) == MsgBoxResult.Yes)
+                            if (MsgBoxCompat.Show("ADMX files downloaded successfully. Open them now?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
                                 NewPolicySourceFolder = destination;
                             }
@@ -172,7 +171,7 @@ namespace PolicyPlus
                         Invoke(() =>
   {
                             SetIsBusy(false);
-                            Interaction.MsgBox("Failed to " + failPhase + ".", MsgBoxStyle.Exclamation);
+                            MsgBoxCompat.Show("Failed to " + failPhase + ".", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         });
                     }
                 });

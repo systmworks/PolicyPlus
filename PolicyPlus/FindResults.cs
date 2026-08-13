@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace PolicyPlus
 {
@@ -45,7 +43,7 @@ namespace PolicyPlus
             // Open the dialog normally, like from the main form
             if (!HasSearched)
             {
-                Interaction.MsgBox("No search has been run yet, so there are no results to display.", MsgBoxStyle.Information);
+                MsgBoxCompat.Show("No search has been run yet, so there are no results to display.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return DialogResult.Cancel;
             }
             CancelingSearch = false;

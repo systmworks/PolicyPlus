@@ -28,11 +28,11 @@ namespace PolicyPlus
             try
             {
                 var spol = SpolFile.FromText(TextSpol.Text);
-                Interaction.MsgBox("Validation successful, " + spol.Policies.Count + " policy settings found.", MsgBoxStyle.Information);
+                MsgBoxCompat.Show("Validation successful, " + spol.Policies.Count + " policy settings found.", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("SPOL validation failed: " + ex.Message, MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("SPOL validation failed: " + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         private void ButtonApply_Click(object sender, EventArgs e)
@@ -44,7 +44,7 @@ namespace PolicyPlus
             }
             catch (Exception ex)
             {
-                Interaction.MsgBox("The SPOL text is invalid: " + ex.Message, MsgBoxStyle.Exclamation);
+                MsgBoxCompat.Show("The SPOL text is invalid: " + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         private void ImportSpol_Shown(object sender, EventArgs e)
@@ -63,7 +63,7 @@ namespace PolicyPlus
         }
         private void ButtonReset_Click(object sender, EventArgs e)
         {
-            if (Interaction.MsgBox("Are you sure you want to reset the text box?", MsgBoxStyle.Question | MsgBoxStyle.YesNo) == MsgBoxResult.Yes)
+            if (MsgBoxCompat.Show("Are you sure you want to reset the text box?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 TextSpol.Text = "Policy Plus Semantic Policy" + Constants.vbCrLf + Constants.vbCrLf;
             }

@@ -52,7 +52,7 @@ namespace PolicyPlus
                     string key = Conversions.ToString(row.Cells[0].Value);
                     if (dict.ContainsKey(key))
                     {
-                        Interaction.MsgBox("Multiple entries are named \"" + key + "\"! Remove or rename all but one.", MsgBoxStyle.Exclamation);
+                        MsgBoxCompat.Show("Multiple entries are named \"" + key + "\"! Remove or rename all but one.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return;
                     }
                     else

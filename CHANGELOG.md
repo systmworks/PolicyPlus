@@ -13,6 +13,50 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.10] - Fixed finding #9: `Interaction.MsgBox` → `MessageBox.Show`
+
+Replaced every VB-runtime `Interaction.MsgBox`/`MsgBoxStyle`/`MsgBoxResult` call with WinForms'
+native `MessageBox.Show`/`MessageBoxButtons`/`MessageBoxIcon`/`DialogResult`. A full inventory
+(not a sample) found **57 call sites across 15 files** — the [1.9] scoping estimate of 61 was
+off by a recount, and only **5 distinct `MsgBoxStyle` combinations** were in use anywhere in the
+project (confirmed no `Critical`/`OkOnly`/`AbortRetryIgnore`/etc. flags exist), so this was a
+uniform mechanical swap rather than 57 independent judgment calls.
+
+Added `MsgBoxCompat.Show(text, buttons, icon)` (`MsgBoxCompat.cs`), a thin wrapper hardcoding
+the `"Policy Plus"` caption — matching what `Interaction.MsgBox`'s implicit title already
+resolved to, since no call site passed a custom title. Every site maps through one small table:
+`Exclamation`→OK/Exclamation icon, `Information`→OK/Information icon, `YesNo|Question`→YesNo/
+Question icon, `Exclamation|YesNo`→YesNo/Exclamation icon, `Information|YesNo`→YesNo/Information
+icon. `MsgBoxResult.Yes/No`→`DialogResult.Yes/No` throughout (only `==` comparisons existed,
+never `!=`).
+
+One structural exception: `Main.cs`'s `DisplayAdmxLoadErrorReport` computed its `MsgBoxStyle`
+from a runtime ternary (`AskContinue ? Exclamation|YesNo : Exclamation`) rather than a literal
+at the call site — the icon was constant (`Exclamation`) in both branches, only the buttons
+varied, so this became a `MessageBoxButtons` ternary instead. The method's own return type
+changed from `MsgBoxResult` to `DialogResult`, and its one comparing caller (`Main.cs:88`,
+loading a problematic ADMX folder) was updated to match.
+
+`using Microsoft.VisualBasic;` (and `.CompilerServices` where present) was removed from the 9
+files where MsgBox was the only VB-runtime dependency (`DownloadAdmx.cs`, `EditPolDelete.cs`,
+`LanguageOptions.cs`, `ExportReg.cs`, `ImportReg.cs`, `OpenPol.cs`, `OpenAdmxFolder.cs`,
+`OpenUserGpo.cs`, `FindResults.cs`). Left untouched in the 6 files that still use other VB
+members unrelated to MsgBox (`Conversions`, `Strings`, `ControlChars`, `LikeOperator`,
+`CompareMethod`, `Constants.vbCrLf`) — `EditPol.cs`, `FindByText.cs`, `ImportSpol.cs`,
+`FindByRegistry.cs`, `ListEditor.cs`, `Main.cs`. This pass was scoped to MsgBox only, not a
+general VB-runtime cleanup.
+
+Build: 0 errors. Warning count moved from 2176 to **2295** (+119) — expected, not a regression:
+`MessageBox`/`MessageBoxButtons`/`MessageBoxIcon` carry `[SupportedOSPlatform("windows")]`
+annotations that `Interaction.MsgBox` didn't, so replacing 57 call sites adds CA1416
+platform-compatibility warnings of the same kind the project already carries 2176 of (see
+[1.3]'s note on this). Verified: user-tested two of the five style combinations live —
+Information-only (REG export success dialog: correct info icon, OK button) and
+Exclamation|YesNo (the "advanced users" raw-POL-editing caution: correct warning icon, Yes/No
+buttons, correct behavior on both) — both rendered and behaved correctly. The other three sites
+use the identical `MsgBoxCompat.Show` call with only their arguments varying from the same
+mapping table, so this is strong evidence for all 57.
+
 ## [1.9] - Fixed finding #5; scoped #8/#9 for a future session instead of skipping them
 
 **Finding #5** (`Main.cs`): `ShouldShowCategory` is self-recursive — `Category.Children.Any(ShouldShowCategory)`
