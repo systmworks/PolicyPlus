@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout master
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-        
+
       - name: Embed version
         run: |
           cd $env:GITHUB_WORKSPACE
@@ -28,15 +28,19 @@ jobs:
       - name: Compile
         run: dotnet build $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.sln -c Release
 
+      - name: Run tests
+        run: dotnet test $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.Tests\PolicyPlus.Tests.csproj -c Release --no-build
+
       - name: Compute hash
         run: Get-FileHash "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\net10.0-windows\Policy Plus.exe"
 
-      - name: Upload to S3
-        uses: stcalica/s3-upload@0.0.1
+      - name: Stage compiled output
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE\Compiled"
+          Copy-Item "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\net10.0-windows\*" -Destination "$env:GITHUB_WORKSPACE\Compiled" -Recurse
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          bucket: ${{ secrets.AWS_S3_BUCKET }}
-          package: PolicyPlus\bin\Release\net10.0-windows\Policy Plus.exe
-          key: PolicyPlusLatest.exe
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_SECRET_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          name: Policy Plus (Windows)
+          path: Compiled/

@@ -1,7 +1,7 @@
 # Policy Plus
 Local Group Policy Editor plus more, for all Windows editions.
 
-[![Build Latest](https://github.com/Fleex255/PolicyPlus/actions/workflows/latest.yml/badge.svg)](https://github.com/Fleex255/PolicyPlus/actions/workflows/latest.yml)
+[![Build Latest](https://github.com/systmworks/PolicyPlus/actions/workflows/latest.yml/badge.svg)](https://github.com/systmworks/PolicyPlus/actions/workflows/latest.yml)
 
 ## Goals
 Policy Plus is intended to make the power of Group Policy settings available to everyone.
@@ -31,11 +31,8 @@ you can switch sections with the "Editing for" drop-down. Click OK to keep the c
 changes to it will not be committed to disk until you use *File | Save Policies* (Ctrl+S).
 
 ## System requirements
-Policy Plus requires .NET Framework 4.5.2 or newer. That can be installed on Windows Vista or newer,
-and comes preinstalled on Windows 10 or newer.
-Policy Plus should also work on the corresponding server OSes: Windows Server 2008 (SP2) or newer.
-The standard [.NET Framework hardware requirements](https://docs.microsoft.com/en-us/dotnet/framework/get-started/system-requirements)
-are sufficient for Policy Plus.
+Policy Plus requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) or newer.
+See [INSTALL.md](INSTALL.md) for details.
 
 ## Special considerations for use on Home editions
 Some administrative templates are present by default on these editions, but many are missing. 
@@ -54,17 +51,16 @@ To change a policy for a different user, modify their Registry directly by openi
 Policy Plus is usable on all editions. It can load and save all policy sources successfully. More features may be still to come, though.
 
 ## Download
-[Download a release build from the Releases page.](https://github.com/Fleex255/PolicyPlus/releases)
-Updates are published as GitHub releases after it is verified that they are fit for public use.
-Note that Policy Plus is still pre-release software, so there may be bugs; please submit any problems to the issue tracker.
+This fork doesn't currently publish tagged releases. Every push to `master` is built
+automatically by [GitHub Actions](https://github.com/systmworks/PolicyPlus/actions/workflows/latest.yml) —
+open the latest successful "Build Latest" run and download the **Policy Plus (Windows)**
+artifact from the Summary page. It's built straight from the code in this repo, so it's
+only as tested as the commit it came from.
 
-[Download the latest build.](https://s3-us-west-2.amazonaws.com/policy-plus/PolicyPlusLatest.exe)
-This link is updated automatically by GitHub Actions after *every commit*.
-It may include more features, but those features will be less tested and could have unintended effects.
-Please be careful.
-
-**N.B.** A few antivirus programs incorrectly flag Policy Plus as malware. 
-Policy Plus is a powerful tool and so may cause problems if used recklessly, but it is not malicious.
-If you would prefer to not trust binaries, feel free to read the code and [compile Policy Plus from source](https://github.com/Fleex255/PolicyPlus/blob/master/COMPILE.md).
+**N.B.** A few antivirus programs incorrectly flag Policy Plus as malware, and since the
+executable isn't code-signed, Windows SmartScreen will show an "unrecognized app" warning
+on first launch (click *More info* → *Run anyway*). Policy Plus is a powerful tool and so
+may cause problems if used recklessly, but it is not malicious.
+If you would prefer to not trust binaries, feel free to read the code and [compile Policy Plus from source](COMPILE.md).
 You can also verify that a build was created from the published code by examining the output of a GitHub Actions run:
 the input commit hash can be found under "checkout master" and the output executable hash can be found under "compute hash."
