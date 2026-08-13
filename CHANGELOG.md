@@ -13,6 +13,54 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.9] - Fixed finding #5; scoped #8/#9 for a future session instead of skipping them
+
+**Finding #5** (`Main.cs`): `ShouldShowCategory` is self-recursive — `Category.Children.Any(ShouldShowCategory)`
+walks a category's whole subtree to answer "is anything visible here." `PopulateAdmxUi`'s
+`addCategory` local function walks the same tree top-down, calling `.Where(ShouldShowCategory)`
+at every level. A category at depth *d* had its subtree-visibility recomputed roughly *d+1*
+times — once by its own level's filter, and again inside every ancestor's
+`Children.Any(ShouldShowCategory)` check, with nothing cached in between. This also
+redundantly re-ran `ShouldShowPolicy`, which can call `PolicyProcessing.GetPolicyState` (real
+registry/`PolFile` reads) — not just cheap boolean logic. Triggered on every filter/view-option
+toggle and after every policy edit.
+
+Unlike finding #6, this carried no correctness risk worth worrying about: pure UI-tree
+filtering with no on-disk format invariant, no ordering dependency, and no side effects —
+calling it more or fewer times can only waste cycles, never corrupt state. The one thing
+worth being careful about: `ShouldShowCategory` has a direct caller in `ShowSettingEditor`
+that checks visibility immediately after a policy save — exactly the kind of call site
+that's easy to miss when hand-listing "safe" places to invalidate a persistent cache (the
+same mistake class that made #6 risky). Avoided that whole problem by not persisting the
+cache at all: added `ShouldShowCategoryCore(Category, Cache)`, an internal helper carrying
+the same logic plus an optional memoization dictionary; `ShouldShowCategory` becomes a
+one-line wrapper calling it with `Cache: null` (byte-for-byte identical behavior to before
+for every caller except `addCategory`). `PopulateAdmxUi` creates one local
+`Dictionary<PolicyPlusCategory, bool>` before its tree walk and threads it through
+`addCategory`'s filter — the cache is a local variable scoped to a single `PopulateAdmxUi()`
+call, so there's nothing to invalidate anywhere. Verified: build 0 errors, 2176 warnings
+(baseline unchanged); manually re-tested View Empty Categories, section filters
+(Computer/User/Both), and a Configured-only filter — tree and subcategory list behave
+identically to before.
+
+**Findings #8 and #9 re-scoped, not skipped.** Earlier assessment called both "disproportionate
+risk" and recommended skipping outright; on reflection that was too pessimistic for #9 and
+premature for #8:
+
+- **#8** (unify `EditPol.cs`'s `addKey`/`removeKey` and `Main.cs`'s `addSubtree` into one
+  shared traversal helper): `removeKey` ends every recursion frame with `ClearKey`+
+  `ForgetKeyClearance` — exactly the `PolFile` machinery the deferred deletion-tracking
+  redesign (see [1.8] below) would restructure. Building a unification now means working
+  against a shape that's about to change. Folded into that redesign's future session instead
+  of tracked separately.
+- **#9** (replace `Interaction.MsgBox`/`MsgBoxStyle`/`MsgBoxResult` with `MessageBox.Show`/
+  `MessageBoxButtons`/`DialogResult`): a full catalog of all 61 call sites found only **5**
+  distinct `MsgBoxStyle` combinations and **3** distinct `MsgBoxResult` values in actual use —
+  not 61 independent judgment calls, as the "disproportionate risk" framing assumed. A
+  concrete mapping table and approach are now recorded (see the plan file) for a future
+  dedicated pass: 61 sites is still real mechanical work, but verification only needs 5
+  visual checks (one per style combination), not 61.
+
 ## [1.8] - Fixed 6 of 10 findings from a full code review; 3 deferred by decision
 
 Ran a high-effort code review (9 finder angles) against the whole C# port. Fixed the 4

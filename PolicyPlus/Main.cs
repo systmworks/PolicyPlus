@@ -121,7 +121,8 @@ namespace PolicyPlus
             // Populate the left categories tree
             CategoriesTree.Nodes.Clear();
             CategoryNodes.Clear();
-            void addCategory(IEnumerable<PolicyPlusCategory> CategoryList, TreeNodeCollection ParentNode) { foreach (var category in CategoryList.Where(ShouldShowCategory)) { var newNode = ParentNode.Add(category.UniqueID, category.DisplayName, GetImageIndexForCategory(category)); newNode.SelectedImageIndex = 3; newNode.Tag = category; CategoryNodes.Add(category, newNode); addCategory(category.Children, newNode.Nodes); } } // "Go" arrow
+            var visibilityCache = new Dictionary<PolicyPlusCategory, bool>();
+            void addCategory(IEnumerable<PolicyPlusCategory> CategoryList, TreeNodeCollection ParentNode) { foreach (var category in CategoryList.Where(c => ShouldShowCategoryCore(c, visibilityCache))) { var newNode = ParentNode.Add(category.UniqueID, category.DisplayName, GetImageIndexForCategory(category)); newNode.SelectedImageIndex = 3; newNode.Tag = category; CategoryNodes.Add(category, newNode); addCategory(category.Children, newNode.Nodes); } } // "Go" arrow
             addCategory(AdmxWorkspace.Categories.Values, CategoriesTree.Nodes);
             CategoriesTree.Sort();
             CurrentCategory = null;
@@ -252,17 +253,28 @@ namespace PolicyPlus
                 return 5;
             } // Extra configuration
         }
-        public bool ShouldShowCategory(PolicyPlusCategory Category)
+        public bool ShouldShowCategory(PolicyPlusCategory Category) => ShouldShowCategoryCore(Category, null);
+
+        // Same logic as ShouldShowCategory, but can memoize subtree results for the duration of one tree walk
+        // (e.g. PopulateAdmxUi's addCategory) so a category's visibility isn't recomputed once per ancestor level.
+        // Cache is never persisted across calls, so there's no invalidation to get wrong.
+        private bool ShouldShowCategoryCore(PolicyPlusCategory Category, Dictionary<PolicyPlusCategory, bool> Cache)
         {
             // Should this category be shown considering the current filter?
             if (ViewEmptyCategories)
             {
                 return true;
             }
-            else // Only if it has visible children
+            if (Cache is not null && Cache.TryGetValue(Category, out bool cached))
             {
-                return Category.Policies.Any(ShouldShowPolicy) || Category.Children.Any(ShouldShowCategory);
+                return cached;
             }
+            bool result = Category.Policies.Any(ShouldShowPolicy) || Category.Children.Any(c => ShouldShowCategoryCore(c, Cache));
+            if (Cache is not null)
+            {
+                Cache[Category] = result;
+            }
+            return result;
         }
         public bool ShouldShowPolicy(PolicyPlusPolicy Policy)
         {
