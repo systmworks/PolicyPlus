@@ -13,6 +13,76 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.11] - `PolFile` redesign: explicit-state key tree, resolving findings #6 and #8
+
+Redesigned `PolFile`'s internal representation, replacing the `SortedDictionary` +
+sentinel-marker scheme with an explicit `KeyNode` tree (one slot per (key, value) carrying
+a `Deleted` flag, plus a `Cleared` flag per key). Prompted by a direct question during
+review: is the whole delete-tracking design over-complicated, not just the specific
+`WillDeleteValue` performance patch under discussion? It was — the old design encoded
+"did this happen before or after that" purely via string-sort order (`**`-prefixed
+sentinel value-names sorting before real ones), an implicit global invariant that
+`WillDeleteValue` and `ApplyDifference` each separately had to know about and preserve
+correctly. See `PolicySource.cs` and the plan file for the full design rationale.
+
+**A real latent bug was found and fixed, not just a hypothetical one**: the old `SetValue`
+never cleared a leftover `**del.<name>` marker left behind by an earlier `DeleteValue`
+(only `ForgetValue`/`DeleteValue` did). This was invisible for ordinary value names only
+because `*` (0x2A) happens to sort after `!`/space/etc. (0x20-0x29) but before letters and
+digits — so `WillDeleteValue`'s scan-and-flip loop got lucky for typical value names, but
+would have silently misreported a value starting with a low-ASCII character (like `!` or a
+leading space) as deleted immediately after re-setting it. The new single-slot-per-value
+structure makes this class of bug structurally impossible. Covered by a regression test
+(`SetValue_AfterDeleteValue_WithoutForget_SurvivesEvenForLowAsciiNames`).
+
+**Resolves finding #6** (`WillDeleteValue`'s O(n) full-file scan) as a side effect —
+it's now an O(depth) node lookup, no secondary index needed at all, which was the whole
+point of two previously-drafted (and now unnecessary) index-patch proposals.
+
+**De-risks finding #8** (three independent hand-rolled key-tree traversals in `EditPol.cs`/
+`Main.cs`): not unified in this pass, but the reason it was hard — building an abstraction
+across the old flat sentinel-laden dictionary and a live `RegistryKey` — no longer applies
+to the `PolFile` side, since there's now an actual tree. `EditPol.cs`'s raw POL editor,
+which reads literal sentinel records (`**del.X`, `**delvals`, `**deletevalues`) via
+`GetValueNames(Key, OnlyValues: false)`, needed zero changes — the business-facing API
+stays sentinel-blind, while a shared `WireRecordsFor` helper (also used by `Save`)
+reproduces the raw view for that one caller. Covered by a regression test
+(`GetValueNames_RawView_SurfacesSentinelRecordsForEditPolCompatibility`).
+
+**Deliberate, called-out behavior changes** (not silent):
+- `Save` always expands deletions to individual `**del.<name>` records instead of
+  reproducing a compact `**deletevalues` list. Semantically identical; visually different
+  in a raw byte diff. Exact fidelity was never a real constraint — `**deletekeys` was
+  already never written by this codebase either.
+- `ApplyDifference`'s old-state "forget" pass is narrower than before: it no longer
+  redundantly calls `Target.ForgetValue` for a value that the same run's replay pass
+  already explicitly `DeleteValue`'d or covered via `ClearKey`. Harmless for the only real
+  production `Target` (`RegistryPolicyProxy`, where `ForgetValue`/`DeleteValue` collapse to
+  the same registry write). Covered by an updated test documenting the old vs. new call
+  sequence explicitly, rather than silently changing what the test asserted.
+- `CasePreservation` as a separate, never-shrinking dictionary is gone; casing now lives
+  inline on tree nodes with "most recent write wins" instead of "first spelling ever seen,
+  sticky forever."
+
+**De-risked with test-first sequencing**, since `Load`/`Save` are the two highest-
+consequence methods in the app (a bug there writes wrong data to a real Windows registry)
+and the project had zero automated tests before this: added a new `PolicyPlus.Tests`
+project (xunit), wrote 9 baseline tests capturing the *old* design's actual behavior first
+(clear-then-set-again, `ApplyDifference`'s minimal-diff semantics via a recording fake
+`IPolicySource`, multi-value clear/restore, byte-buffer round trip), then implemented the
+redesign against that baseline — 8/9 passed unchanged, the 1 difference was the documented
+`ApplyDifference` narrowing above, plus 2 new tests for the fixed bug and the `EditPol.cs`
+compatibility path. All 12 tests pass; build clean (0 errors, 2295 warnings, same baseline
+as [1.10] — no new CA1416 noise from `PolicySource.cs`).
+
+**Manually verified against a real Windows registry** (not just unit tests): enabled a
+Boolean policy ("Remove Run menu from Start Menu"), confirmed the registry value appears
+and disappears correctly on enable/disable; enabled a List-type policy ("Hide specified
+Control Panel items") with entries, set to Not Configured (confirmed fully cleared),
+re-enabled with a *different* set of entries (confirmed only the new entries present, no
+stale leftovers from the first set) — the core clear-then-restore-with-different-entries
+scenario the whole redesign was about. All passed.
+
 ## [1.10] - Fixed finding #9: `Interaction.MsgBox` → `MessageBox.Show`
 
 Replaced every VB-runtime `Interaction.MsgBox`/`MsgBoxStyle`/`MsgBoxResult` call with WinForms'

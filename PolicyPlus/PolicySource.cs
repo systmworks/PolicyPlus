@@ -18,22 +18,80 @@ public interface IPolicySource
     void ForgetKeyClearance(string Key); // Unmark a key as cleared
 }
 
+// Represents a parsed .pol file. Internally this is an explicit-state key tree: each
+// registry key path is a node carrying its own values (each with a Deleted flag) and a
+// Cleared flag for "delete everything else under this key". The .pol wire format has no
+// native delete operation -- Microsoft's real convention represents deletions as specially
+// named sentinel records (**del.<name>, **delvals., **deletevalues, **deletekeys) mixed in
+// with real value records. That wire convention is confined to Load/Save (and the shared
+// WireRecordsFor helper, also used to keep EditPol.cs's raw record view working) -- nothing
+// else in this class needs to know it exists. See CHANGELOG.md for the prior sort-order-
+// dependent design this replaced, and the latent bug that motivated the change.
 public class PolFile : IPolicySource
 {
-    // The sortedness is important because key clearances need to be processed before the addition of their values
-    // Fortunately, clearing entries start with **, which sorts before normal values
-    private readonly SortedDictionary<string, PolEntryData> Entries = new(); // Keys are lowercase Registry keys and values, separated by "\\"
-    private readonly Dictionary<string, string> CasePreservation = new(); // Keep track of the original cases
-
-    // NOTE: string literals below are verbatim (@"...") throughout this file so the exact
-    // backslash count is unambiguous: @"\\" is two literal backslashes (the internal
-    // key/value separator established here), @"\" is one (a normal registry path separator).
-    private string GetDictKey(string Key, string Value)
+    private sealed class ValueEntry
     {
-        string origCase = Key + @"\\" + Value;
-        string lowerCase = origCase.ToLowerInvariant();
-        if (!CasePreservation.ContainsKey(lowerCase)) CasePreservation.Add(lowerCase, origCase);
-        return lowerCase;
+        public string Name; // Original-case value name
+        public bool Deleted; // Pending "delete this value" (was **del.<name> / a **deletevalues member)
+        public PolEntryData Data; // Real payload; unused when Deleted
+    }
+
+    private sealed class KeyNode
+    {
+        public KeyNode Parent;
+        public string OwnName;
+        public bool Cleared; // "**delvals." for this key (also where **deletekeys entries normalize to)
+        public readonly Dictionary<string, ValueEntry> Values = new(StringComparer.OrdinalIgnoreCase);
+        public readonly Dictionary<string, KeyNode> Children = new(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private readonly KeyNode _root = new() { OwnName = "" };
+
+    private static string[] SplitPath(string Key) =>
+        string.IsNullOrEmpty(Key) ? Array.Empty<string>() : Key.Split('\\');
+
+    private KeyNode FindNode(string Key)
+    {
+        var node = _root;
+        foreach (var seg in SplitPath(Key))
+            if (!node.Children.TryGetValue(seg, out node)) return null;
+        return node;
+    }
+
+    private KeyNode GetOrCreateNode(string Key)
+    {
+        var node = _root;
+        foreach (var seg in SplitPath(Key))
+        {
+            if (node.Children.TryGetValue(seg, out var child))
+                child.OwnName = seg; // Most-recent-casing-wins
+            else
+            {
+                child = new KeyNode { Parent = node, OwnName = seg };
+                node.Children[seg] = child;
+            }
+            node = child;
+        }
+        return node;
+    }
+
+    // A node with no content of its own is pruned so ForgetValue/ForgetKeyClearance don't
+    // leave behind empty placeholder nodes that would show up in GetKeyNames.
+    private static void PruneIfEmpty(KeyNode node)
+    {
+        while (node.Parent is not null && node.Values.Count == 0 && !node.Cleared && node.Children.Count == 0)
+        {
+            var parent = node.Parent;
+            parent.Children.Remove(node.OwnName);
+            node = parent;
+        }
+    }
+
+    private static void WalkTree(KeyNode node, string path, Action<string, KeyNode> visit)
+    {
+        visit(path, node);
+        foreach (var child in node.Children.Values)
+            WalkTree(child, string.IsNullOrEmpty(path) ? child.OwnName : path + @"\" + child.OwnName, visit);
     }
 
     public static PolFile Load(string File)
@@ -64,23 +122,58 @@ public class PolFile : IPolicySource
 
         while (Stream.BaseStream.Position != Stream.BaseStream.Length)
         {
-            var ped = new PolEntryData();
             Stream.BaseStream.Position += 2; // Skip the "[" character
             string key = readSz();
             Stream.BaseStream.Position += 2; // Skip ";"
             string value = readSz();
             if (Stream.ReadUInt16() != (ushort)';') Stream.BaseStream.Position += 2; // MS documentation indicates there might be an extra null before the ";" after the value name
-            ped.Kind = (RegistryValueKind)Stream.ReadInt32();
+            var kind = (RegistryValueKind)Stream.ReadInt32();
             Stream.BaseStream.Position += 2; // ";"
             uint length = Stream.ReadUInt32();
             Stream.BaseStream.Position += 2; // ";"
             var data = new byte[length];
             Stream.Read(data, 0, (int)length);
-            ped.Data = data;
             Stream.BaseStream.Position += 2; // "]"
-            pol.Entries[pol.GetDictKey(key, value)] = ped;
+            pol.IngestRawRecord(key, value, new PolEntryData { Kind = kind, Data = data });
         }
         return pol;
+    }
+
+    // The only place besides Save/WireRecordsFor that knows the sentinel conventions.
+    // A literal value record always wins over a marker for the same name, regardless of
+    // which physically appears first in the file -- this matches (and makes explicit) what
+    // the old sort-order-dependent design always actually resolved to, since "**"-prefixed
+    // markers were guaranteed to sort, and therefore be superseded, before a same-named
+    // literal entry.
+    private void IngestRawRecord(string keyPath, string valueName, PolEntryData ped)
+    {
+        var node = GetOrCreateNode(keyPath);
+        if (valueName.StartsWith("**del.", StringComparison.OrdinalIgnoreCase))
+        {
+            string target = valueName.Substring(6);
+            if (!(node.Values.TryGetValue(target, out var existing) && !existing.Deleted))
+                node.Values[target] = new ValueEntry { Name = target, Deleted = true };
+        }
+        else if (valueName.StartsWith("**delvals", StringComparison.OrdinalIgnoreCase))
+        {
+            node.Cleared = true;
+        }
+        else if (valueName.Equals("**deletevalues", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var name in ped.AsString().Split(';'))
+                if (name.Length > 0 && !(node.Values.TryGetValue(name, out var existing) && !existing.Deleted))
+                    node.Values[name] = new ValueEntry { Name = name, Deleted = true };
+        }
+        else if (valueName.StartsWith("**deletekeys", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var sub in ped.AsString().Split(';'))
+                if (sub.Length > 0)
+                    GetOrCreateNode(string.IsNullOrEmpty(keyPath) ? sub : keyPath + @"\" + sub).Cleared = true;
+        }
+        else
+        {
+            node.Values[valueName] = new ValueEntry { Name = valueName, Deleted = false, Data = ped };
+        }
     }
 
     public void Save(string File)
@@ -100,149 +193,160 @@ public class PolFile : IPolicySource
             }
             Writer.Write((short)0);
         }
-        Writer.Write(0x67655250U);
-        Writer.Write(1);
-        foreach (var kv in Entries)
+        void writeRecord(string key, string val, RegistryValueKind kind, byte[] data)
         {
             Writer.Write('[');
-            var pathparts = CasePreservation[kv.Key].Split(new[] { @"\\" }, 2, StringSplitOptions.None);
-            writeSz(pathparts[0]); // Key name
+            writeSz(key);
             Writer.Write(';');
-            writeSz(pathparts[1]); // Value name
+            writeSz(val);
             Writer.Write(';');
-            Writer.Write((int)kv.Value.Kind);
+            Writer.Write((int)kind);
             Writer.Write(';');
-            Writer.Write(kv.Value.Data.Length);
+            Writer.Write(data.Length);
             Writer.Write(';');
-            Writer.Write(kv.Value.Data);
+            Writer.Write(data);
             Writer.Write(']');
         }
+
+        Writer.Write(0x67655250U);
+        Writer.Write(1);
+
+        void writeKey(KeyNode node, string path)
+        {
+            foreach (var (name, data) in WireRecordsFor(node))
+                writeRecord(path, name, data.Kind, data.Data);
+            foreach (var child in node.Children.Values.OrderBy(c => c.OwnName, StringComparer.OrdinalIgnoreCase))
+                writeKey(child, string.IsNullOrEmpty(path) ? child.OwnName : path + @"\" + child.OwnName);
+        }
+        writeKey(_root, "");
+    }
+
+    // Single source of truth for "what would Save() write for this key's direct values" --
+    // used by Save itself and by GetValueNames(Key, OnlyValues: false)/GetValue/GetValueKind
+    // when addressed with a literal sentinel name, which is what EditPol.cs's raw POL editor
+    // does to render "Delete value"/"Delete all values" rows. Deletions are always expanded
+    // to individual **del.<name> records rather than a compact **deletevalues list -- exact
+    // byte fidelity to whatever produced the original file was never a real constraint here
+    // (**deletekeys was already never written by this codebase either), only well-formed
+    // output real Group Policy tooling can read.
+    private static IEnumerable<(string Name, PolEntryData Data)> WireRecordsFor(KeyNode node)
+    {
+        if (node.Cleared)
+            yield return ("**delvals.", PolEntryData.FromString(" "));
+        foreach (var v in node.Values.Values.OrderBy(v => v.Name, StringComparer.OrdinalIgnoreCase))
+            yield return v.Deleted
+                ? ("**del." + v.Name, PolEntryData.FromDword(32)) // It's what Microsoft does
+                : (v.Name, v.Data);
+    }
+
+    private static bool TryResolveRawEntry(KeyNode node, string value, out PolEntryData data)
+    {
+        foreach (var r in WireRecordsFor(node))
+        {
+            if (r.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
+            {
+                data = r.Data;
+                return true;
+            }
+        }
+        data = null;
+        return false;
     }
 
     public void DeleteValue(string Key, string Value)
     {
-        ForgetValue(Key, Value);
-        if (!WillDeleteValue(Key, Value))
-        {
-            var ped = PolEntryData.FromDword(32); // It's what Microsoft does
-            Entries.Add(GetDictKey(Key, "**del." + Value), ped);
-        }
+        var node = GetOrCreateNode(Key);
+        bool alreadyCovered = node.Cleared; // Whole-key clear already implies this deletion
+        node.Values.Remove(Value);
+        if (!alreadyCovered)
+            node.Values[Value] = new ValueEntry { Name = Value, Deleted = true };
     }
 
     public void ForgetValue(string Key, string Value)
     {
-        string dictKey = GetDictKey(Key, Value);
-        if (Entries.ContainsKey(dictKey)) Entries.Remove(dictKey);
-        string deleterKey = GetDictKey(Key, "**del." + Value);
-        if (Entries.ContainsKey(deleterKey)) Entries.Remove(deleterKey);
+        var node = FindNode(Key);
+        if (node is null) return;
+        if (node.Values.Remove(Value)) PruneIfEmpty(node);
     }
 
     public void SetValue(string Key, string Value, object Data, RegistryValueKind DataType)
     {
-        string dictKey = GetDictKey(Key, Value);
-        if (Entries.ContainsKey(dictKey)) Entries.Remove(dictKey);
-        Entries.Add(dictKey, PolEntryData.FromArbitrary(Data, DataType));
+        var node = GetOrCreateNode(Key);
+        node.Values[Value] = new ValueEntry { Name = Value, Deleted = false, Data = PolEntryData.FromArbitrary(Data, DataType) };
     }
 
     public bool ContainsValue(string Key, string Value)
     {
-        if (WillDeleteValue(Key, Value)) return false;
-        return Entries.ContainsKey(GetDictKey(Key, Value));
+        var node = FindNode(Key);
+        return node is not null && node.Values.TryGetValue(Value, out var e) && !e.Deleted;
     }
 
     public object GetValue(string Key, string Value)
     {
-        if (!ContainsValue(Key, Value)) return null;
-        return Entries[GetDictKey(Key, Value)].AsArbitrary();
+        var node = FindNode(Key);
+        if (node is null) return null;
+        if (node.Values.TryGetValue(Value, out var e) && !e.Deleted) return e.Data.AsArbitrary();
+        return TryResolveRawEntry(node, Value, out var raw) ? raw.AsArbitrary() : null;
     }
 
     public bool WillDeleteValue(string Key, string Value)
     {
-        bool willDelete = false;
-        string keyRoot = GetDictKey(Key, "");
-        foreach (var kv in Entries.Where(e => e.Key.StartsWith(keyRoot)))
-        {
-            if (kv.Key == GetDictKey(Key, "**del." + Value))
-            {
-                willDelete = true;
-            }
-            else if (kv.Key.StartsWith(GetDictKey(Key, "**delvals"))) // MS POL files also use "**delvals."
-            {
-                willDelete = true;
-            }
-            else if (kv.Key == GetDictKey(Key, "**deletevalues"))
-            {
-                string lowerVal = Value.ToLowerInvariant();
-                var deletedValues = kv.Value.AsString().Split(';');
-                if (deletedValues.Any(s => s.ToLowerInvariant() == lowerVal)) willDelete = true;
-            }
-            else if (kv.Key == GetDictKey(Key, Value))
-            {
-                willDelete = false; // In case the key is cleared out before setting the values
-            }
-        }
-        return willDelete;
+        var node = FindNode(Key);
+        if (node is null) return false;
+        if (node.Values.TryGetValue(Value, out var e)) return e.Deleted; // Explicit knowledge always wins
+        return node.Cleared; // Else defer to the key-level clearance
     }
 
     public List<string> GetValueNames(string Key) => GetValueNames(Key, true);
 
     public List<string> GetValueNames(string Key, bool OnlyValues)
     {
-        string prefix = GetDictKey(Key, "");
-        var valNames = new List<string>();
-        foreach (var k in Entries.Keys)
-        {
-            if (k.StartsWith(prefix))
-            {
-                string valName = CasePreservation[k].Split(new[] { @"\\" }, 2, StringSplitOptions.None)[1];
-                if (!(OnlyValues && valName.StartsWith("**"))) valNames.Add(valName);
-            }
-        }
-        return valNames;
+        var node = FindNode(Key);
+        if (node is null) return new List<string>();
+        if (OnlyValues)
+            return node.Values.Values.Where(v => !v.Deleted && !v.Name.StartsWith("**", StringComparison.Ordinal))
+                .Select(v => v.Name).ToList();
+        return WireRecordsFor(node).Select(r => r.Name).ToList();
     }
 
     // Figure out which values have changed and commit only the changes
     public void ApplyDifference(PolFile OldVersion, IPolicySource Target)
     {
-        if (OldVersion is null) OldVersion = new PolFile();
-        var oldEntries = OldVersion.Entries.Keys.Where(k => !k.Contains(@"\\**")).ToList();
-        foreach (var kv in Entries)
+        OldVersion ??= new PolFile();
+
+        // Pass 1: replay the new state. A key's Cleared marker is always emitted before its
+        // own values in the same visit, by construction -- no cross-key ordering guarantee
+        // is needed, since different keys' target writes never interact.
+        WalkTree(_root, "", (path, node) =>
         {
-            var parts = kv.Key.Split(new[] { @"\\" }, 2, StringSplitOptions.None); // Key, value
-            var casedParts = CasePreservation[kv.Key].Split(new[] { @"\\" }, 2, StringSplitOptions.None);
-            if (parts[1].StartsWith("**del."))
+            if (node.Cleared) Target.ClearKey(path);
+            foreach (var v in node.Values.Values)
             {
-                Target.DeleteValue(parts[0], parts[1].Split(new[] { "." }, 2, StringSplitOptions.None)[1]);
+                if (v.Name == "") continue; // Empty-name placeholder (EditPol.cs "Add Key"), never a real registry write
+                if (v.Deleted) Target.DeleteValue(path, v.Name);
+                else Target.SetValue(path, v.Name, v.Data.AsArbitrary(), v.Data.Kind);
             }
-            else if (parts[1].StartsWith("**delvals"))
-            {
-                Target.ClearKey(parts[0]);
-            }
-            else if (parts[1] == "**deletevalues")
-            {
-                foreach (var entry in kv.Value.AsString().Split(';'))
-                {
-                    Target.DeleteValue(parts[0], entry);
-                }
-            }
-            else if (parts[1].StartsWith("**deletekeys"))
-            {
-                foreach (var entry in kv.Value.AsString().Split(';'))
-                {
-                    Target.ClearKey(parts[0] + @"\" + entry);
-                }
-            }
-            else if (parts[1] != "" && !parts[1].StartsWith("**"))
-            {
-                Target.SetValue(casedParts[0], casedParts[1], kv.Value.AsArbitrary(), kv.Value.Kind);
-                if (oldEntries.Contains(kv.Key)) oldEntries.Remove(kv.Key); // It's not forgotten
-            }
-        }
-        foreach (var e in oldEntries.Where(RegistryPolicyProxy.IsPolicyKey)) // Remove the forgotten entries from the Registry
+        });
+
+        // Pass 2: forget old values the new state has zero explicit knowledge of at all --
+        // no real value, no explicit per-value delete, and not covered by a whole-key clear.
+        // Deliberately narrower than a literal-match diff: a value Pass 1 already
+        // DeleteValue'd, or that's covered by a ClearKey Pass 1 already emitted, does NOT
+        // also get a redundant ForgetValue here. Harmless for the only real production
+        // Target (RegistryPolicyProxy, where ForgetValue and DeleteValue collapse to the
+        // same registry write) but a real behavior narrowing versus the prior design, which
+        // is why it's called out in the CHANGELOG rather than left as a silent difference.
+        WalkTree(OldVersion._root, "", (path, node) =>
         {
-            var parts = e.Split(new[] { @"\\" }, 2, StringSplitOptions.None);
-            Target.ForgetValue(parts[0], parts[1]);
-        }
+            if (!RegistryPolicyProxy.IsPolicyKey(path)) return;
+            var newNode = FindNode(path);
+            foreach (var v in node.Values.Values)
+            {
+                if (v.Deleted || v.Name == "") continue;
+                bool knownInNew = newNode is not null && (newNode.Values.ContainsKey(v.Name) || newNode.Cleared);
+                if (!knownInNew) Target.ForgetValue(path, v.Name);
+            }
+        });
     }
 
     // Apply all the values to the policy source
@@ -250,39 +354,32 @@ public class PolFile : IPolicySource
 
     public void ClearKey(string Key)
     {
-        foreach (var value in GetValueNames(Key, false))
-        {
-            ForgetValue(Key, value);
-        }
-        var ped = PolEntryData.FromString(" ");
-        Entries.Add(GetDictKey(Key, "**delvals."), ped);
+        var node = GetOrCreateNode(Key);
+        node.Values.Clear(); // Forget every value AND every pending per-value delete at this key
+        node.Cleared = true;
     }
 
     public void ForgetKeyClearance(string Key)
     {
-        string keyDeleter = GetDictKey(Key, "**delvals");
-        foreach (var kv in Entries.Where(e => e.Key.StartsWith(keyDeleter)).ToList()) // "**delvals" and "**delvals." are both valid
-        {
-            Entries.Remove(kv.Key);
-        }
+        var node = FindNode(Key);
+        if (node is null) return;
+        node.Cleared = false;
+        PruneIfEmpty(node);
     }
 
     public List<string> GetKeyNames(string Key)
     {
-        var subkeyNames = new List<string>();
-        string prefix = string.IsNullOrEmpty(Key) ? "" : Key + @"\"; // Let an empty key name mean the root
-        foreach (var entry in Entries.Keys.Where(e => e.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase)))
-        {
-            if (entry.StartsWith(prefix + @"\", StringComparison.InvariantCultureIgnoreCase)) continue; // Values are delimited by an extra slash
-            string properCased = CasePreservation[entry].Split(new[] { @"\\" }, 2, StringSplitOptions.None)[0];
-            if (prefix.Length >= properCased.Length) continue; // Do not return the requested key itself
-            string localKeyName = properCased.Substring(prefix.Length).Split(new[] { @"\" }, 2, StringSplitOptions.None)[0];
-            if (!subkeyNames.Contains(localKeyName, StringComparer.InvariantCultureIgnoreCase)) subkeyNames.Add(localKeyName);
-        }
-        return subkeyNames;
+        var node = FindNode(Key);
+        return node is null ? new List<string>() : node.Children.Values.Select(c => c.OwnName).ToList();
     }
 
-    public RegistryValueKind GetValueKind(string Key, string Value) => Entries[GetDictKey(Key, Value)].Kind;
+    public RegistryValueKind GetValueKind(string Key, string Value)
+    {
+        var node = FindNode(Key) ?? throw new KeyNotFoundException($@"No key ""{Key}"".");
+        if (node.Values.TryGetValue(Value, out var e) && !e.Deleted) return e.Data.Kind;
+        if (TryResolveRawEntry(node, Value, out var raw)) return raw.Kind;
+        throw new KeyNotFoundException($@"No value or marker ""{Value}"" under ""{Key}"".");
+    }
 
     public PolFile Duplicate()
     {
