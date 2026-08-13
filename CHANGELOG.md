@@ -9,9 +9,21 @@ All notable changes to this fork are documented here. Format is loosely based on
 Upstream ([Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus)) does not state a
 meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcoded to
 `1.0.0.0` and never bumped; the version actually shown at runtime comes from
-`version.bat` embedding `git describe --always` into `Version.vb` at build time — i.e.
+`version.bat` embedding `git describe --always` into `Version.cs` at build time — i.e.
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
+
+## [1.12] - Cleaned up leftover VB.NET-era fork artifacts
+
+Post-migration housekeeping pass: removed `PolicyPlus/PolicyPlusCs/`, a dead directory left
+over from the C# port's staging project (before it was swapped directly into `PolicyPlus/`)
+— it contained nothing but stale `bin`/`obj` build output, already git-ignored and untracked,
+so this has no effect on history. Updated four docs that still described the pre-port VB.NET
+build: `COMPILE.md` (referenced the nonexistent `PolicyPlus.vbproj`/`Version.vb`, Visual
+Studio 2019, and the old upstream clone URL — now describes the `net10.0-windows` build, both
+via Visual Studio and `dotnet build`/`dotnet test`), `INSTALL.md` (said ".NET Framework 4.5+";
+now says the .NET 10 Desktop Runtime), `Docs/Components.md` (every file reference used `.vb`
+extensions; all switched to `.cs`), and one stale `.gitignore` entry (`Version.vb` → `Version.cs`).
 
 ## [1.11] - `PolFile` redesign: explicit-state key tree, resolving findings #6 and #8
 
