@@ -13,6 +13,40 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.14] - Triaged the 18 upstream issues
+
+Full triage in the new [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md): summary, complexity
+estimate, and a suggested starting approach for each of the 18 open issues on
+[Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus/issues). None are already
+fixed by prior work on this fork, but two (#73 Dark Mode, #78 HiDPI) had their
+*prerequisite* resolved by the .NET 10 migration — the underlying APIs (`Application.SetColorMode`,
+`ApplicationHighDpiMode`) simply didn't exist under .NET Framework 4.5.2, which is why
+those two issues motivated the migration in the first place. Neither is actually wired up
+yet — confirmed `app.manifest`'s DPI declaration is still commented out and there's no
+color-mode call anywhere in the app.
+
+## [1.13] - Fixed dead CI: replaced S3 upload with a GitHub Actions artifact
+
+The "Build Latest" workflow (`.github/workflows/latest.yml`) is inherited from upstream
+Fleex255/PolicyPlus and had never once run automatically on this fork — GitHub disables
+workflows on newly created forks until manually triggered once, which this session did via
+`workflow_dispatch`. That test run also showed the workflow's "Upload to S3" step failing
+(it targets an AWS bucket/credentials this fork was never given), which had been silently
+broken this whole time.
+
+Removed the S3 step, added a `dotnet test` step (now that `PolicyPlus.Tests` exists), and
+added a proper artifact-upload step (`actions/upload-artifact@v4`) that stages the compiled
+output into a `Compiled/` folder and uploads it as a downloadable **Policy Plus (Windows)**
+artifact — no external account needed. Bumped `actions/checkout` v2→v4. Updated `README.md`
+to match: fixed the stale ".NET Framework 4.5.2" requirement, pointed the build badge and
+compile-from-source link at this fork instead of upstream, and replaced the dead
+Releases/S3 download links with a pointer to the Actions artifact. Verified end-to-end with
+a fresh `workflow_dispatch` run: build, tests, and artifact upload all passed.
+
+Also set up `gh` (GitHub CLI) authentication for this environment, account-scoped so it
+covers any repo, not just this one, and wired git's own credential helper to use the same
+auth (`gh auth setup-git`) so plain `git push`/`pull` need no separate login.
+
 ## [1.12] - Cleaned up leftover VB.NET-era fork artifacts
 
 Post-migration housekeeping pass: removed `PolicyPlus/PolicyPlusCs/`, a dead directory left
