@@ -748,6 +748,7 @@ namespace PolicyPlus
             Shown += new EventHandler(Main_Shown);
             SizeChanged += new EventHandler(ResizePolicyNameColumn);
             Closed += new EventHandler(Main_Closed);
+            FormClosing += new FormClosingEventHandler(Main_FormClosing);
             ResumeLayout(false);
             PerformLayout();
 

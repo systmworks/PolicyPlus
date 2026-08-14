@@ -26,6 +26,7 @@ namespace PolicyPlus
         private bool ViewEmptyCategories = false;
         private AdmxPolicySection ViewPolicyTypes = AdmxPolicySection.Both;
         private bool ViewFilteredOnly = false;
+        private bool _isDirty = false;
 
         public Main()
         {
@@ -430,6 +431,7 @@ namespace PolicyPlus
             // Show the Edit Policy Setting dialog for a policy and reload if changes were made
             if (My.MyProject.Forms.EditSetting.PresentDialog(Policy, Section, AdmxWorkspace, CompPolicySource, UserPolicySource, CompPolicyLoader, UserPolicyLoader, CompComments, UserComments) == DialogResult.OK)
             {
+                _isDirty = true;
                 // Keep the selection where it is if possible
                 if (CurrentCategory is null || ShouldShowCategory(CurrentCategory))
                     UpdateCategoryListing();
@@ -822,6 +824,8 @@ namespace PolicyPlus
             // Make otherwise-identical pairs of user and computer policies into single dual-section policies
             ClearSelections();
             int deduped = PolicyProcessing.DeduplicatePolicies(AdmxWorkspace);
+            if (deduped > 0)
+                _isDirty = true;
             MsgBoxCompat.Show("Deduplicated " + deduped + " policies.", MessageBoxButtons.OK, MessageBoxIcon.Information);
             UpdateCategoryListing();
             UpdatePolicyInfo();
@@ -895,6 +899,7 @@ namespace PolicyPlus
                 Configuration.SetValue("UserSourceType", (int)UserPolicyLoader.Source);
                 Configuration.SetValue("CompSourceData", CompPolicyLoader.LoaderData ?? "");
                 Configuration.SetValue("UserSourceData", UserPolicyLoader.LoaderData ?? "");
+                _isDirty = false;
                 MsgBoxCompat.Show("Success." + Constants.vbCrLf + Constants.vbCrLf + "User policies: " + userStatus + "." + Constants.vbCrLf + Constants.vbCrLf + "Computer policies: " + compStatus + ".", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -963,6 +968,23 @@ namespace PolicyPlus
             PolicyInfoTable.PerformLayout(); // Force the table to take up its full desired size
             PInvoke.ShowScrollBar(SettingInfoPanel.Handle, 0, false); // 0 means horizontal
         }
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!_isDirty)
+                return;
+            var result = MsgBoxCompat.Show("There are unsaved changes. Save before closing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.Cancel)
+            {
+                e.Cancel = true;
+                return;
+            }
+            if (result == DialogResult.Yes)
+            {
+                SavePoliciesToolStripMenuItem_Click(sender, e);
+                if (_isDirty)
+                    e.Cancel = true; // Save failed (error already shown); don't close with unsaved changes
+            }
+        }
         private void Main_Closed(object sender, EventArgs e)
         {
             ClosePolicySources(); // Make sure everything is cleaned up before quitting
@@ -998,6 +1020,7 @@ namespace PolicyPlus
             {
                 var spol = My.MyProject.Forms.ImportSpol.Spol;
                 int fails = spol.ApplyAll(AdmxWorkspace, UserPolicySource, CompPolicySource, UserComments, CompComments);
+                _isDirty = true;
                 MoveToVisibleCategoryAndReload();
                 if (fails == 0)
                 {
@@ -1031,6 +1054,7 @@ namespace PolicyPlus
                     {
                         var section = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.User ? UserPolicySource : CompPolicySource;
                         pol.Apply(section);
+                        _isDirty = true;
                         MoveToVisibleCategoryAndReload();
                         MsgBoxCompat.Show("POL import successful.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -1102,6 +1126,8 @@ namespace PolicyPlus
             if (My.MyProject.Forms.OpenSection.PresentDialog(userIsPol, compIsPol) == DialogResult.OK)
             {
                 My.MyProject.Forms.EditPol.PresentDialog(PolicyIcons, (PolFile)(My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource), My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.User);
+                // EditPol mutates the PolFile in place while open, regardless of how its window is closed
+                _isDirty = true;
             }
             MoveToVisibleCategoryAndReload();
         }
@@ -1119,7 +1145,10 @@ namespace PolicyPlus
             {
                 var source = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
                 if (My.MyProject.Forms.ImportReg.PresentDialog(source) == DialogResult.OK)
+                {
+                    _isDirty = true;
                     MoveToVisibleCategoryAndReload();
+                }
             }
         }
         private void SetADMLLanguageToolStripMenuItem_Click(object sender, EventArgs e)
