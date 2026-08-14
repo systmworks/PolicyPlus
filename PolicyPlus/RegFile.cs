@@ -6,6 +6,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 
+public enum RegFileHive
+{
+    Computer,
+    User,
+    Other // Not a supported Group Policy hive (e.g. HKEY_CLASSES_ROOT)
+}
+
 // This class implements just enough of IPolicySource to work with PolFile.ApplyDifference
 // It is not a valid policy source for any policy loader
 public class RegFile : IPolicySource
@@ -407,6 +414,69 @@ public class RegFile : IPolicySource
     public bool HasDefaultValues()
     {
         return Keys.Any(k => k.Values.Any(v => string.IsNullOrEmpty(v.Name)));
+    }
+
+    // Classify a fully-rooted key name by which hive it belongs to, and return its path
+    // relative to that hive (with any HKEY_USERS\<SID> segment stripped too, since the SID
+    // itself isn't meaningful once the data is applied to a standalone IPolicySource)
+    private static RegFileHive ClassifyKeyHive(string KeyName, out string RelativeName)
+    {
+        const string hklm = "HKEY_LOCAL_MACHINE\\";
+        const string hkcu = "HKEY_CURRENT_USER\\";
+        const string hku = "HKEY_USERS\\";
+        if (KeyName.StartsWith(hklm, StringComparison.InvariantCultureIgnoreCase))
+        {
+            RelativeName = KeyName.Substring(hklm.Length);
+            return RegFileHive.Computer;
+        }
+        if (KeyName.StartsWith(hkcu, StringComparison.InvariantCultureIgnoreCase))
+        {
+            RelativeName = KeyName.Substring(hkcu.Length);
+            return RegFileHive.User;
+        }
+        if (KeyName.StartsWith(hku, StringComparison.InvariantCultureIgnoreCase))
+        {
+            string afterHku = KeyName.Substring(hku.Length);
+            int sidEnd = afterHku.IndexOf('\\');
+            RelativeName = sidEnd >= 0 ? afterHku.Substring(sidEnd + 1) : "";
+            return RegFileHive.User;
+        }
+        RelativeName = KeyName;
+        return RegFileHive.Other;
+    }
+
+    // Count top-level key records per hive, for deciding whether a file is single-hive or mixed
+    public Dictionary<RegFileHive, int> CountKeysByHive()
+    {
+        var counts = new Dictionary<RegFileHive, int> { [RegFileHive.Computer] = 0, [RegFileHive.User] = 0, [RegFileHive.Other] = 0 };
+        foreach (var key in Keys)
+            counts[ClassifyKeyHive(key.Name, out _)]++;
+        return counts;
+    }
+
+    // Apply only the keys belonging to one hive, using each key's own hive root to determine
+    // its path relative to that hive - no single guessed prefix needed, unlike Apply(Target)
+    public void ApplyHive(IPolicySource Target, RegFileHive OnlyHive)
+    {
+        foreach (var key in Keys)
+        {
+            if (ClassifyKeyHive(key.Name, out string relativeName) != OnlyHive)
+                continue;
+            if (key.IsDeleter)
+            {
+                Target.ClearKey(relativeName);
+            }
+            else
+            {
+                foreach (var value in key.Values)
+                {
+                    if (value.IsDeleter)
+                        Target.DeleteValue(relativeName, value.Name);
+                    else
+                        Target.SetValue(relativeName, value.Name, value.Data, value.Kind);
+                }
+            }
+        }
     }
 
     private class RegFileKey

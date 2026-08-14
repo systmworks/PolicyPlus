@@ -59,6 +59,8 @@ namespace PolicyPlus
             CloseADMXWorkspaceToolStripMenuItem.Click += new EventHandler(CloseADMXWorkspaceToolStripMenuItem_Click);
             OpenPolicyResourcesToolStripMenuItem = new ToolStripMenuItem();
             OpenPolicyResourcesToolStripMenuItem.Click += new EventHandler(OpenPolicyResourcesToolStripMenuItem_Click);
+            OpenREGFileToolStripMenuItem = new ToolStripMenuItem();
+            OpenREGFileToolStripMenuItem.Click += new EventHandler(OpenREGFileToolStripMenuItem_Click);
             SavePoliciesToolStripMenuItem = new ToolStripMenuItem();
             SavePoliciesToolStripMenuItem.Click += new EventHandler(SavePoliciesToolStripMenuItem_Click);
             ResetAllToDefaultToolStripMenuItem = new ToolStripMenuItem();
@@ -244,7 +246,7 @@ namespace PolicyPlus
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenADMXFolderToolStripMenuItem, OpenADMXFileToolStripMenuItem, SetADMLLanguageToolStripMenuItem, CloseADMXWorkspaceToolStripMenuItem, ToolStripSeparator2, OpenPolicyResourcesToolStripMenuItem, SavePoliciesToolStripMenuItem, ResetAllToDefaultToolStripMenuItem, EditRawPOLToolStripMenuItem, ToolStripSeparator3, ExitToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenADMXFolderToolStripMenuItem, OpenADMXFileToolStripMenuItem, SetADMLLanguageToolStripMenuItem, CloseADMXWorkspaceToolStripMenuItem, ToolStripSeparator2, OpenPolicyResourcesToolStripMenuItem, OpenREGFileToolStripMenuItem, SavePoliciesToolStripMenuItem, ResetAllToDefaultToolStripMenuItem, EditRawPOLToolStripMenuItem, ToolStripSeparator3, ExitToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(37, 20);
             FileToolStripMenuItem.Text = "File";
@@ -274,11 +276,17 @@ namespace PolicyPlus
             CloseADMXWorkspaceToolStripMenuItem.Text = "Close ADMX Workspace";
             // 
             // OpenPolicyResourcesToolStripMenuItem
-            // 
+            //
             OpenPolicyResourcesToolStripMenuItem.Name = "OpenPolicyResourcesToolStripMenuItem";
             OpenPolicyResourcesToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
             OpenPolicyResourcesToolStripMenuItem.Size = new Size(237, 22);
             OpenPolicyResourcesToolStripMenuItem.Text = "Open Policy Resources";
+            //
+            // OpenREGFileToolStripMenuItem
+            //
+            OpenREGFileToolStripMenuItem.Name = "OpenREGFileToolStripMenuItem";
+            OpenREGFileToolStripMenuItem.Size = new Size(237, 22);
+            OpenREGFileToolStripMenuItem.Text = "Open REG File";
             // 
             // SavePoliciesToolStripMenuItem
             // 
@@ -848,6 +856,7 @@ namespace PolicyPlus
         internal ToolStripMenuItem FindToolStripMenuItem;
         internal ToolStripMenuItem ByIDToolStripMenuItem;
         internal ToolStripMenuItem OpenPolicyResourcesToolStripMenuItem;
+        internal ToolStripMenuItem OpenREGFileToolStripMenuItem;
         internal ToolStripMenuItem SavePoliciesToolStripMenuItem;
         internal ToolStripMenuItem ResetAllToDefaultToolStripMenuItem;
         internal ToolStripMenuItem HelpToolStripMenuItem;

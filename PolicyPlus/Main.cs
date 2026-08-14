@@ -895,6 +895,78 @@ namespace PolicyPlus
                 MoveToVisibleCategoryAndReload();
             }
         }
+        private void OpenREGFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Import a REG file into a fresh, standalone in-memory source (not merged into the
+            // currently-open source), so it can be edited and exported in isolation - same idea
+            // as opening a POL file, just for REG. The section (Computer/User) is detected from
+            // the file's own key headers rather than asked up front.
+            RegFile reg;
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Registry scripts|*.reg";
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+                try
+                {
+                    reg = RegFile.Load(ofd.FileName, "");
+                }
+                catch (Exception ex)
+                {
+                    MsgBoxCompat.Show("Failed to load the REG file.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+            var hiveCounts = reg.CountKeysByHive();
+            bool hasComputer = hiveCounts[RegFileHive.Computer] > 0;
+            bool hasUser = hiveCounts[RegFileHive.User] > 0;
+            if (!hasComputer && !hasUser)
+            {
+                MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            RegFileHive chosenHive;
+            if (hasComputer && hasUser)
+            {
+                // Mixed-hive file - ask which single hive to keep rather than silently picking one
+                string msg = "This REG file mixes Computer and User entries (" + hiveCounts[RegFileHive.Computer] + " Computer key(s), " + hiveCounts[RegFileHive.User] + " User key(s)). Only one can be opened at a time this way." + Constants.vbCrLf + Constants.vbCrLf + "Click Yes to import the Computer entries (discarding the User entries), or No to import the User entries (discarding the Computer entries).";
+                var result = MsgBoxCompat.Show(msg, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Cancel)
+                    return;
+                chosenHive = result == DialogResult.Yes ? RegFileHive.Computer : RegFileHive.User;
+            }
+            else
+            {
+                chosenHive = hasComputer ? RegFileHive.Computer : RegFileHive.User;
+            }
+            var pol = new PolFile();
+            reg.ApplyHive(pol, chosenHive);
+            bool isUser = chosenHive == RegFileHive.User;
+            var newLoader = new PolicyLoader(PolicyLoaderSource.Null, "", isUser);
+            if (isUser)
+            {
+                UserPolicyLoader?.Close(); // Release whatever the old loader held (e.g. an NtUserDat mount) before replacing it
+                UserPolicyLoader = newLoader;
+                UserPolicySource = pol;
+                UserComments = new Dictionary<string, string>();
+                UserSourceLabel.Text = UserPolicyLoader.GetDisplayInfo();
+            }
+            else
+            {
+                CompPolicyLoader?.Close();
+                CompPolicyLoader = newLoader;
+                CompPolicySource = pol;
+                CompComments = new Dictionary<string, string>();
+                ComputerSourceLabel.Text = CompPolicyLoader.GetDisplayInfo();
+            }
+            _isDirty = true;
+            ClearSelections();
+            MoveToVisibleCategoryAndReload();
+            string successMsg = "REG file opened as a standalone editable " + (isUser ? "User" : "Computer") + " source. Use Export POL/REG to save it - the normal Save Policies action discards scratch sources like this one.";
+            if (reg.HasDefaultValues())
+                successMsg = "This REG file set one or more keys' default values, which Group Policy has no way to represent - those specific entries were skipped." + Constants.vbCrLf + Constants.vbCrLf + successMsg;
+            MsgBoxCompat.Show(successMsg, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         private void SavePoliciesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Save policy state and comments to disk
