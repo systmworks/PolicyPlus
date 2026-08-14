@@ -35,7 +35,7 @@ see their entries.
 | [#78](https://github.com/Fleex255/PolicyPlus/issues/78) | Proper HiDPI support | Medium | Foundation laid by the .NET 10 migration |
 | [#68](https://github.com/Fleex255/PolicyPlus/issues/68) | Favorites | Medium | — |
 | [#47](https://github.com/Fleex255/PolicyPlus/issues/47) | Hotkey to change policy state | Medium | — |
-| [#75](https://github.com/Fleex255/PolicyPlus/issues/75) | Policies missing under "User or Computer" | Medium | Adjacent to code touched for finding #5 (`Main.cs`) |
+| [#75](https://github.com/Fleex255/PolicyPlus/issues/75) | Policies missing under "User or Computer" | Investigated, no code bug found | Likely `DeduplicatePolicies` behavior, not a visibility defect — see detail entry |
 | [#77](https://github.com/Fleex255/PolicyPlus/issues/77) | Export part of the policies | Medium-High | Overlaps #19 |
 | [#19](https://github.com/Fleex255/PolicyPlus/issues/19) | Export/Import POL improvements | Medium-High | Overlaps #77 |
 | [#17](https://github.com/Fleex255/PolicyPlus/issues/17) | Search UI improvement | Medium-High | Interacts with code touched for finding #5 |
@@ -245,18 +245,38 @@ sharing" doesn't appear when the section filter is set to show both User and Com
 policies combined. Reporter suspects this may affect other policies too and is concerned
 about silently missing policies as a result.
 
-**Suggested fix**: this needs investigation before a fix can be proposed — could be a
-genuine bug in `ShouldShowPolicy`/`PolicyVisibleInSection` (`Main.cs`), or could be
-correct-but-confusing behavior stemming from how the specific ADMX defines that policy
-(e.g. a policy defined with `class="Both"` but where the User and Computer registry
-mappings differ in a way that trips up the section-visibility logic). **This is adjacent
-to code modified this session** for finding #5 (`ShouldShowCategoryCore`/`ShouldShowPolicy`
-caching in `Main.cs`) — worth investigating with that context fresh, though finding #5's
-change was purely a caching layer around the existing visibility logic and shouldn't have
-altered which policies are considered visible, only how often that's recomputed.
+**Investigated — no code bug found.** `ShouldShowPolicy`/`PolicyVisibleInSection`
+(`Main.cs`) were read line-by-line: the section-filter check is
+`(int)(Policy.RawPolicy.Section & Section) > 0`, which is correct bitwise-flag logic for
+`AdmxPolicySection`'s `Machine=1, User=2, Both=3` — a User-only (`Section=2`) policy is
+not excluded when the combined view (`Section&3`) is active. `PopulateAdmxUi`'s list
+population also doesn't de-duplicate entries by `DisplayName`, so two distinctly-ID'd
+policies sharing a display name would normally both show as separate rows.
 
-**Files**: `Main.cs` (`ShouldShowPolicy`, `PolicyVisibleInSection`), possibly
-`AdmxBundle.cs`/`AdmxFile.cs` if the root cause is in how dual-section policies are parsed.
+The one mechanism in this codebase that *does* make one twin of an identical-name
+Machine/User policy pair disappear is `PolicyProcessing.DeduplicatePolicies`
+(`PolicyProcessing.cs:177-197`): for a pair with the same category, display name,
+explanation text, and registry key whose sections sum to `Both`, it permanently removes
+one twin (`Workspace.Policies.Remove(a.UniqueID)`) and relabels the survivor as
+`Section = Both`. A real matching ADMX example was found in the shipped
+`PolicyDefinitions\Globalization.admx`: `ImplicitDataCollectionOff_1` (`class="User"`) and
+`ImplicitDataCollectionOff_2` (`class="Machine"`) — two separate policy objects with
+identical display name, explanation, and registry key (`SOFTWARE\Policies\Microsoft\InputPersonalization`)
+— the historical "Turn off handwriting personalization data sharing" pair (renamed to
+"Turn off automatic learning" in current ADML strings), exactly the issue's own example.
+This is `Main.cs`'s "Deduplicate Policies" feature, currently hidden from the View menu
+(`Visible = false` at `Main.Designer.cs`) but still wired and reachable if re-enabled.
+
+**Conclusion**: most likely explanation is that Deduplicate was run (or some other path
+triggered it) against a workspace containing this pair, which is expected, working-as-designed
+behavior for that feature, not a visibility bug. Could not reproduce a genuine bug in the
+section-filter logic itself. Recommend closing as "investigated, likely explained" rather
+than treating as an open defect, unless the reporter can confirm they never ran Deduplicate
+and share the exact ADMX/policy where they saw this — that would point at a different,
+still-unidentified cause.
+
+**Files**: `Main.cs` (`ShouldShowPolicy`, `PolicyVisibleInSection` — read, not modified),
+`PolicyProcessing.cs` (`DeduplicatePolicies` — the actual mechanism, also not modified).
 
 ---
 
