@@ -61,6 +61,8 @@ namespace PolicyPlus
             OpenPolicyResourcesToolStripMenuItem.Click += new EventHandler(OpenPolicyResourcesToolStripMenuItem_Click);
             SavePoliciesToolStripMenuItem = new ToolStripMenuItem();
             SavePoliciesToolStripMenuItem.Click += new EventHandler(SavePoliciesToolStripMenuItem_Click);
+            ResetAllToDefaultToolStripMenuItem = new ToolStripMenuItem();
+            ResetAllToDefaultToolStripMenuItem.Click += new EventHandler(ResetAllToDefaultToolStripMenuItem_Click);
             EditRawPOLToolStripMenuItem = new ToolStripMenuItem();
             EditRawPOLToolStripMenuItem.Click += new EventHandler(EditRawPOLToolStripMenuItem_Click);
             ExitToolStripMenuItem = new ToolStripMenuItem();
@@ -242,7 +244,7 @@ namespace PolicyPlus
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenADMXFolderToolStripMenuItem, OpenADMXFileToolStripMenuItem, SetADMLLanguageToolStripMenuItem, CloseADMXWorkspaceToolStripMenuItem, ToolStripSeparator2, OpenPolicyResourcesToolStripMenuItem, SavePoliciesToolStripMenuItem, EditRawPOLToolStripMenuItem, ToolStripSeparator3, ExitToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenADMXFolderToolStripMenuItem, OpenADMXFileToolStripMenuItem, SetADMLLanguageToolStripMenuItem, CloseADMXWorkspaceToolStripMenuItem, ToolStripSeparator2, OpenPolicyResourcesToolStripMenuItem, SavePoliciesToolStripMenuItem, ResetAllToDefaultToolStripMenuItem, EditRawPOLToolStripMenuItem, ToolStripSeparator3, ExitToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(37, 20);
             FileToolStripMenuItem.Text = "File";
@@ -285,8 +287,14 @@ namespace PolicyPlus
             SavePoliciesToolStripMenuItem.Size = new Size(237, 22);
             SavePoliciesToolStripMenuItem.Text = "Save Policies";
             // 
+            // ResetAllToDefaultToolStripMenuItem
+            //
+            ResetAllToDefaultToolStripMenuItem.Name = "ResetAllToDefaultToolStripMenuItem";
+            ResetAllToDefaultToolStripMenuItem.Size = new Size(237, 22);
+            ResetAllToDefaultToolStripMenuItem.Text = "Reset All to Default";
+            //
             // EditRawPOLToolStripMenuItem
-            // 
+            //
             EditRawPOLToolStripMenuItem.Name = "EditRawPOLToolStripMenuItem";
             EditRawPOLToolStripMenuItem.Size = new Size(237, 22);
             EditRawPOLToolStripMenuItem.Text = "Edit Raw POL";
@@ -841,6 +849,7 @@ namespace PolicyPlus
         internal ToolStripMenuItem ByIDToolStripMenuItem;
         internal ToolStripMenuItem OpenPolicyResourcesToolStripMenuItem;
         internal ToolStripMenuItem SavePoliciesToolStripMenuItem;
+        internal ToolStripMenuItem ResetAllToDefaultToolStripMenuItem;
         internal ToolStripMenuItem HelpToolStripMenuItem;
         internal ToolStripMenuItem AboutToolStripMenuItem;
         internal ToolStripMenuItem OptionsToolStripMenuItem;

@@ -922,6 +922,39 @@ namespace PolicyPlus
                 MsgBoxCompat.Show("Saving failed!" + Constants.vbCrLf + Constants.vbCrLf + ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
+        private void ResetAllToDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Reset every currently-configured policy back to Not Configured, across both Computer and User
+            if (MsgBoxCompat.Show("This will reset every configured policy back to Not Configured, across both Computer and User policies. This cannot be undone. Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+            ClearSelections();
+            int reset = 0;
+            foreach (var policy in AdmxWorkspace.Policies.Values)
+            {
+                var section = policy.RawPolicy.Section;
+                if (section == AdmxPolicySection.Both || section == AdmxPolicySection.Machine)
+                {
+                    if (PolicyProcessing.GetPolicyState(CompPolicySource, policy) != PolicyState.NotConfigured)
+                    {
+                        PolicyProcessing.ForgetPolicy(CompPolicySource, policy);
+                        reset++;
+                    }
+                }
+                if (section == AdmxPolicySection.Both || section == AdmxPolicySection.User)
+                {
+                    if (PolicyProcessing.GetPolicyState(UserPolicySource, policy) != PolicyState.NotConfigured)
+                    {
+                        PolicyProcessing.ForgetPolicy(UserPolicySource, policy);
+                        reset++;
+                    }
+                }
+            }
+            if (reset > 0)
+                _isDirty = true;
+            MsgBoxCompat.Show("Reset " + reset + " policy configuration" + (reset == 1 ? "" : "s") + " to Not Configured.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UpdateCategoryListing();
+            UpdatePolicyInfo();
+        }
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show author and version information if it was compiled into the program
