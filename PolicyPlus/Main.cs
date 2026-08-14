@@ -38,6 +38,7 @@ namespace PolicyPlus
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls12;
             // Create the configuration manager (for the Registry)
             Configuration = new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus");
+            RestoreWindowBounds();
             // Restore the last ADMX source and policy loaders
             OpenLastAdmxSource();
             PolicyLoaderSource compLoaderType = (PolicyLoaderSource)Conversions.ToInteger(Configuration.GetValue("CompSourceType", 0));
@@ -968,8 +969,39 @@ namespace PolicyPlus
             PolicyInfoTable.PerformLayout(); // Force the table to take up its full desired size
             PInvoke.ShowScrollBar(SettingInfoPanel.Handle, 0, false); // 0 means horizontal
         }
+        private void RestoreWindowBounds()
+        {
+            // No saved bounds yet (first run) unless all four are present
+            int left = Conversions.ToInteger(Configuration.GetValue("WindowLeft", int.MinValue));
+            int top = Conversions.ToInteger(Configuration.GetValue("WindowTop", int.MinValue));
+            int width = Conversions.ToInteger(Configuration.GetValue("WindowWidth", 0));
+            int height = Conversions.ToInteger(Configuration.GetValue("WindowHeight", 0));
+            if (left == int.MinValue || top == int.MinValue || width <= 0 || height <= 0)
+                return;
+            var bounds = new Rectangle(left, top, width, height);
+            // Guard against a saved position from a monitor/resolution that's since changed
+            if (!Screen.AllScreens.Any(s => s.WorkingArea.IntersectsWith(bounds)))
+                return;
+            StartPosition = FormStartPosition.Manual;
+            Bounds = bounds;
+            if (Conversions.ToInteger(Configuration.GetValue("WindowMaximized", 0)) == 1)
+                WindowState = FormWindowState.Maximized;
+        }
+        private void SaveWindowBounds()
+        {
+            if (WindowState == FormWindowState.Minimized)
+                return; // Not a useful geometry to restore to; keep the last saved Normal/Maximized bounds
+            bool maximized = WindowState == FormWindowState.Maximized;
+            var bounds = maximized ? RestoreBounds : Bounds;
+            Configuration.SetValue("WindowLeft", bounds.Left);
+            Configuration.SetValue("WindowTop", bounds.Top);
+            Configuration.SetValue("WindowWidth", bounds.Width);
+            Configuration.SetValue("WindowHeight", bounds.Height);
+            Configuration.SetValue("WindowMaximized", maximized ? 1 : 0);
+        }
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
+            SaveWindowBounds();
             if (!_isDirty)
                 return;
             var result = MsgBoxCompat.Show("There are unsaved changes. Save before closing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
