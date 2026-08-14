@@ -55,6 +55,13 @@ namespace PolicyPlus
             ExtraOptionsPanel.HorizontalScroll.Maximum = 0;
             ExtraOptionsPanel.VerticalScroll.Visible = true;
             ExtraOptionsPanel.AutoScroll = true;
+            if (Application.IsDarkModeEnabled)
+            {
+                // ExtraOptionsPanel.BackColor is explicitly hardcoded to Color.White in the Designer,
+                // which isn't covered by the built-in dark renderer - match a sibling TextBox instead.
+                ExtraOptionsPanel.BackColor = HelpTextbox.BackColor;
+                ExtraOptionsPanel.ForeColor = HelpTextbox.ForeColor;
+            }
             PreparePolicyElements();
             SectionDropdown.Text = CurrentSection == AdmxPolicySection.Machine ? "Computer" : "User";
             SectionDropdown_SelectedIndexChanged(null, null); // Force an update of the current source

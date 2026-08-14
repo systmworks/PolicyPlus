@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace PolicyPlus
         private AdmxPolicySection ViewPolicyTypes = AdmxPolicySection.Both;
         private bool ViewFilteredOnly = false;
         private bool _isDirty = false;
+        private bool _pendingRestartForColorMode = false;
 
         public Main()
         {
@@ -39,6 +41,18 @@ namespace PolicyPlus
             // Create the configuration manager (for the Registry)
             Configuration = new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus");
             RestoreWindowBounds();
+            SetColorModeMenuChecks(Conversions.ToString(Configuration.GetValue("ColorMode", "System")));
+            if (Application.IsDarkModeEnabled)
+            {
+                // Plain Panel/Label controls aren't covered by the built-in dark renderer (unlike TreeView/
+                // ListView/MenuStrip) - match the description pane and its container to whatever dark shade
+                // the framework actually picked for CategoriesTree, rather than guessing a hardcoded color.
+                // SplitContainer.Panel2.BackColor is explicitly hardcoded to Color.White in the Designer
+                // (Main.Designer.cs), which otherwise shows through as a thin light strip between the two.
+                SettingInfoPanel.BackColor = CategoriesTree.BackColor;
+                SettingInfoPanel.ForeColor = CategoriesTree.ForeColor;
+                SplitContainer.Panel2.BackColor = CategoriesTree.BackColor;
+            }
             // Restore the last ADMX source and policy loaders
             OpenLastAdmxSource();
             PolicyLoaderSource compLoaderType = (PolicyLoaderSource)Conversions.ToInteger(Configuration.GetValue("CompSourceType", 0));
@@ -1008,18 +1022,24 @@ namespace PolicyPlus
             if (result == DialogResult.Cancel)
             {
                 e.Cancel = true;
+                _pendingRestartForColorMode = false; // Abandoned close attempt - don't relaunch on some later, unrelated close
                 return;
             }
             if (result == DialogResult.Yes)
             {
                 SavePoliciesToolStripMenuItem_Click(sender, e);
                 if (_isDirty)
+                {
                     e.Cancel = true; // Save failed (error already shown); don't close with unsaved changes
+                    _pendingRestartForColorMode = false;
+                }
             }
         }
         private void Main_Closed(object sender, EventArgs e)
         {
             ClosePolicySources(); // Make sure everything is cleaned up before quitting
+            if (_pendingRestartForColorMode)
+                Process.Start(Application.ExecutablePath);
         }
         private void PoliciesList_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1196,6 +1216,27 @@ namespace PolicyPlus
                 }
             }
         }
+        private void SetColorModeMenuChecks(string ColorMode)
+        {
+            LightToolStripMenuItem.Checked = ColorMode == "Light";
+            DarkToolStripMenuItem.Checked = ColorMode == "Dark";
+            SystemToolStripMenuItem.Checked = ColorMode == "System";
+        }
+        private void ApplyColorModeChoice(string ColorMode)
+        {
+            Configuration.SetValue("ColorMode", ColorMode);
+            SetColorModeMenuChecks(ColorMode);
+            // SetColorMode is a startup-only, one-time API - can't re-theme controls already created,
+            // so applying a new choice needs a real restart, not just a message
+            if (MsgBoxCompat.Show("Restart Policy Plus now to apply the new color mode?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                _pendingRestartForColorMode = true;
+                Close(); // Goes through Main_FormClosing/Main_Closed, respecting the unsaved-changes prompt
+            }
+        }
+        private void LightToolStripMenuItem_Click(object sender, EventArgs e) => ApplyColorModeChoice("Light");
+        private void DarkToolStripMenuItem_Click(object sender, EventArgs e) => ApplyColorModeChoice("Dark");
+        private void SystemToolStripMenuItem_Click(object sender, EventArgs e) => ApplyColorModeChoice("System");
         private void PolicyObjectContext_Opening(object sender, CancelEventArgs e)
         {
             // When the right-click menu is opened

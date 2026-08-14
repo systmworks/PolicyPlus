@@ -7,6 +7,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using Microsoft.Win32;
 
 /* TODO ERROR: Skipped IfDirectiveTrivia
 #If TARGET = "module" AndAlso _MYTYPE = "" Then
@@ -113,6 +114,9 @@ namespace PolicyPlus.My
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static void Main(string[] Args)
         {
+            // Microsoft's documented init order for dark mode support: EnableVisualStyles -> SetCompatibleTextRenderingDefault
+            // -> SetColorMode -> Run.
+            Application.EnableVisualStyles();
             try
             {
                 Application.SetCompatibleTextRenderingDefault(UseCompatibleTextRendering);
@@ -120,7 +124,25 @@ namespace PolicyPlus.My
             finally
             {
             }
-            MyProject.Application.Run(Args);
+            // Must run before any form is created - changing color mode later doesn't re-theme existing controls
+            string colorMode = (string)new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus").GetValue("ColorMode", "System");
+            SystemColorMode mode = colorMode switch
+            {
+                "Light" => SystemColorMode.Classic,
+                "Dark" => SystemColorMode.Dark,
+                _ => SystemColorMode.System,
+            };
+#pragma warning disable WFO5001 // SystemColorMode/SetColorMode are experimental as of .NET 9/10
+            Application.SetColorMode(mode);
+#pragma warning restore WFO5001
+            // WindowsFormsApplicationBase.Run() (the VB My.Application startup path, MyProject.Application.Run)
+            // silently resets whatever SetColorMode configures above - confirmed via an isolated repro (an
+            // identical minimal app renders dark correctly through a plain Application.Run(form), but not
+            // through WindowsFormsApplicationBase.Run()). This app doesn't use any of WindowsFormsApplicationBase's
+            // actual features (IsSingleInstance is off, no custom splash screen, no command-line arg handling -
+            // see My Project/Application.Designer.cs), so run the main form directly instead. MyProject.Forms.Main
+            // (rather than "new Main()") keeps the same default-instance identity FindById.cs relies on elsewhere.
+            Application.Run(MyProject.Forms.Main);
         }
         /* TODO ERROR: Skipped EndIfDirectiveTrivia
         #End If

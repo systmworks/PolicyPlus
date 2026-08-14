@@ -107,6 +107,14 @@ namespace PolicyPlus
             AboutToolStripMenuItem.Click += new EventHandler(AboutToolStripMenuItem_Click);
             AcquireADMXFilesToolStripMenuItem = new ToolStripMenuItem();
             AcquireADMXFilesToolStripMenuItem.Click += new EventHandler(AcquireADMXFilesToolStripMenuItem_Click);
+            OptionsToolStripMenuItem = new ToolStripMenuItem();
+            ColorModeToolStripMenuItem = new ToolStripMenuItem();
+            LightToolStripMenuItem = new ToolStripMenuItem();
+            LightToolStripMenuItem.Click += new EventHandler(LightToolStripMenuItem_Click);
+            DarkToolStripMenuItem = new ToolStripMenuItem();
+            DarkToolStripMenuItem.Click += new EventHandler(DarkToolStripMenuItem_Click);
+            SystemToolStripMenuItem = new ToolStripMenuItem();
+            SystemToolStripMenuItem.Click += new EventHandler(SystemToolStripMenuItem_Click);
             SplitContainer = new SplitContainer();
             ComboAppliesTo = new ComboBox();
             ComboAppliesTo.SelectedIndexChanged += new EventHandler(ComboAppliesTo_SelectedIndexChanged);
@@ -220,7 +228,7 @@ namespace PolicyPlus
             // 
             // MainMenu
             // 
-            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, HelpToolStripMenuItem });
+            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, OptionsToolStripMenuItem, HelpToolStripMenuItem });
             MainMenu.Location = new Point(0, 0);
             MainMenu.Name = "MainMenu";
             MainMenu.Size = new Size(706, 24);
@@ -412,9 +420,41 @@ namespace PolicyPlus
             ExportREGToolStripMenuItem.Name = "ExportREGToolStripMenuItem";
             ExportREGToolStripMenuItem.Size = new Size(197, 22);
             ExportREGToolStripMenuItem.Text = "Export REG";
-            // 
+            //
+            // OptionsToolStripMenuItem
+            //
+            OptionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { ColorModeToolStripMenuItem });
+            OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem";
+            OptionsToolStripMenuItem.Size = new Size(56, 20);
+            OptionsToolStripMenuItem.Text = "Options";
+            //
+            // ColorModeToolStripMenuItem
+            //
+            ColorModeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { LightToolStripMenuItem, DarkToolStripMenuItem, SystemToolStripMenuItem });
+            ColorModeToolStripMenuItem.Name = "ColorModeToolStripMenuItem";
+            ColorModeToolStripMenuItem.Size = new Size(180, 22);
+            ColorModeToolStripMenuItem.Text = "Color Mode";
+            //
+            // LightToolStripMenuItem
+            //
+            LightToolStripMenuItem.Name = "LightToolStripMenuItem";
+            LightToolStripMenuItem.Size = new Size(180, 22);
+            LightToolStripMenuItem.Text = "Light";
+            //
+            // DarkToolStripMenuItem
+            //
+            DarkToolStripMenuItem.Name = "DarkToolStripMenuItem";
+            DarkToolStripMenuItem.Size = new Size(180, 22);
+            DarkToolStripMenuItem.Text = "Dark";
+            //
+            // SystemToolStripMenuItem
+            //
+            SystemToolStripMenuItem.Name = "SystemToolStripMenuItem";
+            SystemToolStripMenuItem.Size = new Size(180, 22);
+            SystemToolStripMenuItem.Text = "Match Windows";
+            //
             // HelpToolStripMenuItem
-            // 
+            //
             HelpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { AboutToolStripMenuItem, AcquireADMXFilesToolStripMenuItem });
             HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
             HelpToolStripMenuItem.Size = new Size(44, 20);
@@ -780,6 +820,11 @@ namespace PolicyPlus
         internal ToolStripMenuItem SavePoliciesToolStripMenuItem;
         internal ToolStripMenuItem HelpToolStripMenuItem;
         internal ToolStripMenuItem AboutToolStripMenuItem;
+        internal ToolStripMenuItem OptionsToolStripMenuItem;
+        internal ToolStripMenuItem ColorModeToolStripMenuItem;
+        internal ToolStripMenuItem LightToolStripMenuItem;
+        internal ToolStripMenuItem DarkToolStripMenuItem;
+        internal ToolStripMenuItem SystemToolStripMenuItem;
         internal ToolStripMenuItem ByTextToolStripMenuItem;
         internal ToolStripMenuItem ByRegistryToolStripMenuItem;
         internal ToolStripMenuItem SearchResultsToolStripMenuItem;
