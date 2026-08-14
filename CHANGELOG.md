@@ -13,6 +13,94 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.15] - Fixed 5 low-complexity issues plus Dark Mode and HiDPI
+
+Closed out the cheapest wins from [1.14]'s triage — #51, #104, #10 — plus the two issues
+that motivated the .NET 10 migration in the first place, #73 (Dark Mode) and #78 (HiDPI),
+plus one user-requested addition not from the tracker (remember window size/position). Six
+commits in total; see the plan file for the full per-issue writeup and rationale.
+
+**#51 — Prompt to save on close.** Added a `_isDirty` flag set at every UI path that
+mutates policy state or comments (Edit Setting, Deduplicate, SPOL/POL/REG import, raw POL
+edit — 6 call sites in `Main.cs`), cleared on a successful save, and a new
+`Main_FormClosing` handler offering Save/Discard/Cancel when closing with unsaved changes.
+Previously changes were silently lost unless the user explicitly saved first.
+
+**Remember window size and position.** The window always opened at a fixed small size in
+the OS default cascade position. `Main_Load` now restores saved bounds (falling back to
+the default if the saved rectangle no longer intersects any connected screen — e.g. after
+a monitor change), and `Main_FormClosing` saves current bounds (`RestoreBounds` when
+maximized, so un-maximizing returns to a sane size; skipped when minimized).
+
+**#78 — HiDPI.** The planned fix (`<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>`
+in the csproj) turned out to be a no-op — confirmed by extracting the compiled exe's
+embedded manifest resource (`LoadLibraryEx`/`FindResource(RT_MANIFEST)`) and finding the
+DPI block still commented out after adding the property. Root cause: the SDK only
+auto-generates DPI settings into a manifest it creates itself, and this project already
+specifies its own `<ApplicationManifest>` (`My Project/app.manifest`). Reverted the
+csproj property and hand-edited the manifest directly instead, adding the same
+`dpiAware`/`dpiAwareness=PerMonitorV2` block the SDK would have generated — re-confirmed
+present in the compiled binary afterward. No display running a non-100% scale factor was
+available to visually confirm the crispness fix; accepted the manifest-level verification
+as sufficient rather than temporarily reconfiguring a live display.
+
+**#73 — Dark Mode.** Wired `Application.SetColorMode` at startup (reading a persisted
+`Light`/`Dark`/`System` setting via `ConfigurationStorage`, the same registry-backed
+pattern used for other app settings) and added an **Options → Color Mode** menu to choose
+it, with a restart-now prompt (`SetColorMode` is a one-time, startup-only API — it can't
+re-theme controls already created, and throws if called after any window handle exists).
+
+Getting the actual rendering to change was the real work. Three rounds of debugging, each
+confirmed empirically before moving to the next:
+
+1. First attempt (call `SetColorMode` right before `Application.Run`) compiled and ran
+   with no error, but the window stayed light. Added a diagnostic write-out and confirmed
+   `Application.IsDarkModeEnabled` was `true` at runtime — the API call was succeeding,
+   but nothing was rendering dark. Suspected call-ordering relative to
+   `Application.EnableVisualStyles()`/`SetCompatibleTextRenderingDefault` (per Microsoft's
+   documented init order) and fixed that — no change.
+2. Built two isolated minimal repro apps to bisect the real cause: identical code renders
+   dark correctly through a plain `Application.Run(form)`, but stays light through
+   `Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase.Run()` — the VB
+   "My.Application" compatibility layer this app's entire startup goes through (still
+   active post-port via `<MyType>WindowsForms</MyType>` in the csproj, a mechanical
+   leftover from the original VB project). That base class's `Run()` silently resets
+   whatever `SetColorMode` configures beforehand. Confirmed the app doesn't use any of its
+   actual features (`IsSingleInstance` is off, no splash screen, no command-line handling —
+   see `My Project/Application.Designer.cs`) before changing `Main()` to call
+   `Application.Run(MyProject.Forms.Main)` directly, keeping the same default-instance
+   identity `FindById.cs` relies on elsewhere. This fixed the main window and most controls.
+3. Two remaining hardcoded `Color.White` backgrounds surfaced by hand-testing (a thin
+   white gap in the main window, then a solid white box in the Edit Policy Setting
+   dialog) — plain `Panel` controls aren't covered by the built-in dark renderer the way
+   `TreeView`/`ListView`/`TextBox`/`MenuStrip` are. A whole-codebase grep for
+   `BackColor = Color.White`/`SystemColors.Window` confirmed these were the only two
+   anywhere (`SplitContainer.Panel2` in `Main.Designer.cs`, `ExtraOptionsPanel` in
+   `EditSetting.Designer.cs`). Both now copy a sibling control's actual theme-aware color
+   at runtime instead of guessing a hardcoded dark value.
+
+Category tree icons (flagged in [1.14]'s triage as a possible follow-up) turned out fine —
+they're a static `ImageList`, not owner-drawn, and weren't reported as visually broken
+during testing.
+
+**#104 — "Supported on" field may overflow.** `SupportedTextbox` (`EditSetting.Designer.cs`)
+never set `ScrollBars`, defaulting to `None` — overflow text was invisible with no scroll
+affordance. Added `ScrollBars.Vertical`.
+
+**#10 — Resizable divider between description and policy list.** The two panes were
+Anchored controls with a hardcoded 6px gap, not a real draggable splitter. Nested a second
+`SplitContainer` (`DescriptionSplitContainer`) inside the existing outer one's `Panel2`,
+replacing the Anchor/Location-based layout with `Dock = Fill` on both children — same
+pattern as the already-existing outer `SplitContainer` between the category tree and
+everything else, kept consistent rather than reaching for the older, DPI-unfriendly
+`Splitter` control.
+
+**Verified**: full `dotnet build` after every commit (0 errors throughout); each fix
+smoke-tested live (save prompt's Save/Discard/Cancel paths, window bounds across
+resize/maximize/relaunch, HiDPI via manifest inspection, dark mode across the main window
+and Edit Setting dialog, the Supported-on scrollbar, and the new divider drag) rather than
+just confirmed build-clean.
+
 ## [1.14] - Triaged the 18 upstream issues
 
 Full triage in the new [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md): summary, complexity

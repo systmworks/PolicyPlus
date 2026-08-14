@@ -115,6 +115,7 @@ namespace PolicyPlus
             SupportedTextbox.Multiline = true;
             SupportedTextbox.Name = "SupportedTextbox";
             SupportedTextbox.ReadOnly = true;
+            SupportedTextbox.ScrollBars = ScrollBars.Vertical;
             SupportedTextbox.Size = new Size(309, 44);
             SupportedTextbox.TabIndex = 101;
             // 

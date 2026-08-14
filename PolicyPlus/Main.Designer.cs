@@ -116,6 +116,7 @@ namespace PolicyPlus
             SystemToolStripMenuItem = new ToolStripMenuItem();
             SystemToolStripMenuItem.Click += new EventHandler(SystemToolStripMenuItem_Click);
             SplitContainer = new SplitContainer();
+            DescriptionSplitContainer = new SplitContainer();
             ComboAppliesTo = new ComboBox();
             ComboAppliesTo.SelectedIndexChanged += new EventHandler(ComboAppliesTo_SelectedIndexChanged);
             CategoriesTree = new TreeView();
@@ -164,6 +165,10 @@ namespace PolicyPlus
             SplitContainer.Panel1.SuspendLayout();
             SplitContainer.Panel2.SuspendLayout();
             SplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DescriptionSplitContainer).BeginInit();
+            DescriptionSplitContainer.Panel1.SuspendLayout();
+            DescriptionSplitContainer.Panel2.SuspendLayout();
+            DescriptionSplitContainer.SuspendLayout();
             PolicyObjectContext.SuspendLayout();
             SettingInfoPanel.SuspendLayout();
             PolicyInfoTable.SuspendLayout();
@@ -482,16 +487,33 @@ namespace PolicyPlus
             // 
             SplitContainer.Panel1.Controls.Add(ComboAppliesTo);
             SplitContainer.Panel1.Controls.Add(CategoriesTree);
-            // 
+            //
             // SplitContainer.Panel2
-            // 
+            //
             SplitContainer.Panel2.BackColor = Color.White;
-            SplitContainer.Panel2.Controls.Add(PoliciesList);
-            SplitContainer.Panel2.Controls.Add(SettingInfoPanel);
+            SplitContainer.Panel2.Controls.Add(DescriptionSplitContainer);
             SplitContainer.Size = new Size(706, 350);
             SplitContainer.SplitterDistance = 190;
             SplitContainer.TabIndex = 1;
             SplitContainer.TabStop = false;
+            //
+            // DescriptionSplitContainer
+            //
+            DescriptionSplitContainer.Dock = DockStyle.Fill;
+            DescriptionSplitContainer.Location = new Point(0, 0);
+            DescriptionSplitContainer.Name = "DescriptionSplitContainer";
+            //
+            // DescriptionSplitContainer.Panel1
+            //
+            DescriptionSplitContainer.Panel1.Controls.Add(SettingInfoPanel);
+            //
+            // DescriptionSplitContainer.Panel2
+            //
+            DescriptionSplitContainer.Panel2.Controls.Add(PoliciesList);
+            DescriptionSplitContainer.Size = new Size(512, 350);
+            DescriptionSplitContainer.SplitterDistance = 184;
+            DescriptionSplitContainer.TabIndex = 4;
+            DescriptionSplitContainer.TabStop = false;
             // 
             // ComboAppliesTo
             // 
@@ -611,14 +633,12 @@ namespace PolicyPlus
             // 
             // PoliciesList
             // 
-            PoliciesList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-
+            PoliciesList.Dock = DockStyle.Fill;
             PoliciesList.BorderStyle = BorderStyle.None;
             PoliciesList.Columns.AddRange(new ColumnHeader[] { ChSettingName, ChSettingEnabled, ChSettingCommented });
             PoliciesList.ContextMenuStrip = PolicyObjectContext;
             PoliciesList.FullRowSelect = true;
             PoliciesList.HideSelection = false;
-            PoliciesList.Location = new Point(190, 0);
             PoliciesList.MultiSelect = false;
             PoliciesList.Name = "PoliciesList";
             PoliciesList.ShowItemToolTips = true;
@@ -635,12 +655,10 @@ namespace PolicyPlus
             // 
             // SettingInfoPanel
             // 
-            SettingInfoPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            SettingInfoPanel.Dock = DockStyle.Fill;
             SettingInfoPanel.AutoScroll = true;
             SettingInfoPanel.Controls.Add(PolicyInfoTable);
-            SettingInfoPanel.Location = new Point(0, 0);
             SettingInfoPanel.Name = "SettingInfoPanel";
-            SettingInfoPanel.Size = new Size(184, 350);
             SettingInfoPanel.TabIndex = 0;
             // 
             // PolicyInfoTable
@@ -774,6 +792,10 @@ namespace PolicyPlus
             SplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)SplitContainer).EndInit();
             SplitContainer.ResumeLayout(false);
+            DescriptionSplitContainer.Panel1.ResumeLayout(false);
+            DescriptionSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DescriptionSplitContainer).EndInit();
+            DescriptionSplitContainer.ResumeLayout(false);
             PolicyObjectContext.ResumeLayout(false);
             SettingInfoPanel.ResumeLayout(false);
             SettingInfoPanel.PerformLayout();
@@ -801,6 +823,7 @@ namespace PolicyPlus
         internal ToolStripMenuItem CloseADMXWorkspaceToolStripMenuItem;
         internal ToolStripMenuItem ExitToolStripMenuItem;
         internal SplitContainer SplitContainer;
+        internal SplitContainer DescriptionSplitContainer;
         internal TreeView CategoriesTree;
         internal ListView PoliciesList;
         internal Panel SettingInfoPanel;
