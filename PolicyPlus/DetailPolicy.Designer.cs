@@ -44,6 +44,7 @@ namespace PolicyPlus
             Label SectionLabel;
             Label SupportLabel;
             Label CategoryLabel;
+            Label PathLabel;
             NameTextbox = new TextBox();
             IdTextbox = new TextBox();
             DefinedTextbox = new TextBox();
@@ -53,6 +54,7 @@ namespace PolicyPlus
             SectionTextbox = new TextBox();
             SupportTextbox = new TextBox();
             CategoryTextbox = new TextBox();
+            PathTextbox = new TextBox();
             CategoryButton = new Button();
             CategoryButton.Click += new EventHandler(CategoryButton_Click);
             SupportButton = new Button();
@@ -67,6 +69,7 @@ namespace PolicyPlus
             SectionLabel = new Label();
             SupportLabel = new Label();
             CategoryLabel = new Label();
+            PathLabel = new Label();
             SuspendLayout();
             // 
             // NameTextbox
@@ -140,7 +143,15 @@ namespace PolicyPlus
             CategoryTextbox.ReadOnly = true;
             CategoryTextbox.Size = new Size(177, 20);
             CategoryTextbox.TabIndex = 8;
-            // 
+            //
+            // PathTextbox
+            //
+            PathTextbox.Location = new Point(111, 246);
+            PathTextbox.Name = "PathTextbox";
+            PathTextbox.ReadOnly = true;
+            PathTextbox.Size = new Size(258, 20);
+            PathTextbox.TabIndex = 9;
+            //
             // NameLabel
             // 
             NameLabel.AutoSize = true;
@@ -221,7 +232,16 @@ namespace PolicyPlus
             CategoryLabel.Size = new Size(49, 13);
             CategoryLabel.TabIndex = 17;
             CategoryLabel.Text = "Category";
-            // 
+            //
+            // PathLabel
+            //
+            PathLabel.AutoSize = true;
+            PathLabel.Location = new Point(12, 249);
+            PathLabel.Name = "PathLabel";
+            PathLabel.Size = new Size(73, 13);
+            PathLabel.TabIndex = 20;
+            PathLabel.Text = "Template path";
+            //
             // CategoryButton
             // 
             CategoryButton.Location = new Point(294, 218);
@@ -243,7 +263,7 @@ namespace PolicyPlus
             // CloseButton
             // 
             CloseButton.DialogResult = DialogResult.OK;
-            CloseButton.Location = new Point(294, 247);
+            CloseButton.Location = new Point(294, 273);
             CloseButton.Name = "CloseButton";
             CloseButton.Size = new Size(75, 23);
             CloseButton.TabIndex = 19;
@@ -256,10 +276,11 @@ namespace PolicyPlus
             AutoScaleDimensions = new SizeF(6.0f, 13.0f);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = CloseButton;
-            ClientSize = new Size(381, 282);
+            ClientSize = new Size(381, 308);
             Controls.Add(CloseButton);
             Controls.Add(SupportButton);
             Controls.Add(CategoryButton);
+            Controls.Add(PathLabel);
             Controls.Add(CategoryLabel);
             Controls.Add(SupportLabel);
             Controls.Add(SectionLabel);
@@ -269,6 +290,7 @@ namespace PolicyPlus
             Controls.Add(DefinedLabel);
             Controls.Add(IdLabel);
             Controls.Add(NameLabel);
+            Controls.Add(PathTextbox);
             Controls.Add(CategoryTextbox);
             Controls.Add(SupportTextbox);
             Controls.Add(SectionTextbox);
@@ -300,6 +322,7 @@ namespace PolicyPlus
         internal TextBox SectionTextbox;
         internal TextBox SupportTextbox;
         internal TextBox CategoryTextbox;
+        internal TextBox PathTextbox;
         internal Button CategoryButton;
         internal Button SupportButton;
         internal Button CloseButton;

@@ -38,6 +38,7 @@ namespace PolicyPlus
             components = new System.ComponentModel.Container();
             ColumnHeader ChSettingEnabled;
             ColumnHeader ChSettingCommented;
+            ColumnHeader ChSettingId;
             ToolStripSeparator ToolStripSeparator1;
             ToolStripSeparator ToolStripSeparator2;
             ToolStripSeparator ToolStripSeparator3;
@@ -136,12 +137,17 @@ namespace PolicyPlus
             CmeAllDetails = new ToolStripMenuItem();
             CmePolInspectElements = new ToolStripMenuItem();
             CmePolSpolFragment = new ToolStripMenuItem();
+            CmeCopySeparator = new ToolStripSeparator();
+            CmeCopyId = new ToolStripMenuItem();
+            CmeCopyName = new ToolStripMenuItem();
+            CmeCopyRegPath = new ToolStripMenuItem();
             PolicyIcons = new ImageList(components);
             PoliciesList = new ListView();
             PoliciesList.SizeChanged += new EventHandler(ResizePolicyNameColumn);
             PoliciesList.SelectedIndexChanged += new EventHandler(PoliciesList_SelectedIndexChanged);
             PoliciesList.DoubleClick += new EventHandler(PoliciesList_DoubleClick);
             PoliciesList.KeyDown += new KeyEventHandler(PoliciesList_KeyDown);
+            PoliciesList.ColumnClick += new ColumnClickEventHandler(PoliciesList_ColumnClick);
             PoliciesList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(PoliciesList_DrawColumnHeader);
             PoliciesList.DrawItem += new DrawListViewItemEventHandler(PoliciesList_DrawItem);
             PoliciesList.DrawSubItem += new DrawListViewSubItemEventHandler(PoliciesList_DrawSubItem);
@@ -165,6 +171,7 @@ namespace PolicyPlus
             PolicyIsPrefLabel = new Label();
             ChSettingEnabled = new ColumnHeader();
             ChSettingCommented = new ColumnHeader();
+            ChSettingId = new ColumnHeader();
             ToolStripSeparator1 = new ToolStripSeparator();
             ToolStripSeparator2 = new ToolStripSeparator();
             ToolStripSeparator3 = new ToolStripSeparator();
@@ -197,11 +204,16 @@ namespace PolicyPlus
             ChSettingEnabled.Width = 107;
             // 
             // ChSettingCommented
-            // 
+            //
             ChSettingCommented.Text = "Comment";
             ChSettingCommented.TextAlign = HorizontalAlignment.Center;
             ChSettingCommented.Width = 68;
-            // 
+            //
+            // ChSettingId
+            //
+            ChSettingId.Text = "ID";
+            ChSettingId.Width = 180;
+            //
             // ToolStripSeparator1
             // 
             ToolStripSeparator1.Name = "ToolStripSeparator1";
@@ -584,7 +596,7 @@ namespace PolicyPlus
             // 
             // PolicyObjectContext
             // 
-            PolicyObjectContext.Items.AddRange(new ToolStripItem[] { CmeCatOpen, CmePolEdit, CmeFavoriteToggle, CmeAllDetails, CmePolInspectElements, CmePolSpolFragment });
+            PolicyObjectContext.Items.AddRange(new ToolStripItem[] { CmeCatOpen, CmePolEdit, CmeFavoriteToggle, CmeAllDetails, CmePolInspectElements, CmePolSpolFragment, CmeCopySeparator, CmeCopyId, CmeCopyName, CmeCopyRegPath });
             PolicyObjectContext.Name = "PolicyObjectContext";
             PolicyObjectContext.Size = new Size(213, 114);
             // 
@@ -630,7 +642,32 @@ namespace PolicyPlus
             CmePolSpolFragment.Size = new Size(212, 22);
             CmePolSpolFragment.Tag = "P";
             CmePolSpolFragment.Text = "Semantic Policy Fragment";
-            // 
+            //
+            // CmeCopySeparator
+            //
+            CmeCopySeparator.Name = "CmeCopySeparator";
+            //
+            // CmeCopyId
+            //
+            CmeCopyId.Name = "CmeCopyId";
+            CmeCopyId.Size = new Size(212, 22);
+            CmeCopyId.Tag = "P";
+            CmeCopyId.Text = "Copy ID";
+            //
+            // CmeCopyName
+            //
+            CmeCopyName.Name = "CmeCopyName";
+            CmeCopyName.Size = new Size(212, 22);
+            CmeCopyName.Tag = "P";
+            CmeCopyName.Text = "Copy Name";
+            //
+            // CmeCopyRegPath
+            //
+            CmeCopyRegPath.Name = "CmeCopyRegPath";
+            CmeCopyRegPath.Size = new Size(212, 22);
+            CmeCopyRegPath.Tag = "P";
+            CmeCopyRegPath.Text = "Copy Registry Path";
+            //
             // PolicyIcons
             // 
             PolicyIcons.ImageStream = (ImageListStreamer)resources.GetObject("PolicyIcons.ImageStream");
@@ -683,7 +720,7 @@ namespace PolicyPlus
             // 
             PoliciesList.Dock = DockStyle.Fill;
             PoliciesList.BorderStyle = BorderStyle.None;
-            PoliciesList.Columns.AddRange(new ColumnHeader[] { ChSettingName, ChSettingEnabled, ChSettingCommented });
+            PoliciesList.Columns.AddRange(new ColumnHeader[] { ChSettingName, ChSettingEnabled, ChSettingCommented, ChSettingId });
             PoliciesList.ContextMenuStrip = PolicyObjectContext;
             PoliciesList.FullRowSelect = true;
             PoliciesList.HideSelection = false;
@@ -915,6 +952,10 @@ namespace PolicyPlus
         internal ToolStripMenuItem ImportPOLToolStripMenuItem;
         internal ToolStripMenuItem ExportPOLToolStripMenuItem;
         internal ToolStripMenuItem CmePolSpolFragment;
+        internal ToolStripSeparator CmeCopySeparator;
+        internal ToolStripMenuItem CmeCopyId;
+        internal ToolStripMenuItem CmeCopyName;
+        internal ToolStripMenuItem CmeCopyRegPath;
         internal ToolStripMenuItem AcquireADMXFilesToolStripMenuItem;
         internal ToolStripSpringTextBox SearchTextbox;
         internal ToolStripButton SearchButton;

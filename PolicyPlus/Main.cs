@@ -34,6 +34,8 @@ namespace PolicyPlus
         private Func<PolicyPlusPolicy, bool> SearchMatcher;
         private Color SelectionBackColor;
         private Color SelectionForeColor;
+        private int _sortColumn = -1;
+        private bool _sortAscending = true;
 
         public Main()
         {
@@ -199,6 +201,7 @@ namespace PolicyPlus
                 if (CurrentCategory.Parent is not null) // Add the parent
                 {
                     var listItem = PoliciesList.Items.Add("Up: " + CurrentCategory.Parent.DisplayName);
+                    listItem.Name = "Up"; // Marks this row so it stays pinned first when the list is sorted
                     listItem.Tag = CurrentCategory.Parent;
                     listItem.ImageIndex = 6; // Up arrow
                     listItem.SubItems.Add("Parent");
@@ -243,11 +246,53 @@ namespace PolicyPlus
             listItem.ImageIndex = GetImageIndexForSetting(policy);
             listItem.SubItems.Add(GetPolicyState(policy));
             listItem.SubItems.Add(GetPolicyCommentText(policy));
+            listItem.SubItems.Add(policy.UniqueID);
             if (ReferenceEquals(policy, CurrentSetting))
             {
                 listItem.Selected = true;
                 listItem.Focused = true;
                 listItem.EnsureVisible();
+            }
+        }
+        private void PoliciesList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (_sortColumn == e.Column)
+                _sortAscending = !_sortAscending; // Repeat click on the same column reverses direction
+            else
+            {
+                _sortColumn = e.Column;
+                _sortAscending = true;
+            }
+            PoliciesList.ListViewItemSorter = new PolicyListSorter(_sortColumn, _sortAscending);
+            PoliciesList.Sort();
+        }
+        // Sorts by the clicked column's text, but only within the existing Up-row / category / policy
+        // grouping (matching how UpdateCategoryListing already orders the list), so sorting never
+        // interleaves categories and policies.
+        private class PolicyListSorter : System.Collections.IComparer
+        {
+            private readonly int _column;
+            private readonly bool _ascending;
+            public PolicyListSorter(int column, bool ascending)
+            {
+                _column = column;
+                _ascending = ascending;
+            }
+            private static int Rank(ListViewItem item)
+            {
+                if (item.Name == "Up") return 0;
+                return item.Tag is PolicyPlusCategory ? 1 : 2;
+            }
+            public int Compare(object x, object y)
+            {
+                var itemX = (ListViewItem)x;
+                var itemY = (ListViewItem)y;
+                int rankX = Rank(itemX), rankY = Rank(itemY);
+                if (rankX != rankY) return rankX.CompareTo(rankY);
+                string textX = _column < itemX.SubItems.Count ? itemX.SubItems[_column].Text : "";
+                string textY = _column < itemY.SubItems.Count ? itemY.SubItems[_column].Text : "";
+                int result = string.Compare(textX, textY, StringComparison.CurrentCultureIgnoreCase);
+                return _ascending ? result : -result;
             }
         }
         public void UpdatePolicyInfo()
@@ -794,7 +839,7 @@ namespace PolicyPlus
             // Runs only on demand (Enter or the search button), not on every keystroke - see
             // the search-behavior discussion in the plan file for why this replaced live filtering
             string query = SearchTextbox.Text;
-            SearchMatcher = string.IsNullOrWhiteSpace(query) ? null : PolicySearch.BuildMatcher(PolicySearch.ToSubstringQuery(query), true, true, true, CompComments, UserComments);
+            SearchMatcher = string.IsNullOrWhiteSpace(query) ? null : PolicySearch.BuildMatcher(PolicySearch.ToSubstringQuery(query), true, true, true, true, CompComments, UserComments);
             MoveToVisibleCategoryAndReload();
         }
         private void ResizePolicyNameColumn(object sender, EventArgs e)
@@ -1492,6 +1537,8 @@ namespace PolicyPlus
             {
                 CmeFavoriteToggle.Text = FavoriteIds.Contains(policy.UniqueID) ? "Remove from Favorites" : "Add to Favorites";
             }
+            // The copy-to-clipboard group is policy-only; hide its separator along with those items
+            CmeCopySeparator.Visible = !showingForCategory;
         }
         private void PolicyObjectContext_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
@@ -1533,6 +1580,23 @@ namespace PolicyPlus
             else if (ReferenceEquals(e.ClickedItem, CmePolSpolFragment))
             {
                 My.MyProject.Forms.InspectSpolFragment.PresentDialog((PolicyPlusPolicy)polObject, AdmxWorkspace, CompPolicySource, UserPolicySource, CompComments, UserComments);
+            }
+            else if (ReferenceEquals(e.ClickedItem, CmeCopyId))
+            {
+                Clipboard.SetText(((PolicyPlusPolicy)polObject).UniqueID);
+            }
+            else if (ReferenceEquals(e.ClickedItem, CmeCopyName))
+            {
+                Clipboard.SetText(((PolicyPlusPolicy)polObject).DisplayName);
+            }
+            else if (ReferenceEquals(e.ClickedItem, CmeCopyRegPath))
+            {
+                var rawPolicy = ((PolicyPlusPolicy)polObject).RawPolicy;
+                string root = rawPolicy.Section == AdmxPolicySection.User ? @"HKEY_CURRENT_USER\" : @"HKEY_LOCAL_MACHINE\";
+                string path = root + rawPolicy.RegistryKey;
+                if (!string.IsNullOrEmpty(rawPolicy.RegistryValue))
+                    path += @"\" + rawPolicy.RegistryValue;
+                Clipboard.SetText(path);
             }
         }
         private void CategoriesTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)

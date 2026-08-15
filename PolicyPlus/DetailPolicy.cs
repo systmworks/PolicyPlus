@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PolicyPlus
 {
@@ -63,7 +64,26 @@ namespace PolicyPlus
             {
                 CategoryTextbox.Text = "<uncategorized>";
             }
+            PathTextbox.Text = BuildTemplatePath(Policy);
             ShowDialog();
+        }
+        // Breadcrumb-style path matching where the policy appears in the real Group Policy Editor
+        // tree, e.g. "Computer > Administrative Templates > Windows Components > ... > <policy>".
+        private static string BuildTemplatePath(PolicyPlusPolicy Policy)
+        {
+            string sectionPrefix = Policy.RawPolicy.Section switch
+            {
+                AdmxPolicySection.Machine => "Computer",
+                AdmxPolicySection.User => "User",
+                _ => "Computer and User"
+            };
+            var segments = new List<string> { sectionPrefix, "Administrative Templates" };
+            var chain = new List<string>();
+            for (var cat = Policy.Category; cat is not null; cat = cat.Parent)
+                chain.Insert(0, cat.DisplayName);
+            segments.AddRange(chain);
+            segments.Add(Policy.DisplayName);
+            return string.Join(" > ", segments);
         }
         private void SupportButton_Click(object sender, EventArgs e)
         {

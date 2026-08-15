@@ -43,7 +43,7 @@ public static class PolicySearch
         return string.Join(" ", result);
     }
 
-    public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, params Dictionary<string, string>[] CommentSources)
+    public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, bool CheckID, params Dictionary<string, string>[] CommentSources)
     {
         var validCommentSources = CommentSources.Where(d => d is not null).ToArray();
         string cleanupStr(string RawText) => new string(Strings.Trim(RawText.ToLowerInvariant()).Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
@@ -91,6 +91,15 @@ public static class PolicySearch
                                                                                                                                                                                                                                                                                                                                      // Wildcards
                                                                                                                                                                                                                                                                                                                                      // Quoted strings
             };
+            // Policy IDs are a single unbroken token (e.g. "Namespace:PolicyName") with no internal
+            // whitespace, so isStringAHit's word-tokenized whole-word matching would wrongly require
+            // the query to match the *entire* ID. Match query terms as substrings of the whole ID
+            // instead, so a partial ID like "AutoUpdateCfg" is actually found.
+            bool isIdAHit(string SearchedText)
+            {
+                string cleanText = cleanupStr(SearchedText);
+                return simpleWords.All(w => cleanText.Contains(w)) & wildcards.All(w => LikeOperator.LikeString(cleanText, w, CompareMethod.Binary)) & quotedStrings.All(w => cleanText.Contains(w));
+            };
             if (CheckTitle)
             {
                 if (isStringAHit(Policy.DisplayName))
@@ -104,6 +113,11 @@ public static class PolicySearch
             if (CheckComment)
             {
                 if (validCommentSources.Any((Source) => Source.ContainsKey(Policy.UniqueID) && isStringAHit(Source[Policy.UniqueID])))
+                    return true;
+            }
+            if (CheckID)
+            {
+                if (isIdAHit(Policy.UniqueID))
                     return true;
             }
             return false;
