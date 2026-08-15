@@ -5,6 +5,9 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+permissions:
+  contents: write # needed to publish the "latest" release below
+
 jobs:
   BuildLatest:
     runs-on: windows-2022
@@ -44,3 +47,20 @@ jobs:
         with:
           name: Policy Plus (Windows)
           path: Compiled/
+
+      - name: Publish self-contained single-file EXE
+        run: dotnet publish $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o $env:GITHUB_WORKSPACE\publish
+
+      - name: Strip everything except the EXE
+        run: Get-ChildItem "$env:GITHUB_WORKSPACE\publish" -Exclude "*.exe" | Remove-Item -Force
+
+      - name: Publish "latest" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest build (${{ github.sha }})
+          body: >
+            Automated build from the latest commit on master (${{ github.sha }}).
+            Single self-contained EXE - no .NET runtime install required, just download
+            and run. This release is overwritten on every push to master.
+          files: publish/Policy Plus.exe

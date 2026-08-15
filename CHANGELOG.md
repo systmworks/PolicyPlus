@@ -15,6 +15,47 @@ treated as **1.0**, and each notable batch of work increments by **0.1**. As of 
 `version.bat` also keeps the compiled EXE's actual `AssemblyVersion`/`AssemblyFileVersion`
 (the Windows file-properties version) in sync with this number automatically — see below.
 
+## [1.18] - Single-file EXE release, #47 declined
+
+**Single-file EXE distribution.** [#56](https://github.com/Fleex255/PolicyPlus/issues/56)
+(winget) had already flagged that this fork had no Releases page, only a per-commit CI
+artifact requiring the .NET Desktop Runtime pre-installed. Explored `dotnet publish
+--self-contained -p:PublishSingleFile=true`, which bundles the runtime itself into one
+`.exe` (~111MB vs. ~1MB framework-dependent) — no separate runtime install, and confirmed
+by testing it standalone (only the `.exe` present, no `.pdb`/`.dll`/`.json`) that it launches
+fine with nothing else alongside it. The obvious next step — commit that EXE into a repo
+folder — turned out to be impossible: GitHub hard-rejects any `git push` containing a file
+over 100MB. GitHub Releases doesn't have that problem (2GB per asset, and doesn't bloat git
+history the way a committed binary would), so `.github/workflows/latest.yml` now publishes
+the single-file EXE (stripped down to just the `.exe`, dropping the `.pdb`/`.xml` that
+`dotnet publish` leaves alongside it — neither is needed at runtime) as a rolling `latest`
+GitHub Release, updated on every push to `master` via `softprops/action-gh-release`,
+alongside the existing per-commit multi-file Actions artifact (left unchanged). The
+`publish/` staging folder is already covered by the existing Visual-Studio-boilerplate
+`.gitignore` entry.
+
+Also caught and fixed in passing: `AssemblyInfo.cs`/`Version.cs` were still committed at
+`1.16.0.0`/an older commit hash despite [1.17] already being current — not a bug in the
+`version.bat` automation itself, just a reminder that it's a manual pre-build step (same as
+it always was for `Version.cs`), not something wired to run automatically whenever
+`CHANGELOG.md` changes.
+
+**[#47](https://github.com/Fleex255/PolicyPlus/issues/47) (hotkey to fast-change policy
+state) — considered and declined.** Fully scoped and verified against
+`PolicyProcessing.SetPolicyState`'s actual behavior (Not Configured/Disabled always safe
+to apply directly; Enabled needs a fallback to the full dialog only when the policy has
+elements), but the only key scheme that doesn't collide with `ListView`'s built-in
+type-ahead-to-select (digits 1/2/3, since the more mnemonic N/E/D would silently hijack
+that existing behavior for policy names starting with those letters) was judged too
+unintuitive for what the feature is worth. Documented in `UPSTREAM_ISSUES.md` rather than
+left looking untriaged, same pattern as #75/#56's own non-standard outcomes.
+
+**Verified**: local `dotnet publish` run through the exact same steps as the new CI job
+(publish, then strip to just the `.exe`); the resulting standalone EXE actually launched
+(twice — once by the user, once in an isolated empty folder to confirm no other files were
+needed) and its embedded version metadata inspected directly to confirm `1.17.0.0`/`1.18.0.0`
+tracked correctly through the fix.
+
 ## [1.17] - Selection highlight/resize follow-up, build metadata, credits
 
 Polish batch following up on [1.16]'s UI additions once they were actually used, plus
