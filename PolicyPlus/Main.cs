@@ -265,6 +265,30 @@ namespace PolicyPlus
             }
             PoliciesList.ListViewItemSorter = new PolicyListSorter(_sortColumn, _sortAscending);
             PoliciesList.Sort();
+            UpdateSortIcons();
+        }
+        // WinForms ListView has no managed way to show a sort arrow on a column header - this uses
+        // the native header control's own HDF_SORTUP/HDF_SORTDOWN flags, the same mechanism apps
+        // like Explorer use, so it composes correctly with the header's normal (theme-aware) drawing.
+        private const int LvmGetHeader = 0x101F;
+        private const int HdmGetItem = 0x120B;
+        private const int HdmSetItem = 0x120C;
+        private const int HdiFormat = 0x0004;
+        private const int HdfSortUp = 0x0400;
+        private const int HdfSortDown = 0x0200;
+        private void UpdateSortIcons()
+        {
+            IntPtr headerHandle = PInvoke.SendMessage(PoliciesList.Handle, LvmGetHeader, IntPtr.Zero, IntPtr.Zero);
+            if (headerHandle == IntPtr.Zero) return;
+            for (int i = 0; i < PoliciesList.Columns.Count; i++)
+            {
+                var item = new PInvokeHdItem { Mask = HdiFormat };
+                PInvoke.SendMessageHdItem(headerHandle, HdmGetItem, (IntPtr)i, ref item);
+                item.Fmt &= ~(HdfSortUp | HdfSortDown);
+                if (i == _sortColumn)
+                    item.Fmt |= _sortAscending ? HdfSortUp : HdfSortDown;
+                PInvoke.SendMessageHdItem(headerHandle, HdmSetItem, (IntPtr)i, ref item);
+            }
         }
         // Sorts by the clicked column's text, but only within the existing Up-row / category / policy
         // grouping (matching how UpdateCategoryListing already orders the list), so sorting never
@@ -844,9 +868,16 @@ namespace PolicyPlus
         }
         private void ResizePolicyNameColumn(object sender, EventArgs e)
         {
-            // Fit the policy name column to the window size
+            // Fit the policy name column to the window size, but capped - letting it fill 100% of
+            // whatever's left (the old behavior) wastes huge amounts of space on wide windows and,
+            // since it didn't know about the ID column, pushed ID off the visible area entirely
             if (IsHandleCreated)
-                BeginInvoke(() => PoliciesList.Columns[0].Width = PoliciesList.ClientSize.Width - (PoliciesList.Columns[1].Width + PoliciesList.Columns[2].Width));
+                BeginInvoke(() =>
+                {
+                    int fixedColumnsWidth = PoliciesList.Columns[1].Width + PoliciesList.Columns[2].Width + PoliciesList.Columns[3].Width;
+                    int available = PoliciesList.ClientSize.Width - fixedColumnsWidth;
+                    PoliciesList.Columns[0].Width = Math.Max(150, Math.Min(available, 320));
+                });
         }
         private void PoliciesList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e) => e.DrawDefault = true;
         private void PoliciesList_DrawItem(object sender, DrawListViewItemEventArgs e)
