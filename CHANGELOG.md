@@ -5,6 +5,12 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.23] - 2026-08-15
+
+### Fixed
+- Category tree pane had the same unbounded-growth issue just fixed for the
+  description pane; now also pinned to a fixed width. (`b746f6c`)
+
 ## [1.22] - 2026-08-15
 
 ### Fixed
