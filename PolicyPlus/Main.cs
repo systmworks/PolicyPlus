@@ -186,19 +186,7 @@ namespace PolicyPlus
                     listItem.ImageIndex = GetImageIndexForCategory(category);
                 }
                 foreach (var policy in CurrentCategory.Policies.Where(ShouldShowPolicy).OrderBy(p => p.DisplayName)) // Add policies
-                {
-                    var listItem = PoliciesList.Items.Add(policy.DisplayName);
-                    listItem.Tag = policy;
-                    listItem.ImageIndex = GetImageIndexForSetting(policy);
-                    listItem.SubItems.Add(GetPolicyState(policy));
-                    listItem.SubItems.Add(GetPolicyCommentText(policy));
-                    if (ReferenceEquals(policy, CurrentSetting)) // Keep the current policy selected
-                    {
-                        listItem.Selected = true;
-                        listItem.Focused = true;
-                        listItem.EnsureVisible();
-                    }
-                }
+                    AddPolicyListItem(policy);
                 if (topItemIndex.HasValue & inSameCategory) // Minimize the list view's jumping around when refreshing
                 {
                     if (PoliciesList.Items.Count > topItemIndex.Value)
@@ -212,27 +200,30 @@ namespace PolicyPlus
         }
         private void UpdateFavoritesListing()
         {
-            // Same shape as the policy-listing half of UpdateCategoryListing, but sourced from
-            // FavoriteIds instead of a category - IDs no longer present in the current workspace
-            // are silently skipped rather than erroring
+            // Sourced from FavoriteIds instead of a category - IDs no longer present in the
+            // current workspace are silently skipped rather than erroring
             PoliciesList.Items.Clear();
             var favoritePolicies = FavoriteIds
                 .Select(id => AdmxWorkspace.Policies.TryGetValue(id, out var policy) ? policy : null)
                 .Where(p => p is not null)
                 .OrderBy(p => p.DisplayName);
             foreach (var policy in favoritePolicies)
+                AddPolicyListItem(policy);
+        }
+        // Adds one policy row to PoliciesList, keeping it selected if it's the current setting.
+        // Shared by UpdateCategoryListing's policy loop and UpdateFavoritesListing.
+        private void AddPolicyListItem(PolicyPlusPolicy policy)
+        {
+            var listItem = PoliciesList.Items.Add(policy.DisplayName);
+            listItem.Tag = policy;
+            listItem.ImageIndex = GetImageIndexForSetting(policy);
+            listItem.SubItems.Add(GetPolicyState(policy));
+            listItem.SubItems.Add(GetPolicyCommentText(policy));
+            if (ReferenceEquals(policy, CurrentSetting))
             {
-                var listItem = PoliciesList.Items.Add(policy.DisplayName);
-                listItem.Tag = policy;
-                listItem.ImageIndex = GetImageIndexForSetting(policy);
-                listItem.SubItems.Add(GetPolicyState(policy));
-                listItem.SubItems.Add(GetPolicyCommentText(policy));
-                if (ReferenceEquals(policy, CurrentSetting))
-                {
-                    listItem.Selected = true;
-                    listItem.Focused = true;
-                    listItem.EnsureVisible();
-                }
+                listItem.Selected = true;
+                listItem.Focused = true;
+                listItem.EnsureVisible();
             }
         }
         public void UpdatePolicyInfo()
@@ -1496,14 +1487,14 @@ namespace PolicyPlus
         }
 
         // A ToolStripTextBox that claims whatever space is left over in its owning ToolStrip
-        // (after every other item's own width), clamped between a minimum and a fraction of the
-        // ToolStrip's total width - the standard WinForms pattern for a resizable toolbar search box.
+        // (after every other item's own width), clamped between a minimum and a preferred width -
+        // the standard WinForms pattern for a resizable toolbar search box.
         internal class ToolStripSpringTextBox : ToolStripTextBox
         {
             [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
             public int MinimumWidth { get; set; } = 150;
             [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-            public double MaximumWidthFraction { get; set; } = 0.3;
+            public int PreferredWidth { get; set; } = 400;
 
             public override Size GetPreferredSize(Size constrainingSize)
             {
@@ -1517,8 +1508,7 @@ namespace PolicyPlus
                         othersWidth += item.Width + item.Margin.Horizontal;
                 }
                 int available = Owner.DisplayRectangle.Width - othersWidth;
-                int maxWidth = (int)(Owner.DisplayRectangle.Width * MaximumWidthFraction);
-                int width = Math.Max(MinimumWidth, Math.Min(available, maxWidth));
+                int width = Math.Max(MinimumWidth, Math.Min(available, PreferredWidth));
                 return new Size(width, preferredHeight);
             }
         }

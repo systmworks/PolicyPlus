@@ -46,40 +46,42 @@ public static class PolicySearch
     public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, params Dictionary<string, string>[] CommentSources)
     {
         var validCommentSources = CommentSources.Where(d => d is not null).ToArray();
-        return (Policy) =>
+        string cleanupStr(string RawText) => new string(Strings.Trim(RawText.ToLowerInvariant()).Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
+        // Parse the query string for wildcards or quoted strings - done once here rather than
+        // per policy, since the query itself doesn't change across the thousands of policies
+        // this matcher gets run against during a single search
+        string[] rawSplitted = Strings.Split(QueryText);
+        var simpleWords = new List<string>();
+        var wildcards = new List<string>();
+        var quotedStrings = new List<string>();
+        string partialQuotedString = "";
+        for (int n = 0, loopTo = rawSplitted.Length - 1; n <= loopTo; n++)
         {
-            string cleanupStr(string RawText) => new string(Strings.Trim(RawText.ToLowerInvariant()).Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
-            // Parse the query string for wildcards or quoted strings
-            string[] rawSplitted = Strings.Split(QueryText);
-            var simpleWords = new List<string>();
-            var wildcards = new List<string>();
-            var quotedStrings = new List<string>();
-            string partialQuotedString = "";
-            for (int n = 0, loopTo = rawSplitted.Length - 1; n <= loopTo; n++)
+            string curString = rawSplitted[n];
+            if (!string.IsNullOrEmpty(partialQuotedString))
             {
-                string curString = rawSplitted[n];
-                if (!string.IsNullOrEmpty(partialQuotedString))
+                partialQuotedString += curString + " ";
+                if (curString.EndsWith("\""))
                 {
-                    partialQuotedString += curString + " ";
-                    if (curString.EndsWith("\""))
-                    {
-                        quotedStrings.Add(cleanupStr(partialQuotedString));
-                        partialQuotedString = "";
-                    }
-                }
-                else if (curString.StartsWith("\""))
-                {
-                    partialQuotedString = curString + " ";
-                }
-                else if (curString.Contains("*") | curString.Contains("?"))
-                {
-                    wildcards.Add(cleanupStr(curString));
-                }
-                else
-                {
-                    simpleWords.Add(cleanupStr(curString));
+                    quotedStrings.Add(cleanupStr(partialQuotedString));
+                    partialQuotedString = "";
                 }
             }
+            else if (curString.StartsWith("\""))
+            {
+                partialQuotedString = curString + " ";
+            }
+            else if (curString.Contains("*") | curString.Contains("?"))
+            {
+                wildcards.Add(cleanupStr(curString));
+            }
+            else
+            {
+                simpleWords.Add(cleanupStr(curString));
+            }
+        }
+        return (Policy) =>
+        {
             // Do the searching
             bool isStringAHit(string SearchedText)
             {
