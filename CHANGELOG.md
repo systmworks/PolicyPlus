@@ -5,6 +5,17 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.21] - 2026-08-15
+
+### Fixed
+- Policy list's ID column was pushed off-screen because the Name column's
+  auto-fill logic didn't account for it, ballooning Name to consume the
+  space ID needed (and wasting a lot of it on wide windows in the process);
+  Name's growth is now capped. (`9a2339b`)
+
+### Added
+- Sorted column now shows a directional arrow in its header. (`9a2339b`)
+
 ## [1.20] - 2026-08-15
 
 ### Added
