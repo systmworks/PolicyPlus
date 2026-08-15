@@ -149,6 +149,10 @@ namespace PolicyPlus
             PolicyTitleLabel = new Label();
             PolicySupportedLabel = new Label();
             PolicyDescLabel = new Label();
+            SearchTextbox = new ToolStripSpringTextBox();
+            SearchTextbox.KeyDown += new KeyEventHandler(SearchTextbox_KeyDown);
+            SearchButton = new ToolStripButton();
+            SearchButton.Click += new EventHandler(SearchButton_Click);
             InfoStrip = new StatusStrip();
             ComputerSourceLabel = new ToolStripStatusLabel();
             UserSourceLabel = new ToolStripStatusLabel();
@@ -238,7 +242,7 @@ namespace PolicyPlus
             // 
             // MainMenu
             // 
-            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, OptionsToolStripMenuItem, HelpToolStripMenuItem });
+            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, OptionsToolStripMenuItem, HelpToolStripMenuItem, SearchTextbox, SearchButton });
             MainMenu.Location = new Point(0, 0);
             MainMenu.Name = "MainMenu";
             MainMenu.Size = new Size(706, 24);
@@ -494,8 +498,22 @@ namespace PolicyPlus
             AcquireADMXFilesToolStripMenuItem.Size = new Size(178, 22);
             AcquireADMXFilesToolStripMenuItem.Text = "Acquire ADMX Files";
             // 
+            // SearchTextbox
+            //
+            SearchTextbox.Alignment = ToolStripItemAlignment.Right;
+            SearchTextbox.Name = "SearchTextbox";
+            SearchTextbox.TextBox.PlaceholderText = "Search policies...";
+            //
+            // SearchButton
+            //
+            SearchButton.Alignment = ToolStripItemAlignment.Right;
+            SearchButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            SearchButton.Name = "SearchButton";
+            SearchButton.Text = "🔍";
+            SearchButton.ToolTipText = "Search (Enter)";
+            //
             // SplitContainer
-            // 
+            //
             SplitContainer.Dock = DockStyle.Fill;
             SplitContainer.Location = new Point(0, 24);
             SplitContainer.Name = "SplitContainer";
@@ -892,6 +910,8 @@ namespace PolicyPlus
         internal ToolStripMenuItem ExportPOLToolStripMenuItem;
         internal ToolStripMenuItem CmePolSpolFragment;
         internal ToolStripMenuItem AcquireADMXFilesToolStripMenuItem;
+        internal ToolStripSpringTextBox SearchTextbox;
+        internal ToolStripButton SearchButton;
         internal StatusStrip InfoStrip;
         internal ToolStripStatusLabel ComputerSourceLabel;
         internal ToolStripStatusLabel UserSourceLabel;

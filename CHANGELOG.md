@@ -13,6 +13,79 @@ meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcod
 upstream tracks itself by commit, not by release number. For this fork, upstream's state
 at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
 
+## [1.16] - Fixed #74, #66, #68, #17; investigated #75
+
+Second batch from [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md)'s triage: #74 (reset all to
+default), #66 (edit an imported REG file in isolation), #68 (Favorites), #17 (live search),
+plus #75 investigated but not code-fixed (see below). Five commits.
+
+**#74 — Reset all to default.** Added File > Reset All to Default: after a Yes/No/Warning
+confirmation, walks every loaded policy and calls `PolicyProcessing.ForgetPolicy` on any
+Computer/User side that isn't already Not Configured, marking the session dirty (so the
+[1.15] save-prompt applies) and reporting how many were reset. Uses `ForgetPolicy`, not
+`SetPolicyState(..., PolicyState.NotConfigured, ...)` — the latter's internal switch has
+no `NotConfigured` case, so it would have silently done nothing.
+
+**#66 — Open a REG file as a standalone editable source.** Added File > Open REG File,
+which imports a `.reg` file into a fresh in-memory `PolFile` and swaps just one section
+(Computer or User) over to it, rather than merging into the currently-open source the way
+the existing Import REG menu item always has (left completely unchanged). Uses
+`PolicyLoaderSource.Null`, an existing "scratch space" loader type in `PolicyLoader.cs`
+that turned out to already fit exactly — no new loader plumbing needed. Skips the
+originally-planned Computer/User prompt entirely: the section is detected from the file's
+own key headers (`HKEY_LOCAL_MACHINE`/`HKEY_CURRENT_USER`/`HKEY_USERS`) via two new
+`RegFile` methods, going straight to a file picker instead. A file mixing both hives
+prompts to pick one side and discard the other, with rough key counts shown. Also merged
+two sequential message boxes (a default-values warning, then a success confirmation) into
+one, since showing them back-to-back read as a failure followed by an unrelated success.
+
+**#75 — Policies missing under "User or Computer" — investigated, no code fix.**
+`ShouldShowPolicy`/`PolicyVisibleInSection` (`Main.cs`) were read line-by-line and found
+correct; no genuine visibility bug could be reproduced. Most likely explanation instead:
+`PolicyProcessing.DeduplicatePolicies` permanently removes one twin of an identical-name
+Machine/User policy pair, and a real matching ADMX example was found —
+`Globalization.admx`'s `ImplicitDataCollectionOff_1`/`_2`, the historical "Turn off
+handwriting personalization data sharing" pair, exactly the issue's own example. That
+feature is hidden from the View menu (`Visible = false`) but still wired. Documented in
+`UPSTREAM_ISSUES.md` rather than shipping a speculative fix for a bug that doesn't appear
+to exist.
+
+**#68 — Favorites.** Added a pinned "★ Favorites" node at the top of the category tree.
+Right-click any policy for Add/Remove Favorites; selecting the node lists all favorited
+policies, resolved by their stable `UniqueID` and persisted the same way other settings
+are (a plain `string[]`, which `RegistryKey.SetValue` already auto-infers as
+`REG_MULTI_SZ` — no `ConfigurationStorage` changes needed). A favorited ID no longer
+present in the loaded ADMX workspace is silently skipped. `UpdateCategoryListing()`
+branches to a new `UpdateFavoritesListing()` at the top when the Favorites node is
+selected, so all 11 existing call sites pick up correct behavior automatically rather than
+needing individual updates.
+
+**#17 — Search UI improvement.** Added an always-visible search box in the top-right of the
+main menu bar (a `ToolStripTextBox`, the same hosting mechanism Visual Studio's old "Quick
+Launch" box used) plus a small search button next to it, wired into the existing
+`ShouldShowPolicy`/`ShouldShowCategoryCore` visibility pipeline — the same memoized-caching
+machinery [1.9]'s finding #5 built for exactly this kind of repeated `PopulateAdmxUi()`
+workload, now put to its intended use. The search runs on Enter or the button, not on every
+keystroke — an initial live-as-you-type version (debounced full-width box below the menu)
+was reworked after trying it: continuous re-filtering while typing felt like too much
+churn, and the menu-bar corner placement matches the pattern of other apps better than a
+full-width bar.
+
+The modal Find dialog's wildcard/quoted-string matching logic (`FindByText.cs`) was
+tangled inside its click handler; extracted into a new shared `PolicySearch.BuildMatcher()`
+used by both the existing modal dialog (unchanged behavior) and the new search box, rather
+than duplicating the parsing logic. `BuildMatcher`'s plain-word matching requires a
+whole-word exact match (correct for the deliberate modal dialog), which doesn't suit a
+quick filter box — typing "desk" wouldn't find "Desktop" without an explicit wildcard. Added
+`PolicySearch.ToSubstringQuery()`, which rewrites bare words into `*word*` wildcards before
+building the matcher, used only by the toolbar search box; the modal dialog's behavior is
+unchanged.
+
+**Verified**: full `dotnet build` after each commit (0 errors throughout); each fix
+live-tested (reset-all confirm/cancel, standalone REG import including a real
+default-values-containing file from outside the tool, favorite add/remove/persistence
+across restart, and the modal Find still working after the shared-matcher extraction).
+
 ## [1.15] - Fixed 5 low-complexity issues plus Dark Mode and HiDPI
 
 Closed out the cheapest wins from [1.14]'s triage — #51, #104, #10 — plus the two issues

@@ -31,6 +31,7 @@ namespace PolicyPlus
         private bool _pendingRestartForColorMode = false;
         private List<string> FavoriteIds = new List<string>();
         private TreeNode FavoritesNode;
+        private Func<PolicyPlusPolicy, bool> SearchMatcher;
 
         public Main()
         {
@@ -334,6 +335,8 @@ namespace PolicyPlus
         {
             // Should this policy be shown considering the current filter and active sections?
             if (!PolicyVisibleInSection(Policy, ViewPolicyTypes))
+                return false;
+            if (SearchMatcher is not null && !SearchMatcher(Policy))
                 return false;
             if (ViewFilteredOnly)
             {
@@ -744,6 +747,26 @@ namespace PolicyPlus
             UpdateCategoryListing();
             ClearSelections();
             UpdatePolicyInfo();
+        }
+        private void SearchTextbox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Stop the Enter from also triggering a system beep
+                RunSearch();
+            }
+        }
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            RunSearch();
+        }
+        private void RunSearch()
+        {
+            // Runs only on demand (Enter or the search button), not on every keystroke - see
+            // the search-behavior discussion in the plan file for why this replaced live filtering
+            string query = SearchTextbox.Text;
+            SearchMatcher = string.IsNullOrWhiteSpace(query) ? null : PolicySearch.BuildMatcher(PolicySearch.ToSubstringQuery(query), true, true, true, CompComments, UserComments);
+            MoveToVisibleCategoryAndReload();
         }
         private void ResizePolicyNameColumn(object sender, EventArgs e)
         {
@@ -1470,6 +1493,34 @@ namespace PolicyPlus
             foreach (var line in Description.Split(Constants.vbCrLf))
                 sb.AppendLine(line.Trim());
             return sb.ToString().TrimEnd();
+        }
+
+        // A ToolStripTextBox that claims whatever space is left over in its owning ToolStrip
+        // (after every other item's own width), clamped between a minimum and a fraction of the
+        // ToolStrip's total width - the standard WinForms pattern for a resizable toolbar search box.
+        internal class ToolStripSpringTextBox : ToolStripTextBox
+        {
+            [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+            public int MinimumWidth { get; set; } = 150;
+            [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+            public double MaximumWidthFraction { get; set; } = 0.3;
+
+            public override Size GetPreferredSize(Size constrainingSize)
+            {
+                int preferredHeight = base.GetPreferredSize(constrainingSize).Height;
+                if (Owner is null)
+                    return new Size(MinimumWidth, preferredHeight);
+                int othersWidth = 0;
+                foreach (ToolStripItem item in Owner.Items)
+                {
+                    if (!ReferenceEquals(item, this) && item.Visible)
+                        othersWidth += item.Width + item.Margin.Horizontal;
+                }
+                int available = Owner.DisplayRectangle.Width - othersWidth;
+                int maxWidth = (int)(Owner.DisplayRectangle.Width * MaximumWidthFraction);
+                int width = Math.Max(MinimumWidth, Math.Min(available, maxWidth));
+                return new Size(width, preferredHeight);
+            }
         }
     }
 }
