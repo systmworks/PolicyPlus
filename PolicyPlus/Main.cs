@@ -49,6 +49,16 @@ namespace PolicyPlus
             // isn't publicly settable on TreeView/ListView, hence the reflection.
             SetDoubleBuffered(CategoriesTree);
             SetDoubleBuffered(PoliciesList);
+            // Phase 0 WPF-UI migration proof of concept - removed once Phase 1 dialogs land.
+            var wpfProofItem = new ToolStripMenuItem("WPF-UI Proof of Concept (Phase 0)");
+            wpfProofItem.Click += (s, e) =>
+            {
+                ThemeService.ApplyPersisted();
+                var proofWindow = new Views.Phase0ProofWindow();
+                WpfInterop.SetOwner(proofWindow, this);
+                proofWindow.ShowDialog();
+            };
+            HelpToolStripMenuItem.DropDownItems.Add(wpfProofItem);
         }
         private static void SetDoubleBuffered(Control control)
         {
@@ -970,7 +980,7 @@ namespace PolicyPlus
         private void OpenADMXFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Open a single ADMX file
-            using (var ofd = new OpenFileDialog())
+            using (var ofd = new System.Windows.Forms.OpenFileDialog())
             {
                 ofd.Filter = "Policy definitions files|*.admx";
                 ofd.Title = "Open ADMX file";
@@ -1108,7 +1118,7 @@ namespace PolicyPlus
             // as opening a POL file, just for REG. The section (Computer/User) is detected from
             // the file's own key headers rather than asked up front.
             RegFile reg;
-            using (var ofd = new OpenFileDialog())
+            using (var ofd = new System.Windows.Forms.OpenFileDialog())
             {
                 ofd.Filter = "Registry scripts|*.reg";
                 if (ofd.ShowDialog() != DialogResult.OK)
@@ -1428,7 +1438,7 @@ namespace PolicyPlus
         private void ImportPOLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Open a POL file and write it to a policy source
-            using (var ofd = new OpenFileDialog())
+            using (var ofd = new System.Windows.Forms.OpenFileDialog())
             {
                 ofd.Filter = "POL files|*.pol";
                 if (ofd.ShowDialog() == DialogResult.OK)
@@ -1457,7 +1467,7 @@ namespace PolicyPlus
         private void ExportPOLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Create a POL file from a current policy source
-            using (var sfd = new SaveFileDialog())
+            using (var sfd = new System.Windows.Forms.SaveFileDialog())
             {
                 sfd.Filter = "POL files|*.pol";
                 if (sfd.ShowDialog() == DialogResult.OK && My.MyProject.Forms.OpenSection.PresentDialog(true, true) == DialogResult.OK)

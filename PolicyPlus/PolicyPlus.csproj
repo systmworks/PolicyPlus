@@ -9,6 +9,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <StartupObject>PolicyPlus.My.MyApplication</StartupObject>
     <RootNamespace>PolicyPlus</RootNamespace>
     <AssemblyName>PolicyPlus</AssemblyName>
@@ -36,6 +37,10 @@
     <DocumentationFile>bin\Release\PolicyPlus.xml</DocumentationFile>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="My Project\MyNamespace.Dynamic.Designer.cs" />
@@ -289,8 +294,20 @@
     <Compile Include="RegFile.cs" />
     <Compile Include="SpolFile.cs" />
     <Compile Include="SystemInfo.cs" />
+    <Compile Include="ThemeService.cs" />
     <Compile Include="Version.cs" />
+    <Compile Include="Views\Phase0ProofWindow.xaml.cs">
+      <DependentUpon>Phase0ProofWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WpfInterop.cs" />
     <Compile Include="XmlExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Views\Phase0ProofWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
