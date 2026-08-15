@@ -5,6 +5,13 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.24] - 2026-08-15
+
+### Added
+- Tree pane, description pane, and State/Comment/ID column widths are now
+  remembered across sessions, the same way window position/size already
+  is. (`2551a58`)
+
 ## [1.23] - 2026-08-15
 
 ### Fixed
