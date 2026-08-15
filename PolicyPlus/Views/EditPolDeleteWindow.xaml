@@ -1,0 +1,64 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.EditPolDeleteWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Delete Value(s)"
+    Width="380"
+    Height="270"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Delete Value(s)" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <TextBlock Margin="0,0,0,4" Text="Container key" />
+            <ui:TextBox
+                x:Name="TextKey"
+                Margin="0,0,0,12"
+                IsReadOnly="True" />
+
+            <RadioButton
+                x:Name="OptPurge"
+                Margin="0,0,0,8"
+                Content="Delete all the values under the key" />
+            <RadioButton
+                x:Name="OptClearFirst"
+                Margin="0,0,0,8"
+                Content="Clear the key before adding values" />
+            <RadioButton
+                x:Name="OptDeleteOne"
+                Margin="0,0,0,4"
+                Checked="OptDeleteOne_CheckedChanged"
+                Content="Delete this value:"
+                Unchecked="OptDeleteOne_CheckedChanged" />
+            <ui:TextBox x:Name="TextValueName" Margin="20,0,0,0" IsEnabled="False" />
+
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    x:Name="ButtonOK"
+                    Appearance="Primary"
+                    Click="ButtonOK_Click"
+                    Content="OK"
+                    IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

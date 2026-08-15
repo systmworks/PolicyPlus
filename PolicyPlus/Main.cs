@@ -1664,7 +1664,7 @@ namespace PolicyPlus
             }
             else if (ReferenceEquals(e.ClickedItem, CmePolSpolFragment))
             {
-                My.MyProject.Forms.InspectSpolFragment.PresentDialog((PolicyPlusPolicy)polObject, AdmxWorkspace, CompPolicySource, UserPolicySource, CompComments, UserComments);
+                Views.InspectSpolFragmentWindow.PresentDialog(this, (PolicyPlusPolicy)polObject, AdmxWorkspace, CompPolicySource, UserPolicySource, CompComments, UserComments);
             }
             else if (ReferenceEquals(e.ClickedItem, CmeCopyId))
             {

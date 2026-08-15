@@ -171,75 +171,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPolDelete m_EditPolDelete;
-
-            public EditPolDelete EditPolDelete
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPolDelete = Create__Instance__(m_EditPolDelete);
-                    return m_EditPolDelete;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPolDelete))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPolDelete);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPolKey m_EditPolKey;
-
-            public EditPolKey EditPolKey
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPolKey = Create__Instance__(m_EditPolKey);
-                    return m_EditPolKey;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPolKey))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPolKey);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPolMultiStringData m_EditPolMultiStringData;
-
-            public EditPolMultiStringData EditPolMultiStringData
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPolMultiStringData = Create__Instance__(m_EditPolMultiStringData);
-                    return m_EditPolMultiStringData;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPolMultiStringData))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPolMultiStringData);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public EditPolNumericData m_EditPolNumericData;
 
             public EditPolNumericData EditPolNumericData
@@ -258,52 +189,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_EditPolNumericData);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPolStringData m_EditPolStringData;
-
-            public EditPolStringData EditPolStringData
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPolStringData = Create__Instance__(m_EditPolStringData);
-                    return m_EditPolStringData;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPolStringData))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPolStringData);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPolValue m_EditPolValue;
-
-            public EditPolValue EditPolValue
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPolValue = Create__Instance__(m_EditPolValue);
-                    return m_EditPolValue;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPolValue))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPolValue);
                 }
             }
 
@@ -534,29 +419,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_InspectPolicyElements);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public InspectSpolFragment m_InspectSpolFragment;
-
-            public InspectSpolFragment InspectSpolFragment
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_InspectSpolFragment = Create__Instance__(m_InspectSpolFragment);
-                    return m_InspectSpolFragment;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_InspectSpolFragment))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_InspectSpolFragment);
                 }
             }
 

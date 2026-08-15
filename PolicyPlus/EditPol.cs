@@ -163,7 +163,7 @@ namespace PolicyPlus
         }
         private void ButtonAddKey_Click(object sender, EventArgs e)
         {
-            string keyName = My.MyProject.Forms.EditPolKey.PresentDialog("");
+            string keyName = Views.EditPolKeyWindow.PresentDialog(this, "");
             if (string.IsNullOrEmpty(keyName))
                 return;
             if (!IsKeyNameValid(keyName))
@@ -186,14 +186,7 @@ namespace PolicyPlus
         {
             if (Kind == RegistryValueKind.String | Kind == RegistryValueKind.ExpandString)
             {
-                if (My.MyProject.Forms.EditPolStringData.PresentDialog(ValueName, Conversions.ToString(CurrentData)) == DialogResult.OK)
-                {
-                    return My.MyProject.Forms.EditPolStringData.TextData.Text;
-                }
-                else
-                {
-                    return null;
-                }
+                return Views.EditPolStringDataWindow.PresentDialog(this, ValueName, Conversions.ToString(CurrentData));
             }
             else if (Kind == RegistryValueKind.DWord | Kind == RegistryValueKind.QWord)
             {
@@ -208,14 +201,7 @@ namespace PolicyPlus
             }
             else if (Kind == RegistryValueKind.MultiString)
             {
-                if (My.MyProject.Forms.EditPolMultiStringData.PresentDialog(ValueName, (string[])CurrentData) == DialogResult.OK)
-                {
-                    return My.MyProject.Forms.EditPolMultiStringData.TextData.Lines;
-                }
-                else
-                {
-                    return null;
-                }
+                return Views.EditPolMultiStringDataWindow.PresentDialog(this, ValueName, (string[])CurrentData);
             }
             else
             {
@@ -226,10 +212,11 @@ namespace PolicyPlus
         private void ButtonAddValue_Click(object sender, EventArgs e)
         {
             string keyPath = Conversions.ToString(LsvPol.SelectedItems[0].Tag);
-            if (My.MyProject.Forms.EditPolValue.PresentDialog() != DialogResult.OK)
+            var chosen = Views.EditPolValueWindow.PresentDialog(this);
+            if (chosen is null)
                 return;
-            string value = My.MyProject.Forms.EditPolValue.ChosenName;
-            var kind = My.MyProject.Forms.EditPolValue.SelectedKind;
+            string value = chosen.Value.Name;
+            var kind = chosen.Value.Kind;
             object defaultData;
             if (kind == RegistryValueKind.String | kind == RegistryValueKind.ExpandString)
             {
@@ -256,13 +243,14 @@ namespace PolicyPlus
             var tag = LsvPol.SelectedItems[0].Tag;
             if (tag is string)
             {
-                if (My.MyProject.Forms.EditPolDelete.PresentDialog(Strings.Split(Conversions.ToString(tag), @"\").Last()) != DialogResult.OK)
+                var deleteChoice = Views.EditPolDeleteWindow.PresentDialog(this, Strings.Split(Conversions.ToString(tag), @"\").Last());
+                if (deleteChoice is null)
                     return;
-                if (My.MyProject.Forms.EditPolDelete.OptPurge.Checked)
+                if (deleteChoice.Value.Purge)
                 {
                     EditingPol.ClearKey(Conversions.ToString(tag)); // Delete everything
                 }
-                else if (My.MyProject.Forms.EditPolDelete.OptClearFirst.Checked)
+                else if (deleteChoice.Value.ClearFirst)
                 {
                     EditingPol.ForgetKeyClearance(Conversions.ToString(tag)); // So the clearance is before the values in the POL
                     EditingPol.ClearKey(Conversions.ToString(tag));
@@ -288,7 +276,7 @@ namespace PolicyPlus
                 else
                 {
                     // Delete only the specified value
-                    EditingPol.DeleteValue(Conversions.ToString(tag), My.MyProject.Forms.EditPolDelete.TextValueName.Text);
+                    EditingPol.DeleteValue(Conversions.ToString(tag), deleteChoice.Value.ValueName);
                 }
                 UpdateTree();
                 SelectKey(Conversions.ToString(tag));

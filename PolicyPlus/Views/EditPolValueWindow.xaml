@@ -1,0 +1,54 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.EditPolValueWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="New Value"
+    Width="360"
+    Height="220"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="New Value" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <TextBlock Margin="0,0,0,4" Text="Value name" />
+            <ui:TextBox
+                x:Name="TextName"
+                Margin="0,0,0,12"
+                KeyDown="TextName_KeyDown" />
+            <TextBlock Margin="0,0,0,4" Text="Registry value type" />
+            <ComboBox x:Name="ComboKind" SelectedIndex="0">
+                <ComboBoxItem Content="String" />
+                <ComboBoxItem Content="Expandable string" />
+                <ComboBoxItem Content="List of strings" />
+                <ComboBoxItem Content="32-bit DWord" />
+                <ComboBoxItem Content="64-bit QWord" />
+            </ComboBox>
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    Appearance="Primary"
+                    Click="ButtonOK_Click"
+                    Content="OK"
+                    IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>
