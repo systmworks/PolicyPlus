@@ -7,11 +7,90 @@ All notable changes to this fork are documented here. Format is loosely based on
 ## Versioning note
 
 Upstream ([Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus)) does not state a
-meaningful semantic version. `AssemblyVersion`/`AssemblyFileVersion` are hardcoded to
-`1.0.0.0` and never bumped; the version actually shown at runtime comes from
-`version.bat` embedding `git describe --always` into `Version.cs` at build time — i.e.
-upstream tracks itself by commit, not by release number. For this fork, upstream's state
-at fork time is treated as **1.0**, and each notable batch of work increments by **0.1**.
+meaningful semantic version. Its `AssemblyVersion`/`AssemblyFileVersion` are hardcoded to
+`1.0.0.0` and never bumped; the version shown at runtime comes only from `version.bat`
+embedding `git describe --always` into `Version.cs` at build time — i.e. upstream tracks
+itself by commit, not by release number. For this fork, upstream's state at fork time is
+treated as **1.0**, and each notable batch of work increments by **0.1**. As of [1.17],
+`version.bat` also keeps the compiled EXE's actual `AssemblyVersion`/`AssemblyFileVersion`
+(the Windows file-properties version) in sync with this number automatically — see below.
+
+## [1.17] - Selection highlight/resize follow-up, build metadata, credits
+
+Polish batch following up on [1.16]'s UI additions once they were actually used, plus
+overdue build metadata that had never been touched since the fork started. Seven commits,
+several of them iterating on live feedback (color shade, border style, search box width)
+rather than landing right on the first try.
+
+**Code quality pass on the [1.16] batch.** A follow-up review of [1.16]'s new code (the
+live search box, Favorites) found three things worth fixing: `PolicySearch.BuildMatcher`
+was re-parsing the entire search query on every single policy checked instead of once per
+search (the parsing loop was inside the returned per-policy `Func`, not above it) — hoisted
+it out, no behavior change, pure waste eliminated. `UpdateFavoritesListing` duplicated
+`UpdateCategoryListing`'s ~10-line list-item-building block; extracted a shared
+`AddPolicyListItem` helper. The search box's responsive width was retargeted from "30% of
+the menu bar" to a flat 400px preferred width (still clamped to real leftover space, so it
+still can't collide with the other menu items even at the window's 600px minimum width) —
+30% of the default window width worked out to only ~212px, well short of what was wanted.
+
+**Selection highlight visibility + resize performance.** The category tree and policy list
+both use `HideSelection = false` so the current selection stays visible even when focus
+moves elsewhere (e.g. into the search box) — but WinForms' themed selection rendering
+ignores any custom `BackColor`/`ForeColor` on the selected node/item and instead renders
+its own low-contrast grey for that unfocused-but-selected state, which was essentially
+invisible in Dark Mode (only the category tree's existing icon swap on selection gave any
+cue at all). Fixed by owner-drawing just the selected row's background/text with an
+explicit color instead of trusting the theme — a bright blue accent, two shades for the two
+themes (light: `#A8D4F7` with black text; dark: `#2E75B6` with white text), tuned brighter
+after an initial pass looked too muted in both modes.
+
+Owner-drawing introduced a regression of its own: it repaints every visible row through
+managed GDI+ instead of the native (already double-buffered) control painting, which
+visibly flickered/redrew during window resize — worse the longer the list, not specific to
+having a search active as first suspected. Fixed with two changes: enabled double buffering
+on both controls via reflection (`Control.DoubleBuffered` isn't publicly exposed on
+`TreeView`/`ListView`), and removed a genuinely redundant handler — `PoliciesList`'s
+column-width fixup was wired to both `PoliciesList.SizeChanged` and the form's own
+`SizeChanged`, double-queuing the same recalculation on every resize tick even though
+`PoliciesList` is `Dock = Fill` nested under the form and already gets its own
+`SizeChanged` from the cascade.
+
+**Search box border.** `SearchTextbox.TextBox.BorderStyle` was left at the `TextBox`
+default (`Fixed3D`), whose bevel shading is calibrated for a light background and all but
+disappeared in Dark Mode — only the focus-state highlight was visible at rest, making the
+box easy to miss. Switched to `FixedSingle`, a flat single-pixel line drawn unconditionally
+rather than through theme-dependent bevel shading.
+
+**Build metadata.** `AssemblyVersion`/`AssemblyFileVersion` had been stuck at `1.0.0.0`
+since the original VB.NET project (see the versioning note above) and `AssemblyCopyright`
+still credited only the 2016-2021 upstream author — neither had ever been touched by this
+fork, so the compiled EXE's Windows file properties didn't reflect it existing at all.
+Bumped to `1.16.0.0` (matching [1.16], the version at the time) and updated copyright to
+Darren Milne, 2026. Made this self-maintaining rather than another manually-tracked number:
+`version.bat` (already run on every push to `master` via `.github/workflows/latest.yml`,
+and documented in `COMPILE.md` as a pre-build step) now also rewrites `AssemblyInfo.cs`'s
+two version attributes to match whichever `## [X.Y]` header is at the top of this file,
+alongside its existing job of embedding the current commit into `Version.cs`. The
+regex-based rewrite logic lives in a new `version.ps1`; `version.bat` is now a one-line
+wrapper so the documented entry point is unchanged.
+
+**About dialog credit.** Was crediting only Ben Nordick (the original upstream author) and
+linking only the original repo. Now reads "Policy Plus, maintained by Darren Milne,
+originally created by Ben Nordick," linking this fork's repo
+([systmworks/PolicyPlus](https://github.com/systmworks/PolicyPlus)) instead.
+
+**Acquire ADMX Files link.** Was pointing at Microsoft's Sep 2025 25H2 Administrative
+Templates package; Microsoft quietly shipped a V2.0 revision Oct 27, 2025 with no stated
+changelog. Rather than guess whether the internal MSI folder structure also changed name,
+downloaded and administratively extracted (`msiexec /a`) the new package to confirm the
+real path before updating the hardcoded subdirectory constant — same naming pattern as
+before (233 `.admx` files present), just `Sep` → `Oct`.
+
+**Verified**: full `dotnet build` after each change (0 errors throughout); the compiled
+EXE's actual `FileVersion`/`ProductVersion`/`LegalCopyright` inspected directly via
+PowerShell (not just the source) to confirm the metadata fix took effect; live-tested by
+the user in both Light and Dark mode for the highlight color, resize smoothness with a long
+list, and the search box border.
 
 ## [1.16] - Fixed #74, #66, #68, #17; investigated #75
 
