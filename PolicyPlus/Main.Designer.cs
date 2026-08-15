@@ -126,6 +126,7 @@ namespace PolicyPlus
             CategoriesTree = new TreeView();
             CategoriesTree.AfterSelect += new TreeViewEventHandler(CategoriesTree_AfterSelect);
             CategoriesTree.NodeMouseClick += new TreeNodeMouseClickEventHandler(CategoriesTree_NodeMouseClick);
+            CategoriesTree.DrawNode += new DrawTreeNodeEventHandler(CategoriesTree_DrawNode);
             PolicyObjectContext = new ContextMenuStrip(components);
             PolicyObjectContext.Opening += new System.ComponentModel.CancelEventHandler(PolicyObjectContext_Opening);
             PolicyObjectContext.ItemClicked += new ToolStripItemClickedEventHandler(PolicyObjectContext_ItemClicked);
@@ -141,6 +142,9 @@ namespace PolicyPlus
             PoliciesList.SelectedIndexChanged += new EventHandler(PoliciesList_SelectedIndexChanged);
             PoliciesList.DoubleClick += new EventHandler(PoliciesList_DoubleClick);
             PoliciesList.KeyDown += new KeyEventHandler(PoliciesList_KeyDown);
+            PoliciesList.DrawColumnHeader += new DrawListViewColumnHeaderEventHandler(PoliciesList_DrawColumnHeader);
+            PoliciesList.DrawItem += new DrawListViewItemEventHandler(PoliciesList_DrawItem);
+            PoliciesList.DrawSubItem += new DrawListViewSubItemEventHandler(PoliciesList_DrawSubItem);
             ChSettingName = new ColumnHeader();
             SettingInfoPanel = new Panel();
             SettingInfoPanel.ClientSizeChanged += new EventHandler(SettingInfoPanel_ClientSizeChanged);
@@ -566,6 +570,7 @@ namespace PolicyPlus
 
             CategoriesTree.BorderStyle = BorderStyle.None;
             CategoriesTree.ContextMenuStrip = PolicyObjectContext;
+            CategoriesTree.DrawMode = TreeViewDrawMode.OwnerDrawText;
             CategoriesTree.HideSelection = false;
             CategoriesTree.ImageIndex = 0;
             CategoriesTree.ImageList = PolicyIcons;
@@ -683,6 +688,7 @@ namespace PolicyPlus
             PoliciesList.HideSelection = false;
             PoliciesList.MultiSelect = false;
             PoliciesList.Name = "PoliciesList";
+            PoliciesList.OwnerDraw = true;
             PoliciesList.ShowItemToolTips = true;
             PoliciesList.Size = new Size(322, 350);
             PoliciesList.SmallImageList = PolicyIcons;
@@ -850,7 +856,6 @@ namespace PolicyPlus
             ((System.ComponentModel.ISupportInitialize)PictureBox1).EndInit();
             Load += new EventHandler(Main_Load);
             Shown += new EventHandler(Main_Shown);
-            SizeChanged += new EventHandler(ResizePolicyNameColumn);
             Closed += new EventHandler(Main_Closed);
             FormClosing += new FormClosingEventHandler(Main_FormClosing);
             ResumeLayout(false);

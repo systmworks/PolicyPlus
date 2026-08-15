@@ -32,10 +32,26 @@ namespace PolicyPlus
         private List<string> FavoriteIds = new List<string>();
         private TreeNode FavoritesNode;
         private Func<PolicyPlusPolicy, bool> SearchMatcher;
+        private Color SelectionBackColor;
+        private Color SelectionForeColor;
 
         public Main()
         {
             InitializeComponent();
+            // CategoriesTree/PoliciesList became owner-drawn (see CategoriesTree_DrawNode/
+            // PoliciesList_DrawSubItem) so the selection highlight can use an explicit color instead
+            // of the theme's low-contrast one. Owner-drawn controls repaint every visible row through
+            // managed GDI+ instead of the native control's own (already double-buffered) painting, so
+            // without this they visibly flicker/redraw during a window resize - worse the longer the
+            // list is, since every visible row repaints on every intermediate size. DoubleBuffered
+            // isn't publicly settable on TreeView/ListView, hence the reflection.
+            SetDoubleBuffered(CategoriesTree);
+            SetDoubleBuffered(PoliciesList);
+        }
+        private static void SetDoubleBuffered(Control control)
+        {
+            typeof(Control).GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(control, true, null);
         }
         private void Main_Load(object sender, EventArgs e)
         {
@@ -56,6 +72,13 @@ namespace PolicyPlus
                 SettingInfoPanel.BackColor = CategoriesTree.BackColor;
                 SettingInfoPanel.ForeColor = CategoriesTree.ForeColor;
                 SplitContainer.Panel2.BackColor = CategoriesTree.BackColor;
+                SelectionBackColor = Color.FromArgb(0x2E, 0x75, 0xB6); // brighter dark-mode blue
+                SelectionForeColor = Color.White;
+            }
+            else
+            {
+                SelectionBackColor = Color.FromArgb(0xA8, 0xD4, 0xF7); // brighter light-mode blue
+                SelectionForeColor = Color.Black;
             }
             // Restore the last ADMX source and policy loaders
             OpenLastAdmxSource();
@@ -739,6 +762,20 @@ namespace PolicyPlus
             ClearSelections();
             UpdatePolicyInfo();
         }
+        private void CategoriesTree_DrawNode(object sender, DrawTreeNodeEventArgs e)
+        {
+            // The themed selection highlight the TreeView draws by default ignores TreeNode.BackColor
+            // and, when the tree doesn't have focus (HideSelection = false keeps the selected node
+            // visible even then), renders as a low-contrast grey that's nearly invisible in dark mode.
+            // Owner-drawing just the text background sidesteps that theme-controlled rendering with an
+            // explicit, theme-appropriate color instead.
+            bool selected = e.Node.IsSelected;
+            Color back = selected ? SelectionBackColor : CategoriesTree.BackColor;
+            Color fore = selected ? SelectionForeColor : CategoriesTree.ForeColor;
+            using (var brush = new SolidBrush(back))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            TextRenderer.DrawText(e.Graphics, e.Node.Text, CategoriesTree.Font, e.Bounds, fore, back, TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.NoPrefix);
+        }
         private void SearchTextbox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -764,6 +801,32 @@ namespace PolicyPlus
             // Fit the policy name column to the window size
             if (IsHandleCreated)
                 BeginInvoke(() => PoliciesList.Columns[0].Width = PoliciesList.ClientSize.Width - (PoliciesList.Columns[1].Width + PoliciesList.Columns[2].Width));
+        }
+        private void PoliciesList_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e) => e.DrawDefault = true;
+        private void PoliciesList_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            // Actual drawing happens per-cell in DrawSubItem (Details view calls that for every
+            // column, including column 0), so there's nothing to do here beyond opting out of the
+            // default item-level drawing.
+        }
+        private void PoliciesList_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            // Same theming issue as CategoriesTree_DrawNode: the default selection highlight ignores
+            // ListViewItem.BackColor and is nearly invisible in dark mode when the list isn't focused.
+            bool selected = e.Item.Selected;
+            Color back = selected ? SelectionBackColor : PoliciesList.BackColor;
+            Color fore = selected ? SelectionForeColor : PoliciesList.ForeColor;
+            using (var brush = new SolidBrush(back))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            int textLeft = e.Bounds.Left + 2;
+            if (e.ColumnIndex == 0 && e.Item.ImageIndex >= 0 && PoliciesList.SmallImageList is not null)
+            {
+                var image = PoliciesList.SmallImageList.Images[e.Item.ImageIndex];
+                e.Graphics.DrawImage(image, textLeft, e.Bounds.Top + (e.Bounds.Height - image.Height) / 2);
+                textLeft += image.Width + 4;
+            }
+            var textRect = new Rectangle(textLeft, e.Bounds.Top, e.Bounds.Right - textLeft, e.Bounds.Height);
+            TextRenderer.DrawText(e.Graphics, e.SubItem.Text, PoliciesList.Font, textRect, fore, back, TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
         }
         private void PoliciesList_SelectedIndexChanged(object sender, EventArgs e)
         {
