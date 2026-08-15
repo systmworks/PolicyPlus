@@ -5,6 +5,13 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.25] - 2026-08-15
+
+### Added
+- Clear button (and Escape key) next to the toolbar search box. (`6623222`)
+- Toolbar search box now also matches policies by registry key/value path,
+  not just title/description/comment/ID. (`6623222`)
+
 ## [1.24] - 2026-08-15
 
 ### Added
