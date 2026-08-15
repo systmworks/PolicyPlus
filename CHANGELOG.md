@@ -81,10 +81,21 @@ quick filter box — typing "desk" wouldn't find "Desktop" without an explicit w
 building the matcher, used only by the toolbar search box; the modal dialog's behavior is
 unchanged.
 
+The search box's width is responsive rather than fixed: a new `Main.ToolStripSpringTextBox`
+(a nested class, since it needs to be referenced from both `Main.cs` and the generated
+`Main.Designer.cs`) overrides `ToolStripItem.GetPreferredSize` to claim whatever space is
+left over in the menu bar after every other item's own width, clamped between a 150px
+minimum and 30% of the bar's total width. This is the standard WinForms pattern for a
+resizable toolbar control — it participates in the normal layout engine (recalculated
+automatically on every resize) rather than a manual `Resize`-event handler reactively
+setting `.Width` after the fact, which would risk a visible one-frame jump on each resize.
+
 **Verified**: full `dotnet build` after each commit (0 errors throughout); each fix
 live-tested (reset-all confirm/cancel, standalone REG import including a real
 default-values-containing file from outside the tool, favorite add/remove/persistence
-across restart, and the modal Find still working after the shared-matcher extraction).
+across restart, the modal Find still working after the shared-matcher extraction, and the
+search box's Enter/button trigger, substring matching, and responsive resizing down to and
+above the 150px/30%-width bounds).
 
 ## [1.15] - Fixed 5 low-complexity issues plus Dark Mode and HiDPI
 
