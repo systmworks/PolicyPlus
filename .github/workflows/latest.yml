@@ -3,6 +3,7 @@ name: Build Latest
 on:
   push:
     branches: [ master ]
+    paths: [ 'PolicyPlus/**' ]
   workflow_dispatch:
 
 permissions:
