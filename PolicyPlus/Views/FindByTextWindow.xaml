@@ -1,0 +1,58 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.FindByTextWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Find by Text"
+    Width="420"
+    Height="180"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Find by Text" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <ui:TextBox x:Name="StringTextbox" />
+            <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                <CheckBox
+                    x:Name="TitleCheckbox"
+                    Margin="0,0,16,0"
+                    Content="In title"
+                    IsChecked="True" />
+                <CheckBox
+                    x:Name="DescriptionCheckbox"
+                    Margin="0,0,16,0"
+                    Content="In description"
+                    IsChecked="True" />
+                <CheckBox
+                    x:Name="CommentCheckbox"
+                    Content="In comment"
+                    IsChecked="True" />
+            </StackPanel>
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    Appearance="Primary"
+                    Click="SearchButton_Click"
+                    Content="Search"
+                    IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

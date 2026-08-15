@@ -43,6 +43,11 @@ internal static class PInvoke
     // common-control header feature with no managed WinForms equivalent
     [DllImport("user32.dll", EntryPoint = "SendMessage")]
     public static extern IntPtr SendMessageHdItem(IntPtr Handle, int Message, IntPtr WParam, ref PInvokeHdItem LParam);
+
+    // Releases the GDI handle produced by Bitmap.GetHbitmap() - required after
+    // Imaging.CreateBitmapSourceFromHBitmap to avoid leaking GDI objects.
+    [DllImport("gdi32.dll")]
+    public static extern bool DeleteObject(IntPtr Object);
 }
 
 [StructLayout(LayoutKind.Sequential)]

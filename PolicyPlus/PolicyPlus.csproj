@@ -121,24 +121,6 @@
     <Compile Include="FilterOptions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FindById.Designer.cs">
-      <DependentUpon>FindById.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FindById.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindByRegistry.Designer.cs">
-      <DependentUpon>FindByRegistry.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FindByRegistry.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindByText.Designer.cs">
-      <DependentUpon>FindByText.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FindByText.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FindResults.Designer.cs">
       <DependentUpon>FindResults.cs</DependentUpon>
     </Compile>
@@ -275,6 +257,15 @@
     <Compile Include="Views\EditPolValueWindow.xaml.cs">
       <DependentUpon>EditPolValueWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FindByIdWindow.xaml.cs">
+      <DependentUpon>FindByIdWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FindByRegistryWindow.xaml.cs">
+      <DependentUpon>FindByRegistryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FindByTextWindow.xaml.cs">
+      <DependentUpon>FindByTextWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InspectSpolFragmentWindow.xaml.cs">
       <DependentUpon>InspectSpolFragmentWindow.xaml</DependentUpon>
     </Compile>
@@ -303,6 +294,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditPolValueWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FindByIdWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FindByRegistryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FindByTextWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -349,15 +352,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FilterOptions.resx">
       <DependentUpon>FilterOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FindById.resx">
-      <DependentUpon>FindById.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FindByRegistry.resx">
-      <DependentUpon>FindByRegistry.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FindByText.resx">
-      <DependentUpon>FindByText.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FindResults.resx">
       <DependentUpon>FindResults.cs</DependentUpon>

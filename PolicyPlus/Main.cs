@@ -1064,13 +1064,13 @@ namespace PolicyPlus
         private void FindByIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Find By ID window and try to move to the selected object
-            My.MyProject.Forms.FindById.AdmxWorkspace = AdmxWorkspace;
-            if (My.MyProject.Forms.FindById.ShowDialog() == DialogResult.OK)
+            var findByIdResult = Views.FindByIdWindow.PresentDialog(this, AdmxWorkspace, PolicyIcons);
+            if (findByIdResult is not null)
             {
-                var selCat = My.MyProject.Forms.FindById.SelectedCategory;
-                var selPol = My.MyProject.Forms.FindById.SelectedPolicy;
-                var selPro = My.MyProject.Forms.FindById.SelectedProduct;
-                var selSup = My.MyProject.Forms.FindById.SelectedSupport;
+                var selCat = findByIdResult.SelectedCategory;
+                var selPol = findByIdResult.SelectedPolicy;
+                var selPro = findByIdResult.SelectedProduct;
+                var selSup = findByIdResult.SelectedSupport;
                 if (selCat is not null)
                 {
                     if (CategoryNodes.ContainsKey(selCat))
@@ -1085,7 +1085,7 @@ namespace PolicyPlus
                 }
                 else if (selPol is not null)
                 {
-                    ShowSettingEditor(selPol, (AdmxPolicySection)Math.Min((int)ViewPolicyTypes, (int)My.MyProject.Forms.FindById.SelectedSection));
+                    ShowSettingEditor(selPol, (AdmxPolicySection)Math.Min((int)ViewPolicyTypes, (int)findByIdResult.SelectedSection));
                     FocusPolicy(selPol);
                 }
                 else if (selPro is not null)
@@ -1254,9 +1254,10 @@ namespace PolicyPlus
         private void ByTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Find By Text window and start the search
-            if (My.MyProject.Forms.FindByText.PresentDialog(UserComments, CompComments) == DialogResult.OK)
+            var textSearcher = Views.FindByTextWindow.PresentDialog(this, UserComments, CompComments);
+            if (textSearcher is not null)
             {
-                ShowSearchDialog(My.MyProject.Forms.FindByText.Searcher);
+                ShowSearchDialog(textSearcher);
             }
         }
         private void SearchResultsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1286,8 +1287,9 @@ namespace PolicyPlus
         private void ByRegistryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Find By Registry window and start the search
-            if (My.MyProject.Forms.FindByRegistry.ShowDialog() == DialogResult.OK)
-                ShowSearchDialog(My.MyProject.Forms.FindByRegistry.Searcher);
+            var registrySearcher = Views.FindByRegistryWindow.PresentDialog(this);
+            if (registrySearcher is not null)
+                ShowSearchDialog(registrySearcher);
         }
         private void SettingInfoPanel_ClientSizeChanged(object sender, EventArgs e)
         {
