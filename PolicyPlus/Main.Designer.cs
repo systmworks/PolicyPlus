@@ -563,7 +563,12 @@ namespace PolicyPlus
             //
             DescriptionSplitContainer.Panel2.Controls.Add(PoliciesList);
             DescriptionSplitContainer.Size = new Size(512, 350);
-            DescriptionSplitContainer.SplitterDistance = 184;
+            // Panel1 (the description text) only ever needs enough width for a few lines of
+            // wrapped text - pinning it fixed (instead of the default proportional split) stops
+            // it from claiming an ever-larger share of the window as the window gets wider, so
+            // that space goes to the policy list instead.
+            DescriptionSplitContainer.FixedPanel = FixedPanel.Panel1;
+            DescriptionSplitContainer.SplitterDistance = 300;
             DescriptionSplitContainer.TabIndex = 4;
             DescriptionSplitContainer.TabStop = false;
             // 
