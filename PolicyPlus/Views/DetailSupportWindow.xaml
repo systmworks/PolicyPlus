@@ -1,0 +1,66 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.DetailSupportWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Support Details"
+    Width="440"
+    Height="460"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Support Details" />
+
+        <StackPanel Grid.Row="1" Margin="16">
+            <TextBlock Margin="0,0,0,4" Text="Name" />
+            <ui:TextBox
+                x:Name="NameTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Unique ID" />
+            <ui:TextBox
+                x:Name="IdTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Defined in" />
+            <ui:TextBox
+                x:Name="DefinedTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Display code" />
+            <ui:TextBox
+                x:Name="DisplayCodeTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Composition" />
+            <ui:TextBox
+                x:Name="LogicTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Products" />
+            <ListView
+                x:Name="EntriesListview"
+                Height="160"
+                MouseDoubleClick="EntriesListview_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
+                        <GridViewColumn Width="60" DisplayMemberBinding="{Binding Min}" Header="Min" />
+                        <GridViewColumn Width="60" DisplayMemberBinding="{Binding Max}" Header="Max" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

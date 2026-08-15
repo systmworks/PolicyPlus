@@ -61,30 +61,6 @@
     <Compile Include="DetailAdmx.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DetailCategory.Designer.cs">
-      <DependentUpon>DetailCategory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DetailCategory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DetailPolicy.Designer.cs">
-      <DependentUpon>DetailPolicy.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DetailPolicy.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DetailProduct.Designer.cs">
-      <DependentUpon>DetailProduct.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DetailProduct.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DetailSupport.Designer.cs">
-      <DependentUpon>DetailSupport.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DetailSupport.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="EditPol.Designer.cs">
       <DependentUpon>EditPol.cs</DependentUpon>
     </Compile>
@@ -209,6 +185,18 @@
     <Compile Include="Views\FindByRegistryWindow.xaml.cs">
       <DependentUpon>FindByRegistryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DetailCategoryWindow.xaml.cs">
+      <DependentUpon>DetailCategoryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailPolicyWindow.xaml.cs">
+      <DependentUpon>DetailPolicyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailProductWindow.xaml.cs">
+      <DependentUpon>DetailProductWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DetailSupportWindow.xaml.cs">
+      <DependentUpon>DetailSupportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DownloadAdmxWindow.xaml.cs">
       <DependentUpon>DownloadAdmxWindow.xaml</DependentUpon>
     </Compile>
@@ -278,6 +266,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\DetailCategoryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DetailPolicyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DetailProductWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DetailSupportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\DownloadAdmxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -331,18 +335,6 @@
   <ItemGroup>
     <EmbeddedResource Include="DetailAdmx.resx">
       <DependentUpon>DetailAdmx.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DetailCategory.resx">
-      <DependentUpon>DetailCategory.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DetailPolicy.resx">
-      <DependentUpon>DetailPolicy.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DetailProduct.resx">
-      <DependentUpon>DetailProduct.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DetailSupport.resx">
-      <DependentUpon>DetailSupport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditPol.resx">
       <DependentUpon>EditPol.cs</DependentUpon>

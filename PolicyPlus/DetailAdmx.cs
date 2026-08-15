@@ -35,19 +35,19 @@ namespace PolicyPlus
         }
         private void LsvPolicies_DoubleClick(object sender, EventArgs e)
         {
-            My.MyProject.Forms.DetailPolicy.PresentDialog((PolicyPlusPolicy)LsvPolicies.SelectedItems[0].Tag);
+            Views.DetailPolicyWindow.PresentDialog(this, (PolicyPlusPolicy)LsvPolicies.SelectedItems[0].Tag);
         }
         private void LsvCategories_DoubleClick(object sender, EventArgs e)
         {
-            My.MyProject.Forms.DetailCategory.PresentDialog((PolicyPlusCategory)LsvCategories.SelectedItems[0].Tag);
+            Views.DetailCategoryWindow.PresentDialog(this, (PolicyPlusCategory)LsvCategories.SelectedItems[0].Tag);
         }
         private void LsvProducts_DoubleClick(object sender, EventArgs e)
         {
-            My.MyProject.Forms.DetailProduct.PresentDialog((PolicyPlusProduct)LsvProducts.SelectedItems[0].Tag);
+            Views.DetailProductWindow.PresentDialog(this, (PolicyPlusProduct)LsvProducts.SelectedItems[0].Tag);
         }
         private void LsvSupportDefinitions_DoubleClick(object sender, EventArgs e)
         {
-            My.MyProject.Forms.DetailSupport.PresentDialog((PolicyPlusSupport)LsvSupportDefinitions.SelectedItems[0].Tag);
+            Views.DetailSupportWindow.PresentDialog(this, (PolicyPlusSupport)LsvSupportDefinitions.SelectedItems[0].Tag);
         }
     }
 }

@@ -1090,11 +1090,11 @@ namespace PolicyPlus
                 }
                 else if (selPro is not null)
                 {
-                    My.MyProject.Forms.DetailProduct.PresentDialog(selPro);
+                    Views.DetailProductWindow.PresentDialog(this, selPro);
                 }
                 else if (selSup is not null)
                 {
-                    My.MyProject.Forms.DetailSupport.PresentDialog(selSup);
+                    Views.DetailSupportWindow.PresentDialog(this, selSup);
                 }
                 else
                 {
@@ -1658,11 +1658,11 @@ namespace PolicyPlus
             {
                 if (polObject is PolicyPlusCategory)
                 {
-                    My.MyProject.Forms.DetailCategory.PresentDialog((PolicyPlusCategory)polObject);
+                    Views.DetailCategoryWindow.PresentDialog(this, (PolicyPlusCategory)polObject);
                 }
                 else
                 {
-                    My.MyProject.Forms.DetailPolicy.PresentDialog((PolicyPlusPolicy)polObject);
+                    Views.DetailPolicyWindow.PresentDialog(this, (PolicyPlusPolicy)polObject);
                 }
             }
             else if (ReferenceEquals(e.ClickedItem, CmePolInspectElements))

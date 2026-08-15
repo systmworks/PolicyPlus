@@ -273,7 +273,7 @@ namespace PolicyPlus
         }
         private void PolicyDetailsButton_Click(object sender, EventArgs e)
         {
-            My.MyProject.Forms.DetailPolicy.PresentDialog(SelectedPolicy);
+            Views.DetailPolicyWindow.PresentDialog(this, SelectedPolicy);
         }
     }
 }

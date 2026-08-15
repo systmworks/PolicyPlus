@@ -1,0 +1,105 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.DetailPolicyWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Policy Details"
+    Width="460"
+    Height="480"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Policy Details" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <TextBlock Margin="0,0,0,4" Text="Name" />
+            <ui:TextBox
+                x:Name="NameTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Unique ID" />
+            <ui:TextBox
+                x:Name="IdTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Defined in" />
+            <ui:TextBox
+                x:Name="DefinedTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Display code" />
+            <ui:TextBox
+                x:Name="DisplayCodeTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Info code" />
+            <ui:TextBox
+                x:Name="InfoCodeTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Presentation code" />
+            <ui:TextBox
+                x:Name="PresentCodeTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Section" />
+            <ui:TextBox
+                x:Name="SectionTextbox"
+                Margin="0,0,0,10"
+                IsReadOnly="True" />
+            <TextBlock Margin="0,0,0,4" Text="Supported on" />
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox
+                    x:Name="SupportTextbox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
+                <ui:Button
+                    x:Name="SupportButton"
+                    Grid.Column="1"
+                    Click="SupportButton_Click"
+                    Content="Details" />
+            </Grid>
+            <TextBlock Margin="0,0,0,4" Text="Category" />
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox
+                    x:Name="CategoryTextbox"
+                    Grid.Column="0"
+                    Margin="0,0,8,0"
+                    IsReadOnly="True" />
+                <ui:Button
+                    x:Name="CategoryButton"
+                    Grid.Column="1"
+                    Click="CategoryButton_Click"
+                    Content="Details" />
+            </Grid>
+            <TextBlock Margin="0,0,0,4" Text="Template path" />
+            <ui:TextBox
+                x:Name="PathTextbox"
+                IsReadOnly="True"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>
