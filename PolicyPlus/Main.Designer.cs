@@ -131,6 +131,7 @@ namespace PolicyPlus
             PolicyObjectContext.ItemClicked += new ToolStripItemClickedEventHandler(PolicyObjectContext_ItemClicked);
             CmeCatOpen = new ToolStripMenuItem();
             CmePolEdit = new ToolStripMenuItem();
+            CmeFavoriteToggle = new ToolStripMenuItem();
             CmeAllDetails = new ToolStripMenuItem();
             CmePolInspectElements = new ToolStripMenuItem();
             CmePolSpolFragment = new ToolStripMenuItem();
@@ -559,7 +560,7 @@ namespace PolicyPlus
             // 
             // PolicyObjectContext
             // 
-            PolicyObjectContext.Items.AddRange(new ToolStripItem[] { CmeCatOpen, CmePolEdit, CmeAllDetails, CmePolInspectElements, CmePolSpolFragment });
+            PolicyObjectContext.Items.AddRange(new ToolStripItem[] { CmeCatOpen, CmePolEdit, CmeFavoriteToggle, CmeAllDetails, CmePolInspectElements, CmePolSpolFragment });
             PolicyObjectContext.Name = "PolicyObjectContext";
             PolicyObjectContext.Size = new Size(213, 114);
             // 
@@ -578,7 +579,14 @@ namespace PolicyPlus
             CmePolEdit.Size = new Size(212, 22);
             CmePolEdit.Tag = "P";
             CmePolEdit.Text = "Edit";
-            // 
+            //
+            // CmeFavoriteToggle
+            //
+            CmeFavoriteToggle.Name = "CmeFavoriteToggle";
+            CmeFavoriteToggle.Size = new Size(212, 22);
+            CmeFavoriteToggle.Tag = "P";
+            CmeFavoriteToggle.Text = "Add to Favorites";
+            //
             // CmeAllDetails
             // 
             CmeAllDetails.Name = "CmeAllDetails";
@@ -873,6 +881,7 @@ namespace PolicyPlus
         internal ContextMenuStrip PolicyObjectContext;
         internal ToolStripMenuItem CmeCatOpen;
         internal ToolStripMenuItem CmePolEdit;
+        internal ToolStripMenuItem CmeFavoriteToggle;
         internal ToolStripMenuItem CmeAllDetails;
         internal ToolStripMenuItem CmePolInspectElements;
         internal ToolStripMenuItem OnlyFilteredObjectsToolStripMenuItem;

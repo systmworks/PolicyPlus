@@ -29,6 +29,8 @@ namespace PolicyPlus
         private bool ViewFilteredOnly = false;
         private bool _isDirty = false;
         private bool _pendingRestartForColorMode = false;
+        private List<string> FavoriteIds = new List<string>();
+        private TreeNode FavoritesNode;
 
         public Main()
         {
@@ -42,6 +44,7 @@ namespace PolicyPlus
             Configuration = new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus");
             RestoreWindowBounds();
             SetColorModeMenuChecks(Conversions.ToString(Configuration.GetValue("ColorMode", "System")));
+            FavoriteIds = ((string[])Configuration.GetValue("Favorites", Array.Empty<string>())).ToList();
             if (Application.IsDarkModeEnabled)
             {
                 // Plain Panel/Label controls aren't covered by the built-in dark renderer (unlike TreeView/
@@ -141,6 +144,11 @@ namespace PolicyPlus
             void addCategory(IEnumerable<PolicyPlusCategory> CategoryList, TreeNodeCollection ParentNode) { foreach (var category in CategoryList.Where(c => ShouldShowCategoryCore(c, visibilityCache))) { var newNode = ParentNode.Add(category.UniqueID, category.DisplayName, GetImageIndexForCategory(category)); newNode.SelectedImageIndex = 3; newNode.Tag = category; CategoryNodes.Add(category, newNode); addCategory(category.Children, newNode.Nodes); } } // "Go" arrow
             addCategory(AdmxWorkspace.Categories.Values, CategoriesTree.Nodes);
             CategoriesTree.Sort();
+            // Pin a synthetic Favorites node at the top - not a real category, so it's built
+            // outside addCategory and inserted at index 0 after Sort() (which would otherwise
+            // reorder it alphabetically like any other node)
+            FavoritesNode = new TreeNode("★ Favorites");
+            CategoriesTree.Nodes.Insert(0, FavoritesNode);
             CurrentCategory = null;
             UpdateCategoryListing();
             ClearSelections();
@@ -148,6 +156,11 @@ namespace PolicyPlus
         }
         public void UpdateCategoryListing()
         {
+            if (ReferenceEquals(CategoriesTree.SelectedNode, FavoritesNode))
+            {
+                UpdateFavoritesListing();
+                return;
+            }
             // Update the right pane to include the current category's children
             var topItemIndex = default(int?);
             if (PoliciesList.TopItem is not null)
@@ -193,6 +206,31 @@ namespace PolicyPlus
                 if (CategoriesTree.SelectedNode is null || !ReferenceEquals(CategoriesTree.SelectedNode.Tag, CurrentCategory)) // Update the tree view
                 {
                     CategoriesTree.SelectedNode = CategoryNodes[CurrentCategory];
+                }
+            }
+        }
+        private void UpdateFavoritesListing()
+        {
+            // Same shape as the policy-listing half of UpdateCategoryListing, but sourced from
+            // FavoriteIds instead of a category - IDs no longer present in the current workspace
+            // are silently skipped rather than erroring
+            PoliciesList.Items.Clear();
+            var favoritePolicies = FavoriteIds
+                .Select(id => AdmxWorkspace.Policies.TryGetValue(id, out var policy) ? policy : null)
+                .Where(p => p is not null)
+                .OrderBy(p => p.DisplayName);
+            foreach (var policy in favoritePolicies)
+            {
+                var listItem = PoliciesList.Items.Add(policy.DisplayName);
+                listItem.Tag = policy;
+                listItem.ImageIndex = GetImageIndexForSetting(policy);
+                listItem.SubItems.Add(GetPolicyState(policy));
+                listItem.SubItems.Add(GetPolicyCommentText(policy));
+                if (ReferenceEquals(policy, CurrentSetting))
+                {
+                    listItem.Selected = true;
+                    listItem.Focused = true;
+                    listItem.EnsureVisible();
                 }
             }
         }
@@ -702,7 +740,7 @@ namespace PolicyPlus
         private void CategoriesTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // When the user selects a new category in the left pane
-            CurrentCategory = (PolicyPlusCategory)e.Node.Tag;
+            CurrentCategory = ReferenceEquals(e.Node, FavoritesNode) ? null : (PolicyPlusCategory)e.Node.Tag;
             UpdateCategoryListing();
             ClearSelections();
             UpdatePolicyInfo();
@@ -1372,6 +1410,10 @@ namespace PolicyPlus
                     ok = false;
                 item.Visible = ok;
             }
+            if (!showingForCategory && PolicyObjectContext.Tag is PolicyPlusPolicy policy)
+            {
+                CmeFavoriteToggle.Text = FavoriteIds.Contains(policy.UniqueID) ? "Remove from Favorites" : "Add to Favorites";
+            }
         }
         private void PolicyObjectContext_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
@@ -1385,6 +1427,15 @@ namespace PolicyPlus
             else if (ReferenceEquals(e.ClickedItem, CmePolEdit))
             {
                 ShowSettingEditor((PolicyPlusPolicy)polObject, ViewPolicyTypes);
+            }
+            else if (ReferenceEquals(e.ClickedItem, CmeFavoriteToggle))
+            {
+                string id = ((PolicyPlusPolicy)polObject).UniqueID;
+                if (!FavoriteIds.Remove(id))
+                    FavoriteIds.Add(id);
+                Configuration.SetValue("Favorites", FavoriteIds.ToArray());
+                if (ReferenceEquals(CategoriesTree.SelectedNode, FavoritesNode))
+                    UpdateCategoryListing();
             }
             else if (ReferenceEquals(e.ClickedItem, CmeAllDetails))
             {
