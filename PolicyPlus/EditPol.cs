@@ -375,7 +375,7 @@ namespace PolicyPlus
         }
         private void ButtonImport_Click(object sender, EventArgs e)
         {
-            if (My.MyProject.Forms.ImportReg.PresentDialog(EditingPol) == DialogResult.OK)
+            if (Views.ImportRegWindow.PresentDialog(this, EditingPol))
                 UpdateTree();
         }
         private void ButtonExport_Click(object sender, EventArgs e)
@@ -383,7 +383,7 @@ namespace PolicyPlus
             string branch = "";
             if (LsvPol.SelectedItems.Count > 0)
                 branch = Conversions.ToString(LsvPol.SelectedItems[0].Tag);
-            My.MyProject.Forms.ExportReg.PresentDialog(branch, EditingPol, EditingUserSource);
+            Views.ExportRegWindow.PresentDialog(this, branch, EditingPol, EditingUserSource);
         }
         private class PolValueInfo
         {

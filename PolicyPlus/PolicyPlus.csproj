@@ -85,12 +85,6 @@
     <Compile Include="DetailSupport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DownloadAdmx.Designer.cs">
-      <DependentUpon>DownloadAdmx.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DownloadAdmx.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="EditPol.Designer.cs">
       <DependentUpon>EditPol.cs</DependentUpon>
     </Compile>
@@ -109,12 +103,6 @@
     <Compile Include="EditSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExportReg.Designer.cs">
-      <DependentUpon>ExportReg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ExportReg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FilterOptions.Designer.cs">
       <DependentUpon>FilterOptions.cs</DependentUpon>
     </Compile>
@@ -125,18 +113,6 @@
       <DependentUpon>FindResults.cs</DependentUpon>
     </Compile>
     <Compile Include="FindResults.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportReg.Designer.cs">
-      <DependentUpon>ImportReg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ImportReg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ImportSpol.Designer.cs">
-      <DependentUpon>ImportSpol.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ImportSpol.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="InspectPolicyElements.Designer.cs">
@@ -193,24 +169,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="OpenAdmxFolder.Designer.cs">
-      <DependentUpon>OpenAdmxFolder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OpenAdmxFolder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OpenPol.Designer.cs">
-      <DependentUpon>OpenPol.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OpenPol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OpenUserGpo.Designer.cs">
-      <DependentUpon>OpenUserGpo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OpenUserGpo.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="OpenUserRegistry.Designer.cs">
       <DependentUpon>OpenUserRegistry.cs</DependentUpon>
     </Compile>
@@ -251,8 +209,20 @@
     <Compile Include="Views\FindByRegistryWindow.xaml.cs">
       <DependentUpon>FindByRegistryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DownloadAdmxWindow.xaml.cs">
+      <DependentUpon>DownloadAdmxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExportRegWindow.xaml.cs">
+      <DependentUpon>ExportRegWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FindByTextWindow.xaml.cs">
       <DependentUpon>FindByTextWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImportRegWindow.xaml.cs">
+      <DependentUpon>ImportRegWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImportSpolWindow.xaml.cs">
+      <DependentUpon>ImportSpolWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InspectSpolFragmentWindow.xaml.cs">
       <DependentUpon>InspectSpolFragmentWindow.xaml</DependentUpon>
@@ -260,8 +230,17 @@
     <Compile Include="Views\LanguageOptionsWindow.xaml.cs">
       <DependentUpon>LanguageOptionsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\OpenAdmxFolderWindow.xaml.cs">
+      <DependentUpon>OpenAdmxFolderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OpenPolWindow.xaml.cs">
+      <DependentUpon>OpenPolWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\OpenSectionWindow.xaml.cs">
       <DependentUpon>OpenSectionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OpenUserGpoWindow.xaml.cs">
+      <DependentUpon>OpenUserGpoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Phase0ProofWindow.xaml.cs">
       <DependentUpon>Phase0ProofWindow.xaml</DependentUpon>
@@ -299,7 +278,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\DownloadAdmxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ExportRegWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\FindByTextWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ImportRegWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ImportSpolWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -311,7 +306,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\OpenAdmxFolderWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OpenPolWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\OpenSectionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OpenUserGpoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -337,9 +344,6 @@
     <EmbeddedResource Include="DetailSupport.resx">
       <DependentUpon>DetailSupport.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DownloadAdmx.resx">
-      <DependentUpon>DownloadAdmx.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EditPol.resx">
       <DependentUpon>EditPol.cs</DependentUpon>
     </EmbeddedResource>
@@ -349,20 +353,11 @@
     <EmbeddedResource Include="EditSetting.resx">
       <DependentUpon>EditSetting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExportReg.resx">
-      <DependentUpon>ExportReg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FilterOptions.resx">
       <DependentUpon>FilterOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FindResults.resx">
       <DependentUpon>FindResults.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImportReg.resx">
-      <DependentUpon>ImportReg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ImportSpol.resx">
-      <DependentUpon>ImportSpol.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InspectPolicyElements.resx">
       <DependentUpon>InspectPolicyElements.cs</DependentUpon>
@@ -387,15 +382,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>PolicyPlus.My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OpenAdmxFolder.resx">
-      <DependentUpon>OpenAdmxFolder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OpenPol.resx">
-      <DependentUpon>OpenPol.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OpenUserGpo.resx">
-      <DependentUpon>OpenUserGpo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OpenUserRegistry.resx">
       <DependentUpon>OpenUserRegistry.cs</DependentUpon>

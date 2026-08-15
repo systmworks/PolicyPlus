@@ -111,7 +111,6 @@ namespace PolicyPlus
                 Configuration.SetValue("UserSourceType", (int)PolicyLoaderSource.LocalGpo);
                 OpenPolicyLoaders(new PolicyLoader(PolicyLoaderSource.LocalGpo, "", true), new PolicyLoader(PolicyLoaderSource.LocalGpo, "", false), true);
             }
-            My.MyProject.Forms.OpenPol.SetLastSources(compLoaderType, Conversions.ToString(compLoaderData), userLoaderType, Conversions.ToString(userLoaderData));
             // Set up the UI
             ComboAppliesTo.Text = Conversions.ToString(ComboAppliesTo.Items[0]);
             CategoriesTree.Height -= InfoStrip.ClientSize.Height;
@@ -959,16 +958,17 @@ namespace PolicyPlus
         private void OpenADMXFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Open ADMX Folder dialog and load the policy definitions
-            if (My.MyProject.Forms.OpenAdmxFolder.ShowDialog() == DialogResult.OK)
+            var openAdmxResult = Views.OpenAdmxFolderWindow.PresentDialog(this);
+            if (openAdmxResult is not null)
             {
                 try
                 {
-                    if (My.MyProject.Forms.OpenAdmxFolder.ClearWorkspace)
+                    if (openAdmxResult.Value.ClearWorkspace)
                         ClearAdmxWorkspace();
-                    DisplayAdmxLoadErrorReport(AdmxWorkspace.LoadFolder(My.MyProject.Forms.OpenAdmxFolder.SelectedFolder, GetPreferredLanguageCode()));
+                    DisplayAdmxLoadErrorReport(AdmxWorkspace.LoadFolder(openAdmxResult.Value.Folder, GetPreferredLanguageCode()));
                     // Only update the last source when successfully opening a complete source
-                    if (My.MyProject.Forms.OpenAdmxFolder.ClearWorkspace)
-                        Configuration.SetValue("AdmxSource", My.MyProject.Forms.OpenAdmxFolder.SelectedFolder);
+                    if (openAdmxResult.Value.ClearWorkspace)
+                        Configuration.SetValue("AdmxSource", openAdmxResult.Value.Folder);
                 }
                 catch (Exception ex)
                 {
@@ -1105,9 +1105,10 @@ namespace PolicyPlus
         private void OpenPolicyResourcesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Open Policy Resources dialog and open its loaders
-            if (My.MyProject.Forms.OpenPol.ShowDialog() == DialogResult.OK)
+            var openPolResult = Views.OpenPolWindow.PresentDialog(this, CompPolicyLoader.Source, CompPolicyLoader.LoaderData, UserPolicyLoader.Source, UserPolicyLoader.LoaderData);
+            if (openPolResult is not null)
             {
-                OpenPolicyLoaders(My.MyProject.Forms.OpenPol.SelectedUser, My.MyProject.Forms.OpenPol.SelectedComputer, false);
+                OpenPolicyLoaders(openPolResult.Value.User, openPolResult.Value.Computer, false);
                 MoveToVisibleCategoryAndReload();
             }
         }
@@ -1421,9 +1422,9 @@ namespace PolicyPlus
         private void ImportSemanticPolicyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Open the SPOL import dialog and apply the data
-            if (My.MyProject.Forms.ImportSpol.ShowDialog() == DialogResult.OK)
+            var spol = Views.ImportSpolWindow.PresentDialog(this);
+            if (spol is not null)
             {
-                var spol = My.MyProject.Forms.ImportSpol.Spol;
                 int fails = spol.ApplyAll(AdmxWorkspace, UserPolicySource, CompPolicySource, UserComments, CompComments);
                 _isDirty = true;
                 MoveToVisibleCategoryAndReload();
@@ -1492,15 +1493,13 @@ namespace PolicyPlus
         private void AcquireADMXFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Acquire ADMX Files dialog and load the new ADMX files
-            if (My.MyProject.Forms.DownloadAdmx.ShowDialog() == DialogResult.OK)
+            var newAdmxFolder = Views.DownloadAdmxWindow.PresentDialog(this);
+            if (!string.IsNullOrEmpty(newAdmxFolder))
             {
-                if (!string.IsNullOrEmpty(My.MyProject.Forms.DownloadAdmx.NewPolicySourceFolder))
-                {
-                    ClearAdmxWorkspace();
-                    DisplayAdmxLoadErrorReport(AdmxWorkspace.LoadFolder(My.MyProject.Forms.DownloadAdmx.NewPolicySourceFolder, GetPreferredLanguageCode()));
-                    Configuration.SetValue("AdmxSource", My.MyProject.Forms.DownloadAdmx.NewPolicySourceFolder);
-                    PopulateAdmxUi();
-                }
+                ClearAdmxWorkspace();
+                DisplayAdmxLoadErrorReport(AdmxWorkspace.LoadFolder(newAdmxFolder, GetPreferredLanguageCode()));
+                Configuration.SetValue("AdmxSource", newAdmxFolder);
+                PopulateAdmxUi();
             }
         }
         private void LoadedADMXFilesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1545,7 +1544,7 @@ namespace PolicyPlus
             if (exportRegSection is not null)
             {
                 var source = exportRegSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
-                My.MyProject.Forms.ExportReg.PresentDialog("", GetOrCreatePolFromPolicySource(source), exportRegSection == AdmxPolicySection.User);
+                Views.ExportRegWindow.PresentDialog(this, "", GetOrCreatePolFromPolicySource(source), exportRegSection == AdmxPolicySection.User);
             }
         }
         private void ImportREGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1554,7 +1553,7 @@ namespace PolicyPlus
             if (importRegSection is not null)
             {
                 var source = importRegSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
-                if (My.MyProject.Forms.ImportReg.PresentDialog(source) == DialogResult.OK)
+                if (Views.ImportRegWindow.PresentDialog(this, source))
                 {
                     _isDirty = true;
                     MoveToVisibleCategoryAndReload();

@@ -125,29 +125,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public DownloadAdmx m_DownloadAdmx;
-
-            public DownloadAdmx DownloadAdmx
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_DownloadAdmx = Create__Instance__(m_DownloadAdmx);
-                    return m_DownloadAdmx;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_DownloadAdmx))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_DownloadAdmx);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public EditPol m_EditPol;
 
             public EditPol EditPol
@@ -217,29 +194,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public ExportReg m_ExportReg;
-
-            public ExportReg ExportReg
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_ExportReg = Create__Instance__(m_ExportReg);
-                    return m_ExportReg;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_ExportReg))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_ExportReg);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public FilterOptions m_FilterOptions;
 
             public FilterOptions FilterOptions
@@ -281,52 +235,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_FindResults);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public ImportReg m_ImportReg;
-
-            public ImportReg ImportReg
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_ImportReg = Create__Instance__(m_ImportReg);
-                    return m_ImportReg;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_ImportReg))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_ImportReg);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public ImportSpol m_ImportSpol;
-
-            public ImportSpol ImportSpol
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_ImportSpol = Create__Instance__(m_ImportSpol);
-                    return m_ImportSpol;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_ImportSpol))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_ImportSpol);
                 }
             }
 
@@ -465,75 +373,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_Main);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public OpenAdmxFolder m_OpenAdmxFolder;
-
-            public OpenAdmxFolder OpenAdmxFolder
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_OpenAdmxFolder = Create__Instance__(m_OpenAdmxFolder);
-                    return m_OpenAdmxFolder;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_OpenAdmxFolder))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_OpenAdmxFolder);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public OpenPol m_OpenPol;
-
-            public OpenPol OpenPol
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_OpenPol = Create__Instance__(m_OpenPol);
-                    return m_OpenPol;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_OpenPol))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_OpenPol);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public OpenUserGpo m_OpenUserGpo;
-
-            public OpenUserGpo OpenUserGpo
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_OpenUserGpo = Create__Instance__(m_OpenUserGpo);
-                    return m_OpenUserGpo;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_OpenUserGpo))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_OpenUserGpo);
                 }
             }
 

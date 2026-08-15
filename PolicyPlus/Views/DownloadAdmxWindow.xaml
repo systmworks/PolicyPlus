@@ -1,0 +1,72 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.DownloadAdmxWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Acquire ADMX Files"
+    Width="460"
+    Height="230"
+    Closing="Window_Closing"
+    ExtendsContentIntoTitleBar="True"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Acquire ADMX Files" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <TextBlock Margin="0,0,0,12" Text="Download the full set of policy definitions (ADMX files) from Microsoft." />
+            <TextBlock Margin="0,0,0,4" Text="Destination folder" />
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox
+                    x:Name="TextDestFolder"
+                    Grid.Column="0"
+                    Margin="0,0,8,0" />
+                <ui:Button
+                    x:Name="ButtonBrowse"
+                    Grid.Column="1"
+                    Click="ButtonBrowse_Click"
+                    Content="Browse" />
+            </Grid>
+            <ProgressBar
+                x:Name="ProgressSpinner"
+                Height="4"
+                Margin="0,0,0,4"
+                IsIndeterminate="False" />
+            <TextBlock
+                x:Name="LabelProgress"
+                Margin="0,4,0,0"
+                Visibility="Collapsed" />
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    x:Name="ButtonClose"
+                    Margin="0,0,8,0"
+                    Click="ButtonClose_Click"
+                    Content="Close" />
+                <ui:Button
+                    x:Name="ButtonStart"
+                    Appearance="Primary"
+                    Click="ButtonStart_Click"
+                    Content="Begin" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>
