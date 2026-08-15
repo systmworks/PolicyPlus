@@ -63,6 +63,7 @@ namespace PolicyPlus
             Configuration = new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus");
             Text = $"Policy Plus {VersionHolder.AppVersion}";
             RestoreWindowBounds();
+            RestorePaneLayout();
             SetColorModeMenuChecks(Conversions.ToString(Configuration.GetValue("ColorMode", "System")));
             FavoriteIds = ((string[])Configuration.GetValue("Favorites", Array.Empty<string>())).ToList();
             if (Application.IsDarkModeEnabled)
@@ -1310,9 +1311,39 @@ namespace PolicyPlus
             Configuration.SetValue("WindowHeight", bounds.Height);
             Configuration.SetValue("WindowMaximized", maximized ? 1 : 0);
         }
+        private void RestorePaneLayout()
+        {
+            // Only apply a saved distance if it still fits the (possibly since-changed) window/monitor -
+            // SplitContainer throws if SplitterDistance is set outside its current valid range
+            int treeWidth = Conversions.ToInteger(Configuration.GetValue("TreePaneWidth", 0));
+            if (treeWidth > 0 && treeWidth < SplitContainer.ClientSize.Width - SplitContainer.Panel2MinSize)
+                SplitContainer.SplitterDistance = treeWidth;
+            int descWidth = Conversions.ToInteger(Configuration.GetValue("DescriptionPaneWidth", 0));
+            if (descWidth > 0 && descWidth < DescriptionSplitContainer.ClientSize.Width - DescriptionSplitContainer.Panel2MinSize)
+                DescriptionSplitContainer.SplitterDistance = descWidth;
+            // Column widths have no such constraint - any positive value is valid
+            int stateWidth = Conversions.ToInteger(Configuration.GetValue("ColumnWidthState", 0));
+            if (stateWidth > 0)
+                PoliciesList.Columns[1].Width = stateWidth;
+            int commentWidth = Conversions.ToInteger(Configuration.GetValue("ColumnWidthComment", 0));
+            if (commentWidth > 0)
+                PoliciesList.Columns[2].Width = commentWidth;
+            int idWidth = Conversions.ToInteger(Configuration.GetValue("ColumnWidthId", 0));
+            if (idWidth > 0)
+                PoliciesList.Columns[3].Width = idWidth;
+        }
+        private void SavePaneLayout()
+        {
+            Configuration.SetValue("TreePaneWidth", SplitContainer.SplitterDistance);
+            Configuration.SetValue("DescriptionPaneWidth", DescriptionSplitContainer.SplitterDistance);
+            Configuration.SetValue("ColumnWidthState", PoliciesList.Columns[1].Width);
+            Configuration.SetValue("ColumnWidthComment", PoliciesList.Columns[2].Width);
+            Configuration.SetValue("ColumnWidthId", PoliciesList.Columns[3].Width);
+        }
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveWindowBounds();
+            SavePaneLayout();
             if (!_isDirty)
                 return;
             var result = MsgBoxCompat.Show("There are unsaved changes. Save before closing?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
