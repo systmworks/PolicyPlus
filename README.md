@@ -51,11 +51,12 @@ To change a policy for a different user, modify their Registry directly by openi
 Policy Plus is usable on all editions. It can load and save all policy sources successfully. More features may be still to come, though.
 
 ## Download
-This fork doesn't currently publish tagged releases. Every push to `master` is built
-automatically by [GitHub Actions](https://github.com/systmworks/PolicyPlus/actions/workflows/latest.yml) —
-open the latest successful "Build Latest" run and download the **Policy Plus (Windows)**
-artifact from the Summary page. It's built straight from the code in this repo, so it's
-only as tested as the commit it came from.
+Tagged releases (e.g. `v1.19`) are published automatically on the
+[Releases page](https://github.com/systmworks/PolicyPlus/releases) whenever a push changes
+the application code. Two downloads are available: **PolicyPlus.exe** is self-contained (no
+separate .NET runtime install needed — just download and run); **PolicyPlus-framework-dependent.zip**
+is much smaller but requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
+already installed.
 
 **N.B.** A few antivirus programs incorrectly flag Policy Plus as malware, and since the
 executable isn't code-signed, Windows SmartScreen will show an "unrecognized app" warning
