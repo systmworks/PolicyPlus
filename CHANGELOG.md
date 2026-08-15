@@ -5,13 +5,6 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
-## [1.26] - 2026-08-16
-
-### Added
-- Scaffolding for an in-progress WPF-UI migration: the project now builds with both
-  WinForms and WPF side by side, with a live-theming service and a throwaway proof-of-concept
-  window reachable from the Help menu. No user-facing UI has changed yet.
-
 ## [1.25] - 2026-08-15
 
 ### Added
