@@ -1,30 +1,9 @@
 # Changelog
 
-All notable changes to this fork are documented here, grouped per release using
-[Keep a Changelog](https://keepachangelog.com/)'s categories — **Added**, **Changed**,
-**Deprecated**, **Removed**, **Fixed**, **Security** (only categories that apply to a given
-release are shown). Version numbers are custom to this fork (see note below). Each entry is
-1-2 lines with a commit hash in parentheses — that commit has the full technical detail
-(root cause, alternatives considered, verification steps), so it isn't duplicated here.
-
-Entries for issues that were investigated or considered but not shipped (e.g. "declined,"
-"no bug found") aren't listed here — see [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) for that
-tracking instead. This file is strictly "what changed."
-
-## Versioning note
-
-Upstream ([Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus)) does not state a
-meaningful semantic version. Its `AssemblyVersion`/`AssemblyFileVersion` are hardcoded to
-`1.0.0.0` and never bumped; the version shown at runtime comes only from `version.bat`
-embedding `git describe --always` into `Version.cs` at build time — i.e. upstream tracks
-itself by commit, not by release number. For this fork, upstream's state at fork time is
-treated as **1.0**, and it increments by **0.1** with every push to `master` that changes
-source code (not per commit within that push, and not for doc/changelog-only pushes) — this
-version number is bumped as one atomic step together with writing that push's changelog
-entry, before running `version.bat` and committing. `version.bat` reads the `## [X.Y]`
-header at the top of this file as the single source of truth for every displayed version:
-the compiled EXE's `AssemblyVersion`/`AssemblyFileVersion` (Windows file properties), the
-title bar, and the About dialog are all derived from this one number.
+All notable changes, grouped by [Keep a Changelog](https://keepachangelog.com/) category,
+each entry linking to its commit for full detail. Version numbers are custom to this fork
+(not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
+per release.
 
 ## [1.19] - 2026-08-15
 
