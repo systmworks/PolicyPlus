@@ -3,7 +3,7 @@ namespace PolicyPlus
 {
     static class VersionHolder
     {
-        public const string Version = "9b620e9";
+        public const string Version = "5ceb73e";
         public const string AppVersion = "1.19";
     }
 }
