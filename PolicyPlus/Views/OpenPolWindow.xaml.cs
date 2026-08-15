@@ -109,9 +109,10 @@ namespace PolicyPlus.Views
 
         private void UserBrowseRegistryButton_Click(object sender, RoutedEventArgs e)
         {
-            if (My.MyProject.Forms.OpenUserRegistry.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var hivePath = OpenUserRegistryWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            if (hivePath is not null)
             {
-                UserHivePathTextbox.Text = My.MyProject.Forms.OpenUserRegistry.SelectedFilePath;
+                UserHivePathTextbox.Text = hivePath;
             }
         }
 

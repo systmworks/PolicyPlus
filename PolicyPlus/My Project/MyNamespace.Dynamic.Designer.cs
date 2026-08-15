@@ -102,29 +102,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public FindResults m_FindResults;
-
-            public FindResults FindResults
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_FindResults = Create__Instance__(m_FindResults);
-                    return m_FindResults;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_FindResults))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_FindResults);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public InspectPolicyElements m_InspectPolicyElements;
 
             public InspectPolicyElements InspectPolicyElements
@@ -189,29 +166,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_Main);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public OpenUserRegistry m_OpenUserRegistry;
-
-            public OpenUserRegistry OpenUserRegistry
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_OpenUserRegistry = Create__Instance__(m_OpenUserRegistry);
-                    return m_OpenUserRegistry;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_OpenUserRegistry))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_OpenUserRegistry);
                 }
             }
 

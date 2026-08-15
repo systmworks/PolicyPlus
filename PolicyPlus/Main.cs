@@ -673,18 +673,11 @@ namespace PolicyPlus
         public void ShowSearchDialog(Func<PolicyPlusPolicy, bool> Searcher)
         {
             // Show the search dialog and make it start a search if appropriate
-            DialogResult result;
-            if (Searcher is null)
+            var selPol = Searcher is null
+                ? Views.FindResultsWindow.PresentDialog(this)
+                : Views.FindResultsWindow.PresentDialogStartSearch(this, AdmxWorkspace, Searcher);
+            if (selPol is not null)
             {
-                result = My.MyProject.Forms.FindResults.PresentDialog();
-            }
-            else
-            {
-                result = My.MyProject.Forms.FindResults.PresentDialogStartSearch(AdmxWorkspace, Searcher);
-            }
-            if (result == DialogResult.OK)
-            {
-                var selPol = My.MyProject.Forms.FindResults.SelectedPolicy;
                 ShowSettingEditor(selPol, ViewPolicyTypes);
                 FocusPolicy(selPol);
             }
@@ -693,7 +686,7 @@ namespace PolicyPlus
         {
             // Clear out all the per-workspace bookkeeping
             AdmxWorkspace = new AdmxBundle();
-            My.MyProject.Forms.FindResults.ClearSearch();
+            Views.FindResultsWindow.ClearSearch();
         }
         public void FocusPolicy(PolicyPlusPolicy Policy)
         {
@@ -1271,7 +1264,7 @@ namespace PolicyPlus
             // Move to the next policy in the search results
             do
             {
-                var nextPol = My.MyProject.Forms.FindResults.NextPolicy();
+                var nextPol = Views.FindResultsWindow.NextPolicy();
                 if (nextPol is null)
                 {
                     MsgBoxCompat.Show("There are no more results that match the filter.", MessageBoxButtons.OK, MessageBoxIcon.Information);

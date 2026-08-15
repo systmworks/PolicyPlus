@@ -1,0 +1,84 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.FindResultsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Search Results"
+    Width="440"
+    Height="320"
+    MinWidth="360"
+    MinHeight="240"
+    Closing="Window_Closing"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Search Results" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ProgressBar
+                    x:Name="SearchProgress"
+                    Grid.Column="0"
+                    Height="18"
+                    Margin="0,0,8,0" />
+                <ui:Button
+                    x:Name="StopButton"
+                    Grid.Column="1"
+                    Click="StopButton_Click"
+                    Content="Stop" />
+            </Grid>
+
+            <TextBlock x:Name="ProgressLabel" Grid.Row="1" Margin="0,0,0,8" Text="Results: 0 (searching)" />
+
+            <ListView
+                x:Name="ResultsListview"
+                Grid.Row="2"
+                Margin="0,0,0,8"
+                MouseDoubleClick="GoClicked">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="220" DisplayMemberBinding="{Binding Title}" Header="Title" />
+                        <GridViewColumn Width="140" DisplayMemberBinding="{Binding Category}" Header="Category" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <StackPanel
+                Grid.Row="3"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    Margin="0,0,8,0"
+                    Click="CloseButton_Click"
+                    Content="Close"
+                    IsCancel="True" />
+                <ui:Button
+                    Appearance="Primary"
+                    Click="GoClicked"
+                    Content="Go"
+                    IsDefault="True" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

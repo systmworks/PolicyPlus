@@ -79,12 +79,6 @@
     <Compile Include="FilterOptions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FindResults.Designer.cs">
-      <DependentUpon>FindResults.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FindResults.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="InspectPolicyElements.Designer.cs">
       <DependentUpon>InspectPolicyElements.cs</DependentUpon>
     </Compile>
@@ -120,12 +114,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="OpenUserRegistry.Designer.cs">
-      <DependentUpon>OpenUserRegistry.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OpenUserRegistry.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PInvoke.cs" />
     <Compile Include="PolicyLoader.cs" />
@@ -184,6 +172,12 @@
     </Compile>
     <Compile Include="Views\FindByTextWindow.xaml.cs">
       <DependentUpon>FindByTextWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FindResultsWindow.xaml.cs">
+      <DependentUpon>FindResultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OpenUserRegistryWindow.xaml.cs">
+      <DependentUpon>OpenUserRegistryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ImportRegWindow.xaml.cs">
       <DependentUpon>ImportRegWindow.xaml</DependentUpon>
@@ -286,6 +280,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\FindResultsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OpenUserRegistryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ImportRegWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -349,9 +351,6 @@
     <EmbeddedResource Include="FilterOptions.resx">
       <DependentUpon>FilterOptions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FindResults.resx">
-      <DependentUpon>FindResults.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InspectPolicyElements.resx">
       <DependentUpon>InspectPolicyElements.cs</DependentUpon>
     </EmbeddedResource>
@@ -366,9 +365,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>PolicyPlus.My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OpenUserRegistry.resx">
-      <DependentUpon>OpenUserRegistry.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 
