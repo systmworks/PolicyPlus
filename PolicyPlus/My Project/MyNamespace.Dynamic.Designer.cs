@@ -10,29 +10,6 @@ namespace PolicyPlus.My
         {
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public DetailAdmx m_DetailAdmx;
-
-            public DetailAdmx DetailAdmx
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_DetailAdmx = Create__Instance__(m_DetailAdmx);
-                    return m_DetailAdmx;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_DetailAdmx))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_DetailAdmx);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public EditPol m_EditPol;
 
             public EditPol EditPol
@@ -189,75 +166,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_ListEditor);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public LoadedAdmx m_LoadedAdmx;
-
-            public LoadedAdmx LoadedAdmx
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_LoadedAdmx = Create__Instance__(m_LoadedAdmx);
-                    return m_LoadedAdmx;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_LoadedAdmx))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_LoadedAdmx);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public LoadedProducts m_LoadedProducts;
-
-            public LoadedProducts LoadedProducts
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_LoadedProducts = Create__Instance__(m_LoadedProducts);
-                    return m_LoadedProducts;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_LoadedProducts))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_LoadedProducts);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public LoadedSupportDefinitions m_LoadedSupportDefinitions;
-
-            public LoadedSupportDefinitions LoadedSupportDefinitions
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_LoadedSupportDefinitions = Create__Instance__(m_LoadedSupportDefinitions);
-                    return m_LoadedSupportDefinitions;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_LoadedSupportDefinitions))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_LoadedSupportDefinitions);
                 }
             }
 

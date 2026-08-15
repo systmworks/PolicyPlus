@@ -1504,15 +1504,15 @@ namespace PolicyPlus
         }
         private void LoadedADMXFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            My.MyProject.Forms.LoadedAdmx.PresentDialog(AdmxWorkspace);
+            Views.LoadedAdmxWindow.PresentDialog(this, AdmxWorkspace);
         }
         private void AllSupportDefinitionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            My.MyProject.Forms.LoadedSupportDefinitions.PresentDialog(AdmxWorkspace);
+            Views.LoadedSupportDefinitionsWindow.PresentDialog(this, AdmxWorkspace);
         }
         private void AllProductsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            My.MyProject.Forms.LoadedProducts.PresentDialog(AdmxWorkspace);
+            Views.LoadedProductsWindow.PresentDialog(this, AdmxWorkspace);
         }
         private void EditRawPOLToolStripMenuItem_Click(object sender, EventArgs e)
         {

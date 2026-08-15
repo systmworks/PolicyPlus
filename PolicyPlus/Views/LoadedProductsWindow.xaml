@@ -1,0 +1,91 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.LoadedProductsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="All Products"
+    Width="460"
+    Height="560"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="All Products" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Margin="0,0,0,4" Text="Top-level products" />
+            <ListView
+                x:Name="LsvTopLevelProducts"
+                Grid.Row="1"
+                Margin="0,0,0,8"
+                KeyDown="ListView_KeyDown"
+                MouseDoubleClick="LsvTopLevelProducts_MouseDoubleClick"
+                SelectionChanged="LsvTopLevelProducts_SelectionChanged">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="300" DisplayMemberBinding="{Binding Name}" Header="Name" />
+                        <GridViewColumn Width="70" DisplayMemberBinding="{Binding Children}" Header="Children" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <TextBlock x:Name="LabelMajorVersion" Grid.Row="2" Margin="0,0,0,4" Text="Select a product to show its major versions" />
+            <ListView
+                x:Name="LsvMajorVersions"
+                Grid.Row="3"
+                Margin="0,0,0,8"
+                KeyDown="ListView_KeyDown"
+                MouseDoubleClick="LsvMajorVersions_MouseDoubleClick"
+                SelectionChanged="LsvMajorVersions_SelectionChanged">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
+                        <GridViewColumn Width="70" DisplayMemberBinding="{Binding Version}" Header="Version" />
+                        <GridViewColumn Width="70" DisplayMemberBinding="{Binding Children}" Header="Children" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <TextBlock x:Name="LabelMinorVersion" Grid.Row="4" Margin="0,0,0,4" Text="Select a major version to show its minor versions" />
+            <ListView
+                x:Name="LsvMinorVersions"
+                Grid.Row="5"
+                Margin="0,0,0,8"
+                KeyDown="ListView_KeyDown"
+                MouseDoubleClick="LsvMinorVersions_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="300" DisplayMemberBinding="{Binding Name}" Header="Name" />
+                        <GridViewColumn Width="70" DisplayMemberBinding="{Binding Version}" Header="Version" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <StackPanel
+                Grid.Row="6"
+                HorizontalAlignment="Right">
+                <ui:Button Click="ButtonClose_Click" Content="Close" IsCancel="True" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

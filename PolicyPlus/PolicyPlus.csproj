@@ -55,12 +55,6 @@
     <Compile Include="CmtxFile.cs" />
     <Compile Include="CompiledStructures.cs" />
     <Compile Include="ConfigurationStorage.cs" />
-    <Compile Include="DetailAdmx.Designer.cs">
-      <DependentUpon>DetailAdmx.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DetailAdmx.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="EditPol.Designer.cs">
       <DependentUpon>EditPol.cs</DependentUpon>
     </Compile>
@@ -101,24 +95,6 @@
       <DependentUpon>ListEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ListEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadedAdmx.Designer.cs">
-      <DependentUpon>LoadedAdmx.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadedAdmx.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadedProducts.Designer.cs">
-      <DependentUpon>LoadedProducts.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadedProducts.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoadedSupportDefinitions.Designer.cs">
-      <DependentUpon>LoadedSupportDefinitions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LoadedSupportDefinitions.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.cs">
@@ -185,6 +161,9 @@
     <Compile Include="Views\FindByRegistryWindow.xaml.cs">
       <DependentUpon>FindByRegistryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DetailAdmxWindow.xaml.cs">
+      <DependentUpon>DetailAdmxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DetailCategoryWindow.xaml.cs">
       <DependentUpon>DetailCategoryWindow.xaml</DependentUpon>
     </Compile>
@@ -217,6 +196,15 @@
     </Compile>
     <Compile Include="Views\LanguageOptionsWindow.xaml.cs">
       <DependentUpon>LanguageOptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoadedAdmxWindow.xaml.cs">
+      <DependentUpon>LoadedAdmxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoadedProductsWindow.xaml.cs">
+      <DependentUpon>LoadedProductsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoadedSupportDefinitionsWindow.xaml.cs">
+      <DependentUpon>LoadedSupportDefinitionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OpenAdmxFolderWindow.xaml.cs">
       <DependentUpon>OpenAdmxFolderWindow.xaml</DependentUpon>
@@ -266,6 +254,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\DetailAdmxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\DetailCategoryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -310,6 +302,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\LoadedAdmxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoadedProductsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoadedSupportDefinitionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\OpenAdmxFolderWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -333,9 +337,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="DetailAdmx.resx">
-      <DependentUpon>DetailAdmx.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EditPol.resx">
       <DependentUpon>EditPol.cs</DependentUpon>
     </EmbeddedResource>
@@ -356,15 +357,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ListEditor.resx">
       <DependentUpon>ListEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadedAdmx.resx">
-      <DependentUpon>LoadedAdmx.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadedProducts.resx">
-      <DependentUpon>LoadedProducts.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoadedSupportDefinitions.resx">
-      <DependentUpon>LoadedSupportDefinitions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

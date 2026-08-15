@@ -1,0 +1,53 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.LoadedAdmxWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Loaded ADMX Files"
+    Width="560"
+    Height="360"
+    MinWidth="420"
+    MinHeight="260"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Loaded ADMX Files" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ListView
+                x:Name="LsvAdmx"
+                Grid.Row="0"
+                MouseDoubleClick="LsvAdmx_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="120" DisplayMemberBinding="{Binding FileTitle}" Header="File" />
+                        <GridViewColumn Width="260" DisplayMemberBinding="{Binding Folder}" Header="Folder" />
+                        <GridViewColumn Width="150" DisplayMemberBinding="{Binding Namespace}" Header="Namespace" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <StackPanel
+                Grid.Row="1"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Right">
+                <ui:Button Click="ButtonClose_Click" Content="Close" IsCancel="True" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
