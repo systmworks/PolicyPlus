@@ -1145,7 +1145,7 @@ namespace PolicyPlus
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show author and version information if it was compiled into the program
-            string about = $"Policy Plus by Ben Nordick.{Constants.vbCrLf}{Constants.vbCrLf}Available on GitHub: Fleex255/PolicyPlus.";
+            string about = $"Policy Plus, maintained by Darren Milne, originally created by Ben Nordick.{Constants.vbCrLf}{Constants.vbCrLf}Available on GitHub: systmworks/PolicyPlus.";
             if (!string.IsNullOrEmpty(VersionHolder.Version.Trim()))
                 about += $" Version: {VersionHolder.Version.Trim()}.";
             MsgBoxCompat.Show(about, MessageBoxButtons.OK, MessageBoxIcon.Information);
