@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # needed to publish the "latest" release below
+  contents: write # needed to publish the version-tagged release below
 
 jobs:
   BuildLatest:
@@ -19,9 +19,12 @@ jobs:
           fetch-depth: 0
 
       - name: Embed version
+        id: version
         run: |
           cd $env:GITHUB_WORKSPACE
           cmd /c version.bat
+          $appVersion = (Select-String -Path "PolicyPlus\Version.cs" -Pattern 'AppVersion = "(?<v>[^"]+)"').Matches[0].Groups['v'].Value
+          echo "app_version=$appVersion" >> $env:GITHUB_OUTPUT
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -57,17 +60,16 @@ jobs:
       - name: Zip framework-dependent build
         run: Compress-Archive -Path "$env:GITHUB_WORKSPACE\Compiled\*" -DestinationPath "$env:GITHUB_WORKSPACE\PolicyPlus-framework-dependent.zip"
 
-      - name: Publish "latest" release
+      - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: Latest build (${{ github.sha }})
+          tag_name: v${{ steps.version.outputs.app_version }}
+          name: v${{ steps.version.outputs.app_version }}
           body: >
-            Automated build from the latest commit on master (${{ github.sha }}).
-            Two downloads: PolicyPlus.exe is self-contained (no .NET runtime install
-            required, just download and run, ~111MB); PolicyPlus-framework-dependent.zip
-            is much smaller but requires .NET 10 Desktop Runtime already installed. This
-            release is overwritten on every push to master.
+            Built from commit ${{ github.sha }}. Two downloads: PolicyPlus.exe is
+            self-contained (no .NET runtime install required, just download and run,
+            ~111MB); PolicyPlus-framework-dependent.zip is much smaller but requires
+            .NET 10 Desktop Runtime already installed.
           files: |
             publish/PolicyPlus.exe
             PolicyPlus-framework-dependent.zip
