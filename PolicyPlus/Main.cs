@@ -1455,9 +1455,10 @@ namespace PolicyPlus
                         MsgBoxCompat.Show("The POL file could not be loaded.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return;
                     }
-                    if (My.MyProject.Forms.OpenSection.PresentDialog(true, true) == DialogResult.OK)
+                    var importSection = Views.OpenSectionWindow.PresentDialog(this, true, true);
+                    if (importSection is not null)
                     {
-                        var section = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.User ? UserPolicySource : CompPolicySource;
+                        var section = importSection == AdmxPolicySection.User ? UserPolicySource : CompPolicySource;
                         pol.Apply(section);
                         _isDirty = true;
                         MoveToVisibleCategoryAndReload();
@@ -1472,9 +1473,10 @@ namespace PolicyPlus
             using (var sfd = new System.Windows.Forms.SaveFileDialog())
             {
                 sfd.Filter = "POL files|*.pol";
-                if (sfd.ShowDialog() == DialogResult.OK && My.MyProject.Forms.OpenSection.PresentDialog(true, true) == DialogResult.OK)
+                AdmxPolicySection? exportSection = sfd.ShowDialog() == DialogResult.OK ? Views.OpenSectionWindow.PresentDialog(this, true, true) : null;
+                if (exportSection is not null)
                 {
-                    var section = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
+                    var section = exportSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
                     try
                     {
                         GetOrCreatePolFromPolicySource(section).Save(sfd.FileName);
@@ -1528,9 +1530,10 @@ namespace PolicyPlus
                     return;
                 Configuration.SetValue("EditPolDangerAcknowledged", 1);
             }
-            if (My.MyProject.Forms.OpenSection.PresentDialog(userIsPol, compIsPol) == DialogResult.OK)
+            var editPolSection = Views.OpenSectionWindow.PresentDialog(this, userIsPol, compIsPol);
+            if (editPolSection is not null)
             {
-                My.MyProject.Forms.EditPol.PresentDialog(PolicyIcons, (PolFile)(My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource), My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.User);
+                My.MyProject.Forms.EditPol.PresentDialog(PolicyIcons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource), editPolSection == AdmxPolicySection.User);
                 // EditPol mutates the PolFile in place while open, regardless of how its window is closed
                 _isDirty = true;
             }
@@ -1538,17 +1541,19 @@ namespace PolicyPlus
         }
         private void ExportREGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (My.MyProject.Forms.OpenSection.PresentDialog(true, true) == DialogResult.OK)
+            var exportRegSection = Views.OpenSectionWindow.PresentDialog(this, true, true);
+            if (exportRegSection is not null)
             {
-                var source = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
-                My.MyProject.Forms.ExportReg.PresentDialog("", GetOrCreatePolFromPolicySource(source), My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.User);
+                var source = exportRegSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
+                My.MyProject.Forms.ExportReg.PresentDialog("", GetOrCreatePolFromPolicySource(source), exportRegSection == AdmxPolicySection.User);
             }
         }
         private void ImportREGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (My.MyProject.Forms.OpenSection.PresentDialog(true, true) == DialogResult.OK)
+            var importRegSection = Views.OpenSectionWindow.PresentDialog(this, true, true);
+            if (importRegSection is not null)
             {
-                var source = My.MyProject.Forms.OpenSection.SelectedSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
+                var source = importRegSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource;
                 if (My.MyProject.Forms.ImportReg.PresentDialog(source) == DialogResult.OK)
                 {
                     _isDirty = true;
@@ -1558,9 +1563,10 @@ namespace PolicyPlus
         }
         private void SetADMLLanguageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (My.MyProject.Forms.LanguageOptions.PresentDialog(GetPreferredLanguageCode()) == DialogResult.OK)
+            var newLanguage = Views.LanguageOptionsWindow.PresentDialog(this, GetPreferredLanguageCode());
+            if (newLanguage is not null)
             {
-                Configuration.SetValue("LanguageCode", My.MyProject.Forms.LanguageOptions.NewLanguage);
+                Configuration.SetValue("LanguageCode", newLanguage);
                 if (MsgBoxCompat.Show("Language changes will take effect when ADML files are next loaded. Would you like to reload the workspace now?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     ClearAdmxWorkspace();

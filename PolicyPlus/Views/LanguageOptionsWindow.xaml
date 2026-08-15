@@ -1,0 +1,47 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.LanguageOptionsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Language Options"
+    Width="360"
+    Height="220"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="0,40,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Language Options" />
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="16"
+            VerticalAlignment="Top">
+            <TextBlock
+                Margin="0,0,0,12"
+                Text="Each ADMX policy definitions file may have multiple corresponding ADML language-specific files. This setting controls which language's ADML file Policy Plus will look for first."
+                TextWrapping="Wrap" />
+            <TextBlock Margin="0,0,0,4" Text="Preferred ADML language code" />
+            <ui:TextBox x:Name="TextAdmlLanguage" />
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    Appearance="Primary"
+                    Click="ButtonOK_Click"
+                    Content="OK"
+                    IsDefault="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

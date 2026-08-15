@@ -355,29 +355,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public LanguageOptions m_LanguageOptions;
-
-            public LanguageOptions LanguageOptions
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_LanguageOptions = Create__Instance__(m_LanguageOptions);
-                    return m_LanguageOptions;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_LanguageOptions))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_LanguageOptions);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public ListEditor m_ListEditor;
 
             public ListEditor ListEditor
@@ -534,29 +511,6 @@ namespace PolicyPlus.My
                     if (value is not null)
                         throw new ArgumentException("Property can only be set to Nothing");
                     Dispose__Instance__(ref m_OpenPol);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public OpenSection m_OpenSection;
-
-            public OpenSection OpenSection
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_OpenSection = Create__Instance__(m_OpenSection);
-                    return m_OpenSection;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_OpenSection))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_OpenSection);
                 }
             }
 
