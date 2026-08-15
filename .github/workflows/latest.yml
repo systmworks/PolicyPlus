@@ -35,7 +35,7 @@ jobs:
         run: dotnet test $env:GITHUB_WORKSPACE\PolicyPlus\PolicyPlus.Tests\PolicyPlus.Tests.csproj -c Release --no-build
 
       - name: Compute hash
-        run: Get-FileHash "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\net10.0-windows\Policy Plus.exe"
+        run: Get-FileHash "$env:GITHUB_WORKSPACE\PolicyPlus\bin\Release\net10.0-windows\PolicyPlus.exe"
 
       - name: Stage compiled output
         run: |
@@ -54,6 +54,9 @@ jobs:
       - name: Strip everything except the EXE
         run: Get-ChildItem "$env:GITHUB_WORKSPACE\publish" -Exclude "*.exe" | Remove-Item -Force
 
+      - name: Zip framework-dependent build
+        run: Compress-Archive -Path "$env:GITHUB_WORKSPACE\Compiled\*" -DestinationPath "$env:GITHUB_WORKSPACE\PolicyPlus-framework-dependent.zip"
+
       - name: Publish "latest" release
         uses: softprops/action-gh-release@v2
         with:
@@ -61,6 +64,10 @@ jobs:
           name: Latest build (${{ github.sha }})
           body: >
             Automated build from the latest commit on master (${{ github.sha }}).
-            Single self-contained EXE - no .NET runtime install required, just download
-            and run. This release is overwritten on every push to master.
-          files: publish/Policy Plus.exe
+            Two downloads: PolicyPlus.exe is self-contained (no .NET runtime install
+            required, just download and run, ~111MB); PolicyPlus-framework-dependent.zip
+            is much smaller but requires .NET 10 Desktop Runtime already installed. This
+            release is overwritten on every push to master.
+          files: |
+            publish/PolicyPlus.exe
+            PolicyPlus-framework-dependent.zip

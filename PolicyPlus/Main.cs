@@ -59,6 +59,7 @@ namespace PolicyPlus
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls12;
             // Create the configuration manager (for the Registry)
             Configuration = new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus");
+            Text = $"Policy Plus {VersionHolder.AppVersion}";
             RestoreWindowBounds();
             SetColorModeMenuChecks(Conversions.ToString(Configuration.GetValue("ColorMode", "System")));
             FavoriteIds = ((string[])Configuration.GetValue("Favorites", Array.Empty<string>())).ToList();
@@ -1146,8 +1147,8 @@ namespace PolicyPlus
         {
             // Show author and version information if it was compiled into the program
             string about = $"Policy Plus, maintained by Darren Milne, originally created by Ben Nordick.{Constants.vbCrLf}{Constants.vbCrLf}Available on GitHub: systmworks/PolicyPlus.";
-            if (!string.IsNullOrEmpty(VersionHolder.Version.Trim()))
-                about += $" Version: {VersionHolder.Version.Trim()}.";
+            if (!string.IsNullOrEmpty(VersionHolder.AppVersion.Trim()))
+                about += $" Version {VersionHolder.AppVersion.Trim()} (commit {VersionHolder.Version.Trim()}).";
             MsgBoxCompat.Show(about, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void ByTextToolStripMenuItem_Click(object sender, EventArgs e)
