@@ -506,6 +506,7 @@ namespace PolicyPlus
             //
             SearchTextbox.Alignment = ToolStripItemAlignment.Right;
             SearchTextbox.Name = "SearchTextbox";
+            SearchTextbox.TextBox.BorderStyle = BorderStyle.FixedSingle;
             SearchTextbox.TextBox.PlaceholderText = "Search policies...";
             //
             // SearchButton
