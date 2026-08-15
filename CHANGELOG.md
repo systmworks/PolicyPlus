@@ -5,6 +5,14 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.22] - 2026-08-15
+
+### Fixed
+- Description pane (between the category tree and the policy list) grew to
+  claim an ever-larger share of the window on wider screens despite only
+  ever holding a couple of lines of text; now pinned to a fixed width so
+  that space goes to the policy list instead. (`de70324`)
+
 ## [1.21] - 2026-08-15
 
 ### Fixed
