@@ -5,6 +5,18 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.20] - 2026-08-15
+
+### Added
+- Right-click a policy to copy its ID, name, or registry path to the
+  clipboard. (`4b06216`)
+- Policy list now has an ID column, and all columns are sortable by clicking
+  their header. (`4b06216`)
+- The toolbar search box now also matches partial policy IDs, not just
+  title/description/comments. (`4b06216`)
+- Policy details now show a breadcrumb-style template path (e.g. "Computer >
+  Administrative Templates > ... > \<policy\>"). (`4b06216`)
+
 ## [1.19] - 2026-08-15
 
 ### Added
