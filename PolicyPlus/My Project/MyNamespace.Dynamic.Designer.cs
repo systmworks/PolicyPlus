@@ -79,52 +79,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public FilterOptions m_FilterOptions;
-
-            public FilterOptions FilterOptions
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_FilterOptions = Create__Instance__(m_FilterOptions);
-                    return m_FilterOptions;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_FilterOptions))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_FilterOptions);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public InspectPolicyElements m_InspectPolicyElements;
-
-            public InspectPolicyElements InspectPolicyElements
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_InspectPolicyElements = Create__Instance__(m_InspectPolicyElements);
-                    return m_InspectPolicyElements;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_InspectPolicyElements))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_InspectPolicyElements);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public ListEditor m_ListEditor;
 
             public ListEditor ListEditor

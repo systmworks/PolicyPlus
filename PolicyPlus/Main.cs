@@ -1397,9 +1397,10 @@ namespace PolicyPlus
         private void FilterOptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the Filter Options dialog and refresh if the filter changes
-            if (My.MyProject.Forms.FilterOptions.PresentDialog(CurrentFilter, AdmxWorkspace) == DialogResult.OK)
+            var newFilter = Views.FilterOptionsWindow.PresentDialog(this, CurrentFilter, AdmxWorkspace);
+            if (newFilter is not null)
             {
-                CurrentFilter = My.MyProject.Forms.FilterOptions.CurrentFilter;
+                CurrentFilter = newFilter;
                 ViewFilteredOnly = true;
                 OnlyFilteredObjectsToolStripMenuItem.Checked = true;
                 MoveToVisibleCategoryAndReload();
@@ -1660,7 +1661,7 @@ namespace PolicyPlus
             }
             else if (ReferenceEquals(e.ClickedItem, CmePolInspectElements))
             {
-                My.MyProject.Forms.InspectPolicyElements.PresentDialog((PolicyPlusPolicy)polObject, PolicyIcons, AdmxWorkspace);
+                Views.InspectPolicyElementsWindow.PresentDialog(this, (PolicyPlusPolicy)polObject, PolicyIcons, AdmxWorkspace);
             }
             else if (ReferenceEquals(e.ClickedItem, CmePolSpolFragment))
             {

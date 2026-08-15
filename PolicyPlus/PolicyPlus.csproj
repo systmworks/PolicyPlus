@@ -73,18 +73,7 @@
     <Compile Include="EditSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FilterOptions.Designer.cs">
-      <DependentUpon>FilterOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FilterOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InspectPolicyElements.Designer.cs">
-      <DependentUpon>InspectPolicyElements.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InspectPolicyElements.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FilterConfiguration.cs" />
     <Compile Include="ListEditor.Designer.cs">
       <DependentUpon>ListEditor.cs</DependentUpon>
     </Compile>
@@ -175,6 +164,12 @@
     </Compile>
     <Compile Include="Views\FindResultsWindow.xaml.cs">
       <DependentUpon>FindResultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FilterOptionsWindow.xaml.cs">
+      <DependentUpon>FilterOptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InspectPolicyElementsWindow.xaml.cs">
+      <DependentUpon>InspectPolicyElementsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OpenUserRegistryWindow.xaml.cs">
       <DependentUpon>OpenUserRegistryWindow.xaml</DependentUpon>
@@ -284,6 +279,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\FilterOptionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\InspectPolicyElementsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\OpenUserRegistryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -347,12 +350,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditSetting.resx">
       <DependentUpon>EditSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterOptions.resx">
-      <DependentUpon>FilterOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InspectPolicyElements.resx">
-      <DependentUpon>InspectPolicyElements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ListEditor.resx">
       <DependentUpon>ListEditor.cs</DependentUpon>
