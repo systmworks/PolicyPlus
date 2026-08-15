@@ -34,7 +34,7 @@ see their entries.
 | [#73](https://github.com/Fleex255/PolicyPlus/issues/73) | Dark Mode support | Medium | Foundation laid by the .NET 10 migration |
 | [#78](https://github.com/Fleex255/PolicyPlus/issues/78) | Proper HiDPI support | Medium | Foundation laid by the .NET 10 migration |
 | [#68](https://github.com/Fleex255/PolicyPlus/issues/68) | Favorites | Medium | — |
-| [#47](https://github.com/Fleex255/PolicyPlus/issues/47) | Hotkey to change policy state | Medium | — |
+| [#47](https://github.com/Fleex255/PolicyPlus/issues/47) | Hotkey to change policy state | Considered, declined | Key-scheme problem — see detail entry |
 | [#75](https://github.com/Fleex255/PolicyPlus/issues/75) | Policies missing under "User or Computer" | Investigated, no code bug found | Likely `DeduplicatePolicies` behavior, not a visibility defect — see detail entry |
 | [#77](https://github.com/Fleex255/PolicyPlus/issues/77) | Export part of the policies | Medium-High | Overlaps #19 |
 | [#19](https://github.com/Fleex255/PolicyPlus/issues/19) | Export/Import POL improvements | Medium-High | Overlaps #77 |
@@ -233,6 +233,17 @@ with required additional elements (e.g. a list-type or text-type element) can't 
 meaningfully "Enabled" via a single keystroke with no further input — needs a fallback
 (e.g. open the full dialog for those, or skip/no-op the hotkey). Multi-select support
 needs the same per-policy fallback logic applied across the selection.
+
+**Considered and declined.** Fully scoped, verified directly against
+`PolicyProcessing.SetPolicyState`'s actual behavior: Not Configured (`ForgetPolicy`) and
+Disabled are always safe to apply directly with no element values; Enabled is too, but only
+when the policy has no elements — with elements, it falls back to opening the full Edit
+Setting dialog, same as the issue's own suggested fix. The blocker was the key scheme: the
+mnemonic option (N/E/D) would silently override `ListView`'s built-in type-ahead-to-select
+behavior for any policy name starting with those letters, so the only collision-free option
+was digits (1/2/3) — judged too unintuitive for what the feature is worth, so it wasn't
+implemented. Revisit if a better key scheme comes up (e.g. a modifier-based combo like
+Ctrl+Alt+letter, which wouldn't collide with type-ahead).
 
 **Files**: `Main.cs`.
 
