@@ -10,29 +10,6 @@ namespace PolicyPlus.My
         {
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditPol m_EditPol;
-
-            public EditPol EditPol
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditPol = Create__Instance__(m_EditPol);
-                    return m_EditPol;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditPol))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditPol);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public EditPolNumericData m_EditPolNumericData;
 
             public EditPolNumericData EditPolNumericData

@@ -1526,7 +1526,7 @@ namespace PolicyPlus
             var editPolSection = Views.OpenSectionWindow.PresentDialog(this, userIsPol, compIsPol);
             if (editPolSection is not null)
             {
-                My.MyProject.Forms.EditPol.PresentDialog(PolicyIcons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource), editPolSection == AdmxPolicySection.User);
+                Views.EditPolWindow.PresentDialog(this, PolicyIcons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? CompPolicySource : UserPolicySource), editPolSection == AdmxPolicySection.User);
                 // EditPol mutates the PolFile in place while open, regardless of how its window is closed
                 _isDirty = true;
             }

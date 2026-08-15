@@ -55,12 +55,6 @@
     <Compile Include="CmtxFile.cs" />
     <Compile Include="CompiledStructures.cs" />
     <Compile Include="ConfigurationStorage.cs" />
-    <Compile Include="EditPol.Designer.cs">
-      <DependentUpon>EditPol.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditPol.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="EditPolNumericData.Designer.cs">
       <DependentUpon>EditPolNumericData.cs</DependentUpon>
     </Compile>
@@ -119,6 +113,9 @@
     <Compile Include="Version.cs" />
     <Compile Include="Views\EditPolDeleteWindow.xaml.cs">
       <DependentUpon>EditPolDeleteWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditPolWindow.xaml.cs">
+      <DependentUpon>EditPolWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditPolKeyWindow.xaml.cs">
       <DependentUpon>EditPolKeyWindow.xaml</DependentUpon>
@@ -216,6 +213,10 @@
 
   <ItemGroup>
     <Page Include="Views\EditPolDeleteWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditPolWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -342,9 +343,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="EditPol.resx">
-      <DependentUpon>EditPol.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EditPolNumericData.resx">
       <DependentUpon>EditPolNumericData.cs</DependentUpon>
     </EmbeddedResource>
