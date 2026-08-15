@@ -10,8 +10,8 @@ namespace PolicyPlus
 {
     public partial class DownloadAdmx
     {
-        private const string MicrosoftMsiDownloadLink = "https://download.microsoft.com/download/f35d3000-b6c9-4ca6-bedc-5e4ec15a6b7a/Administrative%20Templates%20(admx)%20for%20Windows%2011%20Sep%202025%20Update.msi";
-        private const string PolicyDefinitionsMsiSubdirectory = @"\Microsoft Group Policy\Windows 11 Sep 2025 Update (25H2)\PolicyDefinitions";
+        private const string MicrosoftMsiDownloadLink = "https://download.microsoft.com/download/31897b32-df9e-4585-b5bb-442f1f444c92/Administrative%20Templates%20(.admx)%20for%20Windows%2011%20Oct%202025%20Update.msi";
+        private const string PolicyDefinitionsMsiSubdirectory = @"\Microsoft Group Policy\Windows 11 Oct 2025 Update (25H2)\PolicyDefinitions";
         private bool Downloading = false;
         public string NewPolicySourceFolder;
 
