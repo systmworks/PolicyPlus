@@ -545,6 +545,9 @@ namespace PolicyPlus
             SplitContainer.Panel2.BackColor = Color.White;
             SplitContainer.Panel2.Controls.Add(DescriptionSplitContainer);
             SplitContainer.Size = new Size(706, 350);
+            // Same fix as DescriptionSplitContainer below: Panel1 (the category tree) only needs
+            // enough width for its own content, not a growing share of the window.
+            SplitContainer.FixedPanel = FixedPanel.Panel1;
             SplitContainer.SplitterDistance = 190;
             SplitContainer.TabIndex = 1;
             SplitContainer.TabStop = false;
