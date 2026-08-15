@@ -43,7 +43,7 @@ public static class PolicySearch
         return string.Join(" ", result);
     }
 
-    public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, bool CheckID, params Dictionary<string, string>[] CommentSources)
+    public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, bool CheckID, bool CheckRegistry, params Dictionary<string, string>[] CommentSources)
     {
         var validCommentSources = CommentSources.Where(d => d is not null).ToArray();
         string cleanupStr(string RawText) => new string(Strings.Trim(RawText.ToLowerInvariant()).Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
@@ -118,6 +118,13 @@ public static class PolicySearch
             if (CheckID)
             {
                 if (isIdAHit(Policy.UniqueID))
+                    return true;
+            }
+            if (CheckRegistry)
+            {
+                // Same whole-string substring matching as CheckID - a registry key/value name is
+                // also a single unbroken token, not word-tokenized text
+                if (PolicyProcessing.GetReferencedRegistryValues(Policy).Any(rkvp => isIdAHit(rkvp.Key + @"\" + rkvp.Value)))
                     return true;
             }
             return false;

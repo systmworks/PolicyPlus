@@ -854,9 +854,22 @@ namespace PolicyPlus
                 e.SuppressKeyPress = true; // Stop the Enter from also triggering a system beep
                 RunSearch();
             }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                ClearSearch();
+            }
         }
         private void SearchButton_Click(object sender, EventArgs e)
         {
+            RunSearch();
+        }
+        private void ClearSearchButton_Click(object sender, EventArgs e)
+        {
+            ClearSearch();
+        }
+        private void ClearSearch()
+        {
+            SearchTextbox.Text = "";
             RunSearch();
         }
         private void RunSearch()
@@ -864,7 +877,7 @@ namespace PolicyPlus
             // Runs only on demand (Enter or the search button), not on every keystroke - see
             // the search-behavior discussion in the plan file for why this replaced live filtering
             string query = SearchTextbox.Text;
-            SearchMatcher = string.IsNullOrWhiteSpace(query) ? null : PolicySearch.BuildMatcher(PolicySearch.ToSubstringQuery(query), true, true, true, true, CompComments, UserComments);
+            SearchMatcher = string.IsNullOrWhiteSpace(query) ? null : PolicySearch.BuildMatcher(PolicySearch.ToSubstringQuery(query), true, true, true, true, true, CompComments, UserComments);
             MoveToVisibleCategoryAndReload();
         }
         private void ResizePolicyNameColumn(object sender, EventArgs e)

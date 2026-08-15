@@ -40,7 +40,7 @@ namespace PolicyPlus
                 MsgBoxCompat.Show("At least one attribute must be searched. Check one of the boxes and try again.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            Searcher = PolicySearch.BuildMatcher(text, checkTitle, checkDesc, checkComment, false, CommentSources);
+            Searcher = PolicySearch.BuildMatcher(text, checkTitle, checkDesc, checkComment, false, false, CommentSources);
             DialogResult = DialogResult.OK;
         }
     }

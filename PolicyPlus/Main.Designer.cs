@@ -163,6 +163,8 @@ namespace PolicyPlus
             SearchTextbox.KeyDown += new KeyEventHandler(SearchTextbox_KeyDown);
             SearchButton = new ToolStripButton();
             SearchButton.Click += new EventHandler(SearchButton_Click);
+            ClearSearchButton = new ToolStripButton();
+            ClearSearchButton.Click += new EventHandler(ClearSearchButton_Click);
             InfoStrip = new StatusStrip();
             ComputerSourceLabel = new ToolStripStatusLabel();
             UserSourceLabel = new ToolStripStatusLabel();
@@ -258,7 +260,7 @@ namespace PolicyPlus
             // 
             // MainMenu
             // 
-            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, OptionsToolStripMenuItem, HelpToolStripMenuItem, SearchTextbox, SearchButton });
+            MainMenu.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ViewToolStripMenuItem, FindToolStripMenuItem, ShareToolStripMenuItem, OptionsToolStripMenuItem, HelpToolStripMenuItem, SearchTextbox, SearchButton, ClearSearchButton });
             MainMenu.Location = new Point(0, 0);
             MainMenu.Name = "MainMenu";
             MainMenu.Size = new Size(706, 24);
@@ -528,6 +530,14 @@ namespace PolicyPlus
             SearchButton.Name = "SearchButton";
             SearchButton.Text = "🔍";
             SearchButton.ToolTipText = "Search (Enter)";
+            //
+            // ClearSearchButton
+            //
+            ClearSearchButton.Alignment = ToolStripItemAlignment.Right;
+            ClearSearchButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            ClearSearchButton.Name = "ClearSearchButton";
+            ClearSearchButton.Text = "✕";
+            ClearSearchButton.ToolTipText = "Clear search (Esc)";
             //
             // SplitContainer
             //
@@ -967,6 +977,7 @@ namespace PolicyPlus
         internal ToolStripMenuItem AcquireADMXFilesToolStripMenuItem;
         internal ToolStripSpringTextBox SearchTextbox;
         internal ToolStripButton SearchButton;
+        internal ToolStripButton ClearSearchButton;
         internal StatusStrip InfoStrip;
         internal ToolStripStatusLabel ComputerSourceLabel;
         internal ToolStripStatusLabel UserSourceLabel;
