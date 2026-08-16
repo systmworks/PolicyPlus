@@ -123,21 +123,19 @@
                         VerticalOffset="1">
                         <Grid>
                             <!--
-                                Background/BorderBrush use the same AppChromeBackgroundBrush/
-                                AppChromeTextBrush pair as the menu bar (not WPF-UI's own
-                                FlyoutBackground) - WPF-UI's stock dropdown MenuItem foreground
-                                doesn't reliably follow the Light/Dark base swap on its own (stays
-                                white regardless of theme), so rather than chase that token down,
-                                the dropdown is guaranteed readable the same way the menu bar
-                                already is: a bold theme-colored background paired with the theme's
-                                own white/near-white chrome text, set explicitly below.
+                                FlyoutBackground/FlyoutBorderBrush are overridden per-theme in
+                                ThemeService.Apply (to the same chrome color as the menu bar), so
+                                this just uses them directly like WPF-UI's own default does.
+                                Foreground still needs the explicit override below though - WPF-UI's
+                                stock dropdown MenuItem foreground doesn't reliably follow the
+                                Light/Dark base swap on its own (stays white regardless of theme).
                             -->
                             <Border
                                 x:Name="SubmenuBorder"
                                 Margin="12,0,12,18"
                                 Padding="0,3,0,3"
-                                Background="{DynamicResource AppChromeBackgroundBrush}"
-                                BorderBrush="{DynamicResource AppChromeTextBrush}"
+                                Background="{DynamicResource FlyoutBackground}"
+                                BorderBrush="{DynamicResource FlyoutBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 SnapsToDevicePixels="True">
@@ -313,7 +311,20 @@
                     <MenuItem x:Name="ExportRegMenuItem" Click="ExportRegMenuItem_Click" Header="Export REG" />
                 </MenuItem>
                 <MenuItem Header="_Options">
+                    <!--
+                        This is a nested submenu (a MenuItem-with-children inside the Options
+                        dropdown), rendered through WPF-UI's own stock submenu popup rather than
+                        the app's custom top-level template above - same white-text-doesn't-follow-
+                        theme issue, fixed the same way: an explicit Foreground override scoped to
+                        just this popup's items via BasedOn (background comes for free from the
+                        FlyoutBackground/FlyoutBorderBrush override in ThemeService.Apply).
+                    -->
                     <MenuItem Header="Color Mode">
+                        <MenuItem.Resources>
+                            <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                <Setter Property="Foreground" Value="{DynamicResource AppChromeTextBrush}" />
+                            </Style>
+                        </MenuItem.Resources>
                         <MenuItem x:Name="SolarizedLightMenuItem" Click="SolarizedLightMenuItem_Click" Header="(Light) Blue" IsCheckable="True" />
                         <MenuItem x:Name="GruvboxLightMenuItem" Click="GruvboxLightMenuItem_Click" Header="(Light) Orange" IsCheckable="True" />
                         <MenuItem x:Name="CatppuccinLatteMenuItem" Click="CatppuccinLatteMenuItem_Click" Header="(Light) Purple" IsCheckable="True" />

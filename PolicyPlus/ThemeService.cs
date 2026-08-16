@@ -59,6 +59,13 @@ namespace PolicyPlus
             // too instead of only the tree/list surfaces above.
             resources["AppChromeBackgroundBrush"] = Brush(option.Chrome);
             resources["AppChromeTextBrush"] = Brush(option.ChromeText);
+
+            // WPF-UI's own FlyoutBackground/FlyoutBorderBrush (used by any nested submenu popup
+            // that isn't the app's custom top-level one, e.g. Color Mode's own 6-item popup)
+            // overridden the same way, so every popup surface - not just the ones this app
+            // explicitly templates - carries the theme's chrome color too.
+            resources["FlyoutBackground"] = Brush(option.Chrome);
+            resources["FlyoutBorderBrush"] = Brush(option.ChromeText);
         }
 
         private static SolidColorBrush Brush(Color color)
