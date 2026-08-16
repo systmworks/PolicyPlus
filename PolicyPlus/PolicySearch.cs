@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
 
 // Shared policy text-search matcher, used by both the modal Find dialog (FindByText.cs)
 // and Main's always-visible live search box.
@@ -43,16 +43,39 @@ public static class PolicySearch
         return string.Join(" ", result);
     }
 
+    // Translates a VB "Like"-style wildcard pattern ("*" = any run, "?" = any single char, "#" =
+    // any single digit) into an anchored Regex matching the whole string, ordinal/no culture
+    // handling (matching VB Like's CompareMethod.Binary this replaces). Query text is already
+    // stripped of "[]!" by cleanupStr below before reaching here, so [charlist]/[!charlist]
+    // syntax never actually appears in a pattern this sees and isn't translated.
+    private static Regex LikePatternToRegex(string pattern)
+    {
+        var sb = new StringBuilder("^");
+        foreach (char c in pattern)
+        {
+            switch (c)
+            {
+                case '*': sb.Append(".*"); break;
+                case '?': sb.Append('.'); break;
+                case '#': sb.Append("[0-9]"); break;
+                default: sb.Append(Regex.Escape(c.ToString())); break;
+            }
+        }
+        sb.Append('$');
+        return new Regex(sb.ToString(), RegexOptions.Singleline);
+    }
+
     public static Func<PolicyPlusPolicy, bool> BuildMatcher(string QueryText, bool CheckTitle, bool CheckDesc, bool CheckComment, bool CheckID, bool CheckRegistry, params Dictionary<string, string>[] CommentSources)
     {
         var validCommentSources = CommentSources.Where(d => d is not null).ToArray();
-        string cleanupStr(string RawText) => new string(Strings.Trim(RawText.ToLowerInvariant()).Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
+        string cleanupStr(string RawText) => new string(RawText.ToLowerInvariant().Trim().Where(c => !".,'\";/!(){}[]".Contains(c)).ToArray());
         // Parse the query string for wildcards or quoted strings - done once here rather than
         // per policy, since the query itself doesn't change across the thousands of policies
         // this matcher gets run against during a single search
-        string[] rawSplitted = Strings.Split(QueryText);
+        string[] rawSplitted = QueryText.Split(' ');
         var simpleWords = new List<string>();
         var wildcards = new List<string>();
+        var wildcardRegexes = new List<Regex>();
         var quotedStrings = new List<string>();
         string partialQuotedString = "";
         for (int n = 0, loopTo = rawSplitted.Length - 1; n <= loopTo; n++)
@@ -73,7 +96,9 @@ public static class PolicySearch
             }
             else if (curString.Contains("*") | curString.Contains("?"))
             {
-                wildcards.Add(cleanupStr(curString));
+                string cleaned = cleanupStr(curString);
+                wildcards.Add(cleaned);
+                wildcardRegexes.Add(LikePatternToRegex(cleaned));
             }
             else
             {
@@ -86,8 +111,8 @@ public static class PolicySearch
             bool isStringAHit(string SearchedText)
             {
                 string cleanText = cleanupStr(SearchedText);
-                string[] wordsInText = cleanText.Split(' ', ControlChars.Cr, ControlChars.Lf);
-                return simpleWords.All(w => wordsInText.Contains(w)) & wildcards.All(w => wordsInText.Any(wit => LikeOperator.LikeString(wit, w, CompareMethod.Binary))) & quotedStrings.All(w => cleanText.Contains(" " + w + " ") | cleanText.StartsWith(w + " ") | cleanText.EndsWith(" " + w) | (cleanText ?? "") == (w ?? "")); // Plain search terms
+                string[] wordsInText = cleanText.Split(' ', '\r', '\n');
+                return simpleWords.All(w => wordsInText.Contains(w)) & wildcardRegexes.All(re => wordsInText.Any(wit => re.IsMatch(wit))) & quotedStrings.All(w => cleanText.Contains(" " + w + " ") | cleanText.StartsWith(w + " ") | cleanText.EndsWith(" " + w) | (cleanText ?? "") == (w ?? "")); // Plain search terms
                                                                                                                                                                                                                                                                                                                                      // Wildcards
                                                                                                                                                                                                                                                                                                                                      // Quoted strings
             };
@@ -98,7 +123,7 @@ public static class PolicySearch
             bool isIdAHit(string SearchedText)
             {
                 string cleanText = cleanupStr(SearchedText);
-                return simpleWords.All(w => cleanText.Contains(w)) & wildcards.All(w => LikeOperator.LikeString(cleanText, w, CompareMethod.Binary)) & quotedStrings.All(w => cleanText.Contains(w));
+                return simpleWords.All(w => cleanText.Contains(w)) & wildcardRegexes.All(re => re.IsMatch(cleanText)) & quotedStrings.All(w => cleanText.Contains(w));
             };
             if (CheckTitle)
             {
