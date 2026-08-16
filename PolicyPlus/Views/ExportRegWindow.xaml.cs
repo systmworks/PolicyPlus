@@ -16,8 +16,8 @@ namespace PolicyPlus.Views
 
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            using var sfd = new System.Windows.Forms.SaveFileDialog { Filter = "Registry scripts|*.reg" };
-            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var sfd = new Microsoft.Win32.SaveFileDialog { Filter = "Registry scripts|*.reg" };
+            if (sfd.ShowDialog() == true)
             {
                 TextReg.Text = sfd.FileName;
             }

@@ -1010,8 +1010,8 @@ namespace PolicyPlus.Views
 
         private void OpenAdmxFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var ofd = new System.Windows.Forms.OpenFileDialog { Filter = "Policy definitions files|*.admx", Title = "Open ADMX file" };
-            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            var ofd = new Microsoft.Win32.OpenFileDialog { Filter = "Policy definitions files|*.admx", Title = "Open ADMX file" };
+            if (ofd.ShowDialog() != true)
                 return;
             try
             {
@@ -1058,8 +1058,8 @@ namespace PolicyPlus.Views
 
         private void OpenRegFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var ofd = new System.Windows.Forms.OpenFileDialog { Filter = "Registry scripts|*.reg" };
-            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            var ofd = new Microsoft.Win32.OpenFileDialog { Filter = "Registry scripts|*.reg" };
+            if (ofd.ShowDialog() != true)
                 return;
             RegFile reg;
             try
@@ -1327,8 +1327,8 @@ namespace PolicyPlus.Views
 
         private void ImportPolMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var ofd = new System.Windows.Forms.OpenFileDialog { Filter = "POL files|*.pol" };
-            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            var ofd = new Microsoft.Win32.OpenFileDialog { Filter = "POL files|*.pol" };
+            if (ofd.ShowDialog() != true)
                 return;
             PolFile pol;
             try
@@ -1365,8 +1365,8 @@ namespace PolicyPlus.Views
 
         private void ExportPolMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var sfd = new System.Windows.Forms.SaveFileDialog { Filter = "POL files|*.pol" };
-            AdmxPolicySection? exportSection = sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK ? OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true) : null;
+            var sfd = new Microsoft.Win32.SaveFileDialog { Filter = "POL files|*.pol" };
+            AdmxPolicySection? exportSection = sfd.ShowDialog() == true ? OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true) : null;
             if (exportSection is not null)
             {
                 var section = exportSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource;

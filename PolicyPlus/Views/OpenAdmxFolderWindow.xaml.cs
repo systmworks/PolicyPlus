@@ -78,13 +78,13 @@ namespace PolicyPlus.Views
 
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            using var fbd = new System.Windows.Forms.FolderBrowserDialog();
-            if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            var fbd = new Microsoft.Win32.OpenFolderDialog();
+            if (fbd.ShowDialog() != true)
             {
                 return;
             }
 
-            TextFolder.Text = fbd.SelectedPath;
+            TextFolder.Text = fbd.FolderName;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

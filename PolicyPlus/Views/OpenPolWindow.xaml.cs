@@ -66,8 +66,8 @@ namespace PolicyPlus.Views
 
         private void BrowseForPol(Wpf.Ui.Controls.TextBox destTextbox)
         {
-            using var sfd = new System.Windows.Forms.SaveFileDialog { OverwritePrompt = false, Filter = "Registry policy files|*.pol" };
-            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var sfd = new Microsoft.Win32.SaveFileDialog { OverwritePrompt = false, Filter = "Registry policy files|*.pol" };
+            if (sfd.ShowDialog() == true)
             {
                 destTextbox.Text = sfd.FileName;
             }

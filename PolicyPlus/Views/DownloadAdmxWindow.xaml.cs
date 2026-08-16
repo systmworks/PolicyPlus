@@ -30,10 +30,10 @@ namespace PolicyPlus.Views
 
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            using var fbd = new System.Windows.Forms.FolderBrowserDialog();
-            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var fbd = new Microsoft.Win32.OpenFolderDialog();
+            if (fbd.ShowDialog() == true)
             {
-                TextDestFolder.Text = fbd.SelectedPath;
+                TextDestFolder.Text = fbd.FolderName;
             }
         }
 

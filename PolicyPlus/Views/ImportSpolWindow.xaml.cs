@@ -17,8 +17,8 @@ namespace PolicyPlus.Views
 
         private void ButtonOpenFile_Click(object sender, RoutedEventArgs e)
         {
-            using var ofd = new System.Windows.Forms.OpenFileDialog { Filter = "Semantic Policy files|*.spol|All files|*.*" };
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var ofd = new Microsoft.Win32.OpenFileDialog { Filter = "Semantic Policy files|*.spol|All files|*.*" };
+            if (ofd.ShowDialog() == true)
             {
                 TextSpol.Text = System.IO.File.ReadAllText(ofd.FileName);
             }

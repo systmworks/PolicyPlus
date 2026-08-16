@@ -26,8 +26,8 @@ namespace PolicyPlus.Views
 
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)
         {
-            using var ofd = new System.Windows.Forms.OpenFileDialog { Filter = "Registry scripts|*.reg" };
-            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            var ofd = new Microsoft.Win32.OpenFileDialog { Filter = "Registry scripts|*.reg" };
+            if (ofd.ShowDialog() != true)
             {
                 return;
             }
