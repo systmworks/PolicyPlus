@@ -75,6 +75,8 @@
 
         <DockPanel Grid.Row="1" Margin="8,0,8,0" LastChildFill="False">
             <Menu
+                Height="32"
+                Padding="0"
                 DockPanel.Dock="Left"
                 VerticalAlignment="Center"
                 Background="Transparent">

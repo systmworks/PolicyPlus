@@ -70,6 +70,43 @@
                         <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding Category}" />
                     </DataTemplate>
                 </ui:ListView.Resources>
+                <ui:ListView.ItemContainerStyle>
+                    <!--
+                        Round 5: the CellTemplate/Foreground fix above still wasn't enough - WPF-UI's
+                        real ListViewItem template (decompiled: named ListViewItemStyle, a selection-
+                        pill overlay, idle rows transparent by design) can hide descendant content via
+                        ancestor opacity/overlay, which no local Foreground on a descendant can undo.
+                        Replacing the container's entire ControlTemplate removes that ancestor - a
+                        single opaque-on-hover/selected Border around GridViewRowPresenter, nothing
+                        else in the tree that can cover or hide text.
+                    -->
+                    <Style TargetType="{x:Type ui:ListViewItem}">
+                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                        <Setter Property="Padding" Value="4,3,4,3" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ui:ListViewItem}">
+                                    <Border
+                                        x:Name="ItemBorder"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="Transparent"
+                                        SnapsToDevicePixels="True">
+                                        <GridViewRowPresenter Content="{TemplateBinding Content}" Columns="{TemplateBinding GridView.ColumnCollection}" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ControlFillColorTertiaryBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ui:ListView.ItemContainerStyle>
                 <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="480" CellTemplate="{StaticResource TitleCellTemplate}" Header="Title" />
