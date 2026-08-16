@@ -91,7 +91,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("The previous policy sources are not accessible. The defaults will be loaded.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The previous policy sources are not accessible. The defaults will be loaded.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 _configuration.SetValue("CompSourceType", (int)PolicyLoaderSource.LocalGpo);
                 _configuration.SetValue("UserSourceType", (int)PolicyLoaderSource.LocalGpo);
                 OpenPolicyLoaders(new PolicyLoader(PolicyLoaderSource.LocalGpo, "", true), new PolicyLoader(PolicyLoaderSource.LocalGpo, "", false), true);
@@ -111,7 +111,7 @@ namespace PolicyPlus.Views
                 if (MsgBoxCompat.Show(
                     "Welcome to Policy Plus!" + Environment.NewLine + Environment.NewLine +
                     "Home editions do not come with the full set of policy definitions. Would you like to download them now? This can also be done later with Help | Acquire ADMX Files.",
-                    System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                    MsgBoxButtons.YesNo, MsgBoxIcon.Information) == MsgBoxResult.Yes)
                 {
                     AcquireAdmxFilesMenuItem_Click(null, null);
                 }
@@ -125,7 +125,7 @@ namespace PolicyPlus.Views
             try
             {
                 var fails = _admxWorkspace.LoadFolder(admxSource, GetPreferredLanguageCode());
-                if (DisplayAdmxLoadErrorReport(fails, true) == System.Windows.Forms.DialogResult.No)
+                if (DisplayAdmxLoadErrorReport(fails, true) == MsgBoxResult.No)
                     throw new Exception("You decided to not use the problematic ADMX bundle.");
             }
             catch (Exception ex)
@@ -134,7 +134,7 @@ namespace PolicyPlus.Views
                 string loadFailReason = "";
                 if ((admxSource ?? "") != (defaultAdmxSource ?? ""))
                 {
-                    if (MsgBoxCompat.Show("Policy definitions could not be loaded from \"" + admxSource + "\": " + ex.Message + Environment.NewLine + Environment.NewLine + "Load from the default location?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                    if (MsgBoxCompat.Show("Policy definitions could not be loaded from \"" + admxSource + "\": " + ex.Message + Environment.NewLine + Environment.NewLine + "Load from the default location?", MsgBoxButtons.YesNo, MsgBoxIcon.Question) == MsgBoxResult.Yes)
                     {
                         try
                         {
@@ -154,7 +154,7 @@ namespace PolicyPlus.Views
                 }
 
                 if (!string.IsNullOrEmpty(loadFailReason))
-                    MsgBoxCompat.Show("Policy definitions could not be loaded: " + loadFailReason, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show("Policy definitions could not be loaded: " + loadFailReason, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -554,12 +554,12 @@ namespace PolicyPlus.Views
             if (allOk)
             {
                 if (!quiet)
-                    MsgBoxCompat.Show("Both the user and computer policy sources are loaded and writable.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MsgBoxCompat.Show("Both the user and computer policy sources are loaded and writable.", MsgBoxButtons.OK, MsgBoxIcon.Information);
             }
             else
             {
                 string msgText = "Not all policy sources are fully writable." + Environment.NewLine + Environment.NewLine + "The user source " + userStatus + "." + Environment.NewLine + Environment.NewLine + "The computer source " + compStatus + ".";
-                MsgBoxCompat.Show(msgText, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show(msgText, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -571,7 +571,7 @@ namespace PolicyPlus.Views
             if (_compPolicyLoader is not null && !_compPolicyLoader.Close())
                 allOk = false;
             if (!allOk)
-                MsgBoxCompat.Show("Cleanup did not complete fully because the loaded resources are open in other programs.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Cleanup did not complete fully because the loaded resources are open in other programs.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
         }
 
         public void ShowSearchDialog(Func<PolicyPlusPolicy, bool> searcher)
@@ -687,13 +687,13 @@ namespace PolicyPlus.Views
             throw new InvalidOperationException("Policy source type not supported");
         }
 
-        public System.Windows.Forms.DialogResult DisplayAdmxLoadErrorReport(IEnumerable<AdmxLoadFailure> failures, bool askContinue = false)
+        public MsgBoxResult DisplayAdmxLoadErrorReport(IEnumerable<AdmxLoadFailure> failures, bool askContinue = false)
         {
             if (!failures.Any())
-                return System.Windows.Forms.DialogResult.OK;
-            var boxButtons = askContinue ? System.Windows.Forms.MessageBoxButtons.YesNo : System.Windows.Forms.MessageBoxButtons.OK;
+                return MsgBoxResult.OK;
+            var boxButtons = askContinue ? MsgBoxButtons.YesNo : MsgBoxButtons.OK;
             string header = "Errors were encountered while adding administrative templates to the workspace.";
-            return MsgBoxCompat.Show(header + (askContinue ? " Continue trying to use this workspace?" : "") + Environment.NewLine + Environment.NewLine + string.Join(Environment.NewLine + Environment.NewLine, failures.Select(f => f.ToString())), boxButtons, System.Windows.Forms.MessageBoxIcon.Exclamation);
+            return MsgBoxCompat.Show(header + (askContinue ? " Continue trying to use this workspace?" : "") + Environment.NewLine + Environment.NewLine + string.Join(Environment.NewLine + Environment.NewLine, failures.Select(f => f.ToString())), boxButtons, MsgBoxIcon.Warning);
         }
 
         public string GetPreferredLanguageCode() => Convert.ToString(_configuration.GetValue("LanguageCode", System.Globalization.CultureInfo.CurrentCulture.Name));
@@ -971,7 +971,7 @@ namespace PolicyPlus.Views
             int deduped = PolicyProcessing.DeduplicatePolicies(_admxWorkspace);
             if (deduped > 0)
                 _isDirty = true;
-            MsgBoxCompat.Show("Deduplicated " + deduped + " policies.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            MsgBoxCompat.Show("Deduplicated " + deduped + " policies.", MsgBoxButtons.OK, MsgBoxIcon.Information);
             UpdateCategoryListing();
             UpdatePolicyInfo();
         }
@@ -1001,7 +1001,7 @@ namespace PolicyPlus.Views
                 }
                 catch (Exception ex)
                 {
-                    MsgBoxCompat.Show("The folder could not be fully added to the workspace. " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show("The folder could not be fully added to the workspace. " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 }
 
                 PopulateAdmxUi();
@@ -1019,7 +1019,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception ex)
             {
-                MsgBoxCompat.Show("The ADMX file could not be added to the workspace. " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The ADMX file could not be added to the workspace. " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
 
             PopulateAdmxUi();
@@ -1037,7 +1037,7 @@ namespace PolicyPlus.Views
             if (newLanguage is not null)
             {
                 _configuration.SetValue("LanguageCode", newLanguage);
-                if (MsgBoxCompat.Show("Language changes will take effect when ADML files are next loaded. Would you like to reload the workspace now?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                if (MsgBoxCompat.Show("Language changes will take effect when ADML files are next loaded. Would you like to reload the workspace now?", MsgBoxButtons.YesNo, MsgBoxIcon.Question) == MsgBoxResult.Yes)
                 {
                     ClearAdmxWorkspace();
                     OpenLastAdmxSource();
@@ -1068,7 +1068,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("Failed to load the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Failed to load the REG file.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -1077,7 +1077,7 @@ namespace PolicyPlus.Views
             bool hasUser = hiveCounts[RegFileHive.User] > 0;
             if (!hasComputer && !hasUser)
             {
-                MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -1085,10 +1085,10 @@ namespace PolicyPlus.Views
             if (hasComputer && hasUser)
             {
                 string msg = "This REG file mixes Computer and User entries (" + hiveCounts[RegFileHive.Computer] + " Computer key(s), " + hiveCounts[RegFileHive.User] + " User key(s)). Only one can be opened at a time this way." + Environment.NewLine + Environment.NewLine + "Click Yes to import the Computer entries (discarding the User entries), or No to import the User entries (discarding the Computer entries).";
-                var result = MsgBoxCompat.Show(msg, System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Warning);
-                if (result == System.Windows.Forms.DialogResult.Cancel)
+                var result = MsgBoxCompat.Show(msg, MsgBoxButtons.YesNoCancel, MsgBoxIcon.Warning);
+                if (result == MsgBoxResult.Cancel)
                     return;
-                chosenHive = result == System.Windows.Forms.DialogResult.Yes ? RegFileHive.Computer : RegFileHive.User;
+                chosenHive = result == MsgBoxResult.Yes ? RegFileHive.Computer : RegFileHive.User;
             }
             else
             {
@@ -1122,7 +1122,7 @@ namespace PolicyPlus.Views
             string successMsg = "REG file opened as a standalone editable " + (isUser ? "User" : "Computer") + " source. Use Export POL/REG to save it - the normal Save Policies action discards scratch sources like this one.";
             if (reg.HasDefaultValues())
                 successMsg = "This REG file set one or more keys' default values, which Group Policy has no way to represent - those specific entries were skipped." + Environment.NewLine + Environment.NewLine + successMsg;
-            MsgBoxCompat.Show(successMsg, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            MsgBoxCompat.Show(successMsg, MsgBoxButtons.OK, MsgBoxIcon.Information);
         }
 
         private void SavePoliciesMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1154,17 +1154,17 @@ namespace PolicyPlus.Views
                 _configuration.SetValue("CompSourceData", _compPolicyLoader.LoaderData ?? "");
                 _configuration.SetValue("UserSourceData", _userPolicyLoader.LoaderData ?? "");
                 _isDirty = false;
-                MsgBoxCompat.Show("Success." + Environment.NewLine + Environment.NewLine + "User policies: " + userStatus + "." + Environment.NewLine + Environment.NewLine + "Computer policies: " + compStatus + ".", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MsgBoxCompat.Show("Success." + Environment.NewLine + Environment.NewLine + "User policies: " + userStatus + "." + Environment.NewLine + Environment.NewLine + "Computer policies: " + compStatus + ".", MsgBoxButtons.OK, MsgBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MsgBoxCompat.Show("Saving failed!" + Environment.NewLine + Environment.NewLine + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Saving failed!" + Environment.NewLine + Environment.NewLine + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
         private void ResetAllToDefaultMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (MsgBoxCompat.Show("This will reset every configured policy back to Not Configured, across both Computer and User policies. This cannot be undone. Continue?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning) != System.Windows.Forms.DialogResult.Yes)
+            if (MsgBoxCompat.Show("This will reset every configured policy back to Not Configured, across both Computer and User policies. This cannot be undone. Continue?", MsgBoxButtons.YesNo, MsgBoxIcon.Warning) != MsgBoxResult.Yes)
                 return;
             ClearSelections();
             int reset = 0;
@@ -1192,7 +1192,7 @@ namespace PolicyPlus.Views
 
             if (reset > 0)
                 _isDirty = true;
-            MsgBoxCompat.Show("Reset " + reset + " policy configuration" + (reset == 1 ? "" : "s") + " to Not Configured.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            MsgBoxCompat.Show("Reset " + reset + " policy configuration" + (reset == 1 ? "" : "s") + " to Not Configured.", MsgBoxButtons.OK, MsgBoxIcon.Information);
             UpdateCategoryListing();
             UpdatePolicyInfo();
         }
@@ -1203,13 +1203,13 @@ namespace PolicyPlus.Views
             bool compIsPol = _compPolicySource is PolFile;
             if (!(userIsPol || compIsPol))
             {
-                MsgBoxCompat.Show("Neither loaded source is backed by a POL file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Neither loaded source is backed by a POL file.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
             if (Convert.ToInt32(_configuration.GetValue("EditPolDangerAcknowledged", 0)) == 0)
             {
-                if (MsgBoxCompat.Show("Caution! This tool is for very advanced users. Improper modifications may result in inconsistencies in policies' states." + Environment.NewLine + Environment.NewLine + "Changes operate directly on the policy source, though they will not be committed to disk until you save. Are you sure you want to continue?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No)
+                if (MsgBoxCompat.Show("Caution! This tool is for very advanced users. Improper modifications may result in inconsistencies in policies' states." + Environment.NewLine + Environment.NewLine + "Changes operate directly on the policy source, though they will not be committed to disk until you save. Are you sure you want to continue?", MsgBoxButtons.YesNo, MsgBoxIcon.Warning) == MsgBoxResult.No)
                     return;
                 _configuration.SetValue("EditPolDangerAcknowledged", 1);
             }
@@ -1248,7 +1248,7 @@ namespace PolicyPlus.Views
                     }
                     else
                     {
-                        MsgBoxCompat.Show("The category is not currently visible. Change the view settings and try again.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                        MsgBoxCompat.Show("The category is not currently visible. Change the view settings and try again.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                     }
                 }
                 else if (selPol is not null)
@@ -1266,7 +1266,7 @@ namespace PolicyPlus.Views
                 }
                 else
                 {
-                    MsgBoxCompat.Show("That object could not be found.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show("That object could not be found.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 }
             }
         }
@@ -1287,7 +1287,7 @@ namespace PolicyPlus.Views
                 var nextPol = FindResultsWindow.NextPolicy();
                 if (nextPol is null)
                 {
-                    MsgBoxCompat.Show("There are no more results that match the filter.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MsgBoxCompat.Show("There are no more results that match the filter.", MsgBoxButtons.OK, MsgBoxIcon.Information);
                     break;
                 }
 
@@ -1319,9 +1319,9 @@ namespace PolicyPlus.Views
                 _isDirty = true;
                 MoveToVisibleCategoryAndReload();
                 if (fails == 0)
-                    MsgBoxCompat.Show("Semantic Policy successfully applied.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MsgBoxCompat.Show("Semantic Policy successfully applied.", MsgBoxButtons.OK, MsgBoxIcon.Information);
                 else
-                    MsgBoxCompat.Show(fails + " out of " + spol.Policies.Count + " could not be applied.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show(fails + " out of " + spol.Policies.Count + " could not be applied.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -1337,7 +1337,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("The POL file could not be loaded.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The POL file could not be loaded.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -1348,7 +1348,7 @@ namespace PolicyPlus.Views
                 pol.Apply(section);
                 _isDirty = true;
                 MoveToVisibleCategoryAndReload();
-                MsgBoxCompat.Show("POL import successful.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MsgBoxCompat.Show("POL import successful.", MsgBoxButtons.OK, MsgBoxIcon.Information);
             }
         }
 
@@ -1373,11 +1373,11 @@ namespace PolicyPlus.Views
                 try
                 {
                     GetOrCreatePolFromPolicySource(section).Save(sfd.FileName);
-                    MsgBoxCompat.Show("POL exported successfully.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MsgBoxCompat.Show("POL exported successfully.", MsgBoxButtons.OK, MsgBoxIcon.Information);
                 }
                 catch (Exception)
                 {
-                    MsgBoxCompat.Show("The POL file could not be saved.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show("The POL file could not be saved.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 }
             }
         }
@@ -1488,14 +1488,14 @@ namespace PolicyPlus.Views
             SavePaneLayout();
             if (!_isDirty)
                 return;
-            var result = MsgBoxCompat.Show("There are unsaved changes. Save before closing?", System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Question);
-            if (result == System.Windows.Forms.DialogResult.Cancel)
+            var result = MsgBoxCompat.Show("There are unsaved changes. Save before closing?", MsgBoxButtons.YesNoCancel, MsgBoxIcon.Question);
+            if (result == MsgBoxResult.Cancel)
             {
                 e.Cancel = true;
                 return;
             }
 
-            if (result == System.Windows.Forms.DialogResult.Yes)
+            if (result == MsgBoxResult.Yes)
             {
                 SavePoliciesMenuItem_Click(sender, null);
                 if (_isDirty)

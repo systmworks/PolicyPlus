@@ -19,7 +19,7 @@ namespace PolicyPlus.Views
             string selection = TextAdmlLanguage.Text.Trim();
             if (selection.Split('-').Length != 2)
             {
-                MsgBoxCompat.Show("Please enter a valid language code.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please enter a valid language code.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 

@@ -201,14 +201,14 @@ namespace PolicyPlus.Views
 
             if (!IsKeyNameValid(keyName))
             {
-                MsgBoxCompat.Show("The key name is not valid.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The key name is not valid.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
             string containerKey = (LsvPol.SelectedItem as Row)?.Tag as string ?? "";
             if (!IsKeyNameAvailable(containerKey, keyName))
             {
-                MsgBoxCompat.Show("The key name is already taken.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The key name is already taken.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace PolicyPlus.Views
             }
             else
             {
-                MsgBoxCompat.Show("This value kind is not supported.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("This value kind is not supported.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return null;
             }
         }
@@ -330,7 +330,7 @@ namespace PolicyPlus.Views
             var tag = (LsvPol.SelectedItem as Row)?.Tag;
             if (tag is string keyPath)
             {
-                if (MsgBoxCompat.Show("Are you sure you want to remove this key and all its contents?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No)
+                if (MsgBoxCompat.Show("Are you sure you want to remove this key and all its contents?", MsgBoxButtons.YesNo, MsgBoxIcon.Warning) == MsgBoxResult.No)
                 {
                     return;
                 }

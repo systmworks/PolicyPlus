@@ -22,7 +22,7 @@ namespace PolicyPlus.Views
         {
             if (OptDeleteOne.IsChecked == true && string.IsNullOrEmpty(TextValueName.Text))
             {
-                MsgBoxCompat.Show("You must enter a value name.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("You must enter a value name.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 

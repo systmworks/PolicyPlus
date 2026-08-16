@@ -29,11 +29,11 @@ namespace PolicyPlus.Views
             try
             {
                 var spol = SpolFile.FromText(TextSpol.Text);
-                MsgBoxCompat.Show("Validation successful, " + spol.Policies.Count + " policy settings found.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MsgBoxCompat.Show("Validation successful, " + spol.Policies.Count + " policy settings found.", MsgBoxButtons.OK, MsgBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MsgBoxCompat.Show("SPOL validation failed: " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("SPOL validation failed: " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -46,13 +46,13 @@ namespace PolicyPlus.Views
             }
             catch (Exception ex)
             {
-                MsgBoxCompat.Show("The SPOL text is invalid: " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The SPOL text is invalid: " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
         private void ButtonReset_Click(object sender, RoutedEventArgs e)
         {
-            if (MsgBoxCompat.Show("Are you sure you want to reset the text box?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            if (MsgBoxCompat.Show("Are you sure you want to reset the text box?", MsgBoxButtons.YesNo, MsgBoxIcon.Question) == MsgBoxResult.Yes)
             {
                 TextSpol.Text = "Policy Plus Semantic Policy\r\n\r\n";
             }

@@ -184,7 +184,7 @@ namespace PolicyPlus.Views
                     Dispatcher.Invoke(() =>
                     {
                         SetIsBusy(false);
-                        if (MsgBoxCompat.Show("ADMX files downloaded successfully. Open them now?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                        if (MsgBoxCompat.Show("ADMX files downloaded successfully. Open them now?", MsgBoxButtons.YesNo, MsgBoxIcon.Question) == MsgBoxResult.Yes)
                         {
                             _newPolicySourceFolder = destination;
                         }
@@ -197,7 +197,7 @@ namespace PolicyPlus.Views
                     Dispatcher.Invoke(() =>
                     {
                         SetIsBusy(false);
-                        MsgBoxCompat.Show("Failed to " + failPhase + ".", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                        MsgBoxCompat.Show("Failed to " + failPhase + ".", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                     });
                 }
             });

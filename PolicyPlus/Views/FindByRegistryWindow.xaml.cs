@@ -24,13 +24,13 @@ namespace PolicyPlus.Views
             string valName = ValueTextbox.Text.ToLowerInvariant();
             if (string.IsNullOrEmpty(keyName) & string.IsNullOrEmpty(valName))
             {
-                MsgBoxCompat.Show("Please enter search terms.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please enter search terms.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
             if (new[] { @"HKLM\", @"HKCU\", @"HKEY_LOCAL_MACHINE\", @"HKEY_CURRENT_USER\" }.Any(bad => keyName.StartsWith(bad, StringComparison.InvariantCultureIgnoreCase)))
             {
-                MsgBoxCompat.Show("Policies' root keys are determined only by their section. Remove the root key from the search terms and try again.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Policies' root keys are determined only by their section. Remove the root key from the search terms and try again.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 

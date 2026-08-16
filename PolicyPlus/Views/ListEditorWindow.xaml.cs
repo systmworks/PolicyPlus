@@ -59,8 +59,8 @@ namespace PolicyPlus.Views
                     {
                         MsgBoxCompat.Show(
                             "Multiple entries are named \"" + row.Name + "\"! Remove or rename all but one.",
-                            System.Windows.Forms.MessageBoxButtons.OK,
-                            System.Windows.Forms.MessageBoxIcon.Exclamation);
+                            MsgBoxButtons.OK,
+                            MsgBoxIcon.Warning);
                         return;
                     }
 

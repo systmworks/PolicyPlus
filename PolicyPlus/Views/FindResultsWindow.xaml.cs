@@ -191,7 +191,7 @@ namespace PolicyPlus.Views
         {
             if (!_hasSearched)
             {
-                MsgBoxCompat.Show("No search has been run yet, so there are no results to display.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MsgBoxCompat.Show("No search has been run yet, so there are no results to display.", MsgBoxButtons.OK, MsgBoxIcon.Information);
                 return null;
             }
 

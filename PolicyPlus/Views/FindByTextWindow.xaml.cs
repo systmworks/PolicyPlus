@@ -22,7 +22,7 @@ namespace PolicyPlus.Views
             string text = StringTextbox.Text;
             if (string.IsNullOrEmpty(text))
             {
-                MsgBoxCompat.Show("Please enter search terms.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please enter search terms.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -31,7 +31,7 @@ namespace PolicyPlus.Views
             bool checkComment = CommentCheckbox.IsChecked == true;
             if (!(checkTitle | checkDesc | checkComment))
             {
-                MsgBoxCompat.Show("At least one attribute must be searched. Check one of the boxes and try again.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("At least one attribute must be searched. Check one of the boxes and try again.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 

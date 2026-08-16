@@ -27,7 +27,7 @@ namespace PolicyPlus.Views
         {
             if (string.IsNullOrEmpty(TextReg.Text))
             {
-                MsgBoxCompat.Show("Please specify a filename and path for the exported REG.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please specify a filename and path for the exported REG.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -38,12 +38,12 @@ namespace PolicyPlus.Views
             {
                 _source.Apply(reg);
                 reg.Save(TextReg.Text);
-                MsgBoxCompat.Show("REG exported successfully.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                MsgBoxCompat.Show("REG exported successfully.", MsgBoxButtons.OK, MsgBoxIcon.Information);
                 Close();
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("Failed to export REG!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Failed to export REG!", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 

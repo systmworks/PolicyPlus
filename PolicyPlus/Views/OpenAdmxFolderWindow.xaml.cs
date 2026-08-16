@@ -72,7 +72,7 @@ namespace PolicyPlus.Views
             }
             else
             {
-                MsgBoxCompat.Show("The folder you specified does not exist.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The folder you specified does not exist.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 

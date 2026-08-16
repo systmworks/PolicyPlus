@@ -41,12 +41,12 @@ namespace PolicyPlus.Views
                     TextRoot.Text = reg.GuessPrefix();
                     if (reg.HasDefaultValues())
                     {
-                        MsgBoxCompat.Show("This REG file contains data for default values, which cannot be applied to all policy sources.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                        MsgBoxCompat.Show("This REG file contains data for default values, which cannot be applied to all policy sources.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                     }
                 }
                 catch (Exception)
                 {
-                    MsgBoxCompat.Show("An error occurred while trying to guess the prefix.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    MsgBoxCompat.Show("An error occurred while trying to guess the prefix.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 }
             }
         }
@@ -55,13 +55,13 @@ namespace PolicyPlus.Views
         {
             if (string.IsNullOrEmpty(TextReg.Text))
             {
-                MsgBoxCompat.Show("Please specify a REG file to import.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please specify a REG file to import.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
             if (string.IsNullOrEmpty(TextRoot.Text))
             {
-                MsgBoxCompat.Show("Please specify the prefix used to fully qualify paths in the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Please specify the prefix used to fully qualify paths in the REG file.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("Failed to import the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Failed to import the REG file.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -90,7 +90,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("Failed to import the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("Failed to import the REG file.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -123,7 +123,7 @@ namespace PolicyPlus.Views
                 return _userPolicySource;
             }
 
-            MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+            MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             return null;
         }
 

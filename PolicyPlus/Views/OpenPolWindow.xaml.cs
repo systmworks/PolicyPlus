@@ -148,7 +148,7 @@ namespace PolicyPlus.Views
             }
             catch (System.Exception ex)
             {
-                MsgBoxCompat.Show("The computer policy loader could not be created. " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The computer policy loader could not be created. " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
@@ -181,7 +181,7 @@ namespace PolicyPlus.Views
             }
             catch (System.Exception ex)
             {
-                MsgBoxCompat.Show("The user policy loader could not be created. " + ex.Message, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The user policy loader could not be created. " + ex.Message, MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 

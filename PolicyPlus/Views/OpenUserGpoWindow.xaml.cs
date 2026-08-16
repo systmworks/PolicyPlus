@@ -25,7 +25,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("The name could not be translated to a SID.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The name could not be translated to a SID.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
             }
         }
 
@@ -46,7 +46,7 @@ namespace PolicyPlus.Views
             }
             catch (Exception)
             {
-                MsgBoxCompat.Show("The SID is not valid. Enter a SID in the lower box, or enter a username in the top box and press Search to translate.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                MsgBoxCompat.Show("The SID is not valid. Enter a SID in the lower box, or enter a username in the top box and press Search to translate.", MsgBoxButtons.OK, MsgBoxIcon.Warning);
                 return;
             }
 
