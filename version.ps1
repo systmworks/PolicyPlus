@@ -12,8 +12,8 @@ if (-not $match) { throw "Could not find a version header (## [X.Y]) at the top 
 $appVersion = $match.Matches[0].Groups['v'].Value
 $fileVersion = "$appVersion.0.0"
 
-# Embed the current commit and the app version into Version.cs, read by Main.cs for the
-# title bar and About dialog.
+# Embed the current commit and the app version into Version.cs, read by MainWindow.xaml.cs
+# and AboutWindow.xaml.cs for the title bar and About dialog.
 $versionCsPath = Join-Path $root "PolicyPlus\Version.cs"
 @"
 // DO NOT MODIFY THIS FILE. To update it, run version.bat again.

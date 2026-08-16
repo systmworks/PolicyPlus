@@ -15,7 +15,7 @@ compiled EXE's Windows file properties always reflect the fork's actual current 
 this automatically on every push to `master` (see `.github/workflows/latest.yml`), so released
 builds never need a manual version bump - only bumping the version in `CHANGELOG.md` itself.
 
-Policy Plus is a C# WinForms app targeting `net10.0-windows` (the [.NET 10 SDK](https://dotnet.microsoft.com/download) or later). You can build it with [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) or later, or from the command line.
+Policy Plus is a C# WPF-UI (Fluent design) app targeting `net10.0-windows` (the [.NET 10 SDK](https://dotnet.microsoft.com/download) or later). You can build it with [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) or later, or from the command line.
 
 To compile in Visual Studio, open `PolicyPlus.sln` (from the `PolicyPlus` folder). Set the *Solution Configurations* dropdown to Release (or Debug for a debug build).
 Choose *Build* | *Build PolicyPlus* from the main menu. The result is `PolicyPlus.exe`.
