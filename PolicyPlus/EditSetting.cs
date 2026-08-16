@@ -244,7 +244,7 @@ namespace PolicyPlus
                                     UseVisualStyleBackColor = true,
                                     Text = "Edit..."
                                 };
-                                button.Click += (sender, e) => { if (My.MyProject.Forms.ListEditor.PresentDialog(listPres.Label, button.Tag, list.UserProvidesNames) == DialogResult.OK) button.Tag = My.MyProject.Forms.ListEditor.FinalData; };
+                                button.Click += (sender, e) => { var result = Views.ListEditorWindow.PresentDialog(this, listPres.Label, button.Tag, list.UserProvidesNames); if (result is not null) button.Tag = result; };
                                 addControl(pres.ID, button, listPres.Label);
                                 break;
                             }

@@ -56,29 +56,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public ListEditor m_ListEditor;
-
-            public ListEditor ListEditor
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_ListEditor = Create__Instance__(m_ListEditor);
-                    return m_ListEditor;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_ListEditor))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_ListEditor);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public Main m_Main;
 
             public Main Main

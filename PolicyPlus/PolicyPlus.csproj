@@ -68,12 +68,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FilterConfiguration.cs" />
-    <Compile Include="ListEditor.Designer.cs">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ListEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,6 +176,9 @@
     </Compile>
     <Compile Include="Views\LanguageOptionsWindow.xaml.cs">
       <DependentUpon>LanguageOptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ListEditorWindow.xaml.cs">
+      <DependentUpon>ListEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoadedAdmxWindow.xaml.cs">
       <DependentUpon>LoadedAdmxWindow.xaml</DependentUpon>
@@ -308,6 +305,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ListEditorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\LoadedAdmxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -348,9 +349,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditSetting.resx">
       <DependentUpon>EditSetting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ListEditor.resx">
-      <DependentUpon>ListEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
