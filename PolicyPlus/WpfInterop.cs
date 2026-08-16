@@ -131,26 +131,36 @@ namespace PolicyPlus
             window.Owner = owner;
         }
 
-        // SizeToContent="Height" leaves these windows taller than their content, with the dead space
-        // below it. Re-running the SizeToContent pass (at Loaded, then at ContentRendered on an idle
-        // dispatch) was tried first on the theory that WPF-UI's async Mica backdrop was racing the
-        // measure - neither helped, because it isn't a timing problem: with ExtendsContentIntoTitleBar
-        // the caption is drawn by the window's own content, but WPF still reserves standard
-        // non-client caption space when converting the measured content height into a window height,
-        // so every re-measure lands on the same too-tall answer.
+        // SizeToContent="Height" left these windows taller than their content, with dead space
+        // below it - two earlier fixes here (a Loaded-based SizeToContent toggle, then a Mica-
+        // timing theory using ContentRendered) both did nothing, and a third (measuring the gap
+        // between window and content height directly) computed the right answer but still didn't
+        // visibly help. Confirmed by headlessly showing a real AboutWindow and pumping its message
+        // loop: the third fix WAS correctly setting window.Height to content's true 228px, but
+        // WPF-UI's stock FluentWindow style sets MinHeight="320"/MinWidth="460" - sensible floors
+        // for a resizable primary window, but these dialogs are all ResizeMode="NoResize" and
+        // explicitly opting into SizeToContent, so any content shorter/narrower than the floor gets
+        // silently clamped back up regardless of what Height/Width get set to. There's no
+        // interactive resizing on these windows for the floor to protect against, so it's cleared
+        // outright rather than lowered to some other guessed number.
         //
-        // Measuring the gap directly sidesteps the cause entirely. Once laid out, the content's
-        // DesiredSize is its true height while its ActualHeight is the stretched height it was
-        // given, so the difference between the window and the stretched content is the real
-        // non-client overhead. Guarded to only ever shrink, so a window that's already correct (or
-        // measures oddly) is left alone rather than made worse. Call from a window's constructor,
-        // after InitializeComponent, for any window seen sizing too tall.
+        // The direct-measurement shrink from the third attempt is kept as a second layer - once the
+        // floor is gone SizeToContent should already produce the right height on its own, but this
+        // still catches cases where it doesn't for some other reason. Call from a window's
+        // constructor, after InitializeComponent, for any window seen sizing too tall.
         public static void FixSizeToContent(Window window)
         {
             if (window.SizeToContent == SizeToContent.Manual)
             {
                 return;
             }
+
+            // A local value is required, not ClearValue - there's no local MinHeight/MinWidth to
+            // clear here, only the stock Style's Setter, and ClearValue only removes local values,
+            // leaving a Style Setter fully in effect. A local value is the one thing guaranteed to
+            // outrank it.
+            window.MinHeight = 0;
+            window.MinWidth = 0;
 
             window.ContentRendered += (s, e) =>
             {
