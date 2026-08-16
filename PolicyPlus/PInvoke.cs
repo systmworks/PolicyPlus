@@ -3,9 +3,6 @@ using System.Runtime.InteropServices;
 
 internal static class PInvoke
 {
-    [DllImport("user32.dll")]
-    public static extern bool ShowScrollBar(IntPtr Handle, int Scrollbar, bool Show);
-
     [DllImport("userenv.dll")]
     public static extern bool RefreshPolicyEx(bool IsMachine, uint Options);
 
@@ -36,14 +33,6 @@ internal static class PInvoke
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern bool SendNotifyMessageW(IntPtr Handle, int Message, UIntPtr WParam, IntPtr LParam);
 
-    [DllImport("user32.dll")]
-    public static extern IntPtr SendMessage(IntPtr Handle, int Message, IntPtr WParam, IntPtr LParam);
-
-    // Used to draw the sort arrow (HDF_SORTUP/HDF_SORTDOWN) on a ListView column header - a native
-    // common-control header feature with no managed WinForms equivalent
-    [DllImport("user32.dll", EntryPoint = "SendMessage")]
-    public static extern IntPtr SendMessageHdItem(IntPtr Handle, int Message, IntPtr WParam, ref PInvokeHdItem LParam);
-
     // Releases the GDI handle produced by Bitmap.GetHbitmap() - required after
     // Imaging.CreateBitmapSourceFromHBitmap to avoid leaking GDI objects.
     [DllImport("gdi32.dll")]
@@ -55,23 +44,6 @@ internal static class PInvoke
     // is used as the fallback when no WinForms Form is active (e.g. a WPF window is on top).
     [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();
-}
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct PInvokeHdItem
-{
-    public int Mask;
-    public int Cxy;
-    public IntPtr PszText;
-    public IntPtr Hbm;
-    public int CchTextMax;
-    public int Fmt;
-    public IntPtr LParam;
-    public int IImage;
-    public int IOrder;
-    public int Type;
-    public IntPtr PvFilter;
-    public int State;
 }
 
 [StructLayout(LayoutKind.Sequential)]

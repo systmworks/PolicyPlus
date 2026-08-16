@@ -10,7 +10,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <StartupObject>PolicyPlus.My.MyApplication</StartupObject>
+    <StartupObject>PolicyPlus.App</StartupObject>
     <RootNamespace>PolicyPlus</RootNamespace>
     <AssemblyName>PolicyPlus</AssemblyName>
     <MyType>WindowsForms</MyType>
@@ -55,30 +55,14 @@
     <Compile Include="CmtxFile.cs" />
     <Compile Include="CompiledStructures.cs" />
     <Compile Include="ConfigurationStorage.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="FilterConfiguration.cs" />
-    <Compile Include="Main.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MsgBoxCompat.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
-    <Compile Include="My Project\Application.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="My Project\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="PInvoke.cs" />
     <Compile Include="PolicyLoader.cs" />
@@ -198,9 +182,15 @@
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Views\PolicyElementTemplateSelector.cs" />
     <Compile Include="Views\SpinButtonPlacementConverter.cs" />
+    <Compile Include="ViewModels\CategoryNodeViewModel.cs" />
     <Compile Include="ViewModels\PolicyElementViewModels.cs" />
+    <Compile Include="ViewModels\PolicyRowViewModel.cs" />
     <Compile Include="WpfInterop.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
@@ -346,11 +336,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="Views\MainWindow.resx">
+      <DependentUpon>MainWindow.xaml.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -362,15 +356,6 @@
 
   <ItemGroup>
     <None Include="My Project\app.manifest" />
-    <None Include="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="My Project\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <CustomToolNamespace>PolicyPlus.My</CustomToolNamespace>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,338 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PolicyPlus.ViewModels"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Policy Plus"
+    Width="900"
+    Height="620"
+    MinWidth="600"
+    MinHeight="400"
+    Closing="Window_Closing"
+    Closed="Window_Closed"
+    Loaded="Window_Loaded"
+    PreviewKeyDown="Window_PreviewKeyDown"
+    ExtendsContentIntoTitleBar="True"
+    ShowInTaskbar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round">
+
+    <ui:FluentWindow.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type local:CategoryNodeViewModel}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="0,0,4,0">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Setter Property="Source" Value="{Binding Icon}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Source" Value="{Binding SelectedIcon}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <TextBlock Text="{Binding DisplayName}" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <DataTemplate x:Key="PolicyNameCellTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    Width="16"
+                    Height="16"
+                    Margin="0,0,4,0"
+                    Source="{Binding Icon}" />
+                <TextBlock Text="{Binding Name}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style x:Key="CategoryTreeItemStyle" TargetType="TreeViewItem">
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        </Style>
+
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Policy Plus" />
+
+        <DockPanel Grid.Row="1" Margin="8,4,8,4">
+            <Menu DockPanel.Dock="Left" Background="Transparent">
+                <MenuItem Header="_File">
+                    <MenuItem x:Name="OpenAdmxFolderMenuItem" Click="OpenAdmxFolderMenuItem_Click" Header="Open ADMX Folder" />
+                    <MenuItem x:Name="OpenAdmxFileMenuItem" Click="OpenAdmxFileMenuItem_Click" Header="Open ADMX File" />
+                    <MenuItem x:Name="SetAdmlLanguageMenuItem" Click="SetAdmlLanguageMenuItem_Click" Header="Set ADML Language" />
+                    <MenuItem x:Name="CloseAdmxWorkspaceMenuItem" Click="CloseAdmxWorkspaceMenuItem_Click" Header="Close ADMX Workspace" />
+                    <Separator />
+                    <MenuItem x:Name="OpenPolicyResourcesMenuItem" Click="OpenPolicyResourcesMenuItem_Click" Header="Open Policy Resources" InputGestureText="Ctrl+O" />
+                    <MenuItem x:Name="OpenRegFileMenuItem" Click="OpenRegFileMenuItem_Click" Header="Open REG File" />
+                    <MenuItem x:Name="SavePoliciesMenuItem" Click="SavePoliciesMenuItem_Click" Header="Save Policies" InputGestureText="Ctrl+S" />
+                    <MenuItem x:Name="ResetAllToDefaultMenuItem" Click="ResetAllToDefaultMenuItem_Click" Header="Reset All to Default" />
+                    <MenuItem x:Name="EditRawPolMenuItem" Click="EditRawPolMenuItem_Click" Header="Edit Raw POL" />
+                    <Separator />
+                    <MenuItem x:Name="ExitMenuItem" Click="ExitMenuItem_Click" Header="Exit" />
+                </MenuItem>
+                <MenuItem Header="_View">
+                    <MenuItem x:Name="EmptyCategoriesMenuItem" Click="EmptyCategoriesMenuItem_Click" Header="Empty Categories" IsCheckable="True" />
+                    <MenuItem x:Name="OnlyFilteredObjectsMenuItem" Click="OnlyFilteredObjectsMenuItem_Click" Header="Only Filtered Policies" IsCheckable="True" />
+                    <Separator />
+                    <MenuItem x:Name="FilterOptionsMenuItem" Click="FilterOptionsMenuItem_Click" Header="Filter Options" />
+                    <MenuItem
+                        x:Name="DeduplicatePoliciesMenuItem"
+                        Click="DeduplicatePoliciesMenuItem_Click"
+                        Header="Deduplicate Policies"
+                        Visibility="Collapsed" />
+                    <Separator />
+                    <MenuItem x:Name="LoadedAdmxFilesMenuItem" Click="LoadedAdmxFilesMenuItem_Click" Header="Loaded ADMX Files" />
+                    <MenuItem x:Name="AllProductsMenuItem" Click="AllProductsMenuItem_Click" Header="All Products" />
+                    <MenuItem x:Name="AllSupportDefinitionsMenuItem" Click="AllSupportDefinitionsMenuItem_Click" Header="All Support Definitions" />
+                </MenuItem>
+                <MenuItem Header="F_ind">
+                    <MenuItem x:Name="ByIdMenuItem" Click="ByIdMenuItem_Click" Header="By ID" InputGestureText="Ctrl+G" />
+                    <MenuItem x:Name="ByTextMenuItem" Click="ByTextMenuItem_Click" Header="By Text" InputGestureText="Ctrl+F" />
+                    <MenuItem x:Name="ByRegistryMenuItem" Click="ByRegistryMenuItem_Click" Header="By Registry" InputGestureText="Ctrl+R" />
+                    <Separator />
+                    <MenuItem x:Name="SearchResultsMenuItem" Click="SearchResultsMenuItem_Click" Header="Search Results" InputGestureText="Shift+F3" />
+                    <MenuItem x:Name="FindNextMenuItem" Click="FindNextMenuItem_Click" Header="Find Next" InputGestureText="F3" />
+                </MenuItem>
+                <MenuItem Header="_Share">
+                    <MenuItem x:Name="ImportSemanticPolicyMenuItem" Click="ImportSemanticPolicyMenuItem_Click" Header="Import Semantic Policy" />
+                    <MenuItem x:Name="ImportPolMenuItem" Click="ImportPolMenuItem_Click" Header="Import POL" />
+                    <MenuItem x:Name="ImportRegMenuItem" Click="ImportRegMenuItem_Click" Header="Import REG" />
+                    <Separator />
+                    <MenuItem x:Name="ExportPolMenuItem" Click="ExportPolMenuItem_Click" Header="Export POL" />
+                    <MenuItem x:Name="ExportRegMenuItem" Click="ExportRegMenuItem_Click" Header="Export REG" />
+                </MenuItem>
+                <MenuItem Header="_Options">
+                    <MenuItem Header="Color Mode">
+                        <MenuItem x:Name="LightMenuItem" Click="LightMenuItem_Click" Header="Light" IsCheckable="True" />
+                        <MenuItem x:Name="DarkMenuItem" Click="DarkMenuItem_Click" Header="Dark" IsCheckable="True" />
+                        <MenuItem x:Name="SystemMenuItem" Click="SystemMenuItem_Click" Header="Match Windows" IsCheckable="True" />
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem x:Name="AboutMenuItem" Click="AboutMenuItem_Click" Header="About" />
+                    <MenuItem x:Name="AcquireAdmxFilesMenuItem" Click="AcquireAdmxFilesMenuItem_Click" Header="Acquire ADMX Files" />
+                </MenuItem>
+            </Menu>
+
+            <StackPanel
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    x:Name="ClearSearchButton"
+                    Margin="4,0,0,0"
+                    Click="ClearSearchButton_Click"
+                    Content="✕"
+                    ToolTip="Clear search (Esc)" />
+                <ui:Button
+                    x:Name="SearchButton"
+                    Margin="4,0,0,0"
+                    Click="SearchButton_Click"
+                    Content="🔍"
+                    ToolTip="Search (Enter)" />
+                <ui:TextBox
+                    x:Name="SearchTextbox"
+                    Width="260"
+                    Margin="8,0,0,0"
+                    KeyDown="SearchTextbox_KeyDown"
+                    PlaceholderText="Search policies..." />
+            </StackPanel>
+        </DockPanel>
+
+        <Grid Grid.Row="2" Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="TreeColumn" Width="220" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="DescriptionColumn" Width="300" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ComboBox
+                    x:Name="ComboAppliesTo"
+                    Grid.Row="0"
+                    Margin="0,0,0,4"
+                    SelectedIndex="0"
+                    SelectionChanged="ComboAppliesTo_SelectionChanged">
+                    <ComboBoxItem Content="User or Computer" />
+                    <ComboBoxItem Content="User" />
+                    <ComboBoxItem Content="Computer" />
+                </ComboBox>
+                <TreeView
+                    x:Name="CategoriesTree"
+                    Grid.Row="1"
+                    ItemContainerStyle="{StaticResource CategoryTreeItemStyle}"
+                    PreviewMouseRightButtonDown="CategoriesTree_PreviewMouseRightButtonDown"
+                    SelectedItemChanged="CategoriesTree_SelectedItemChanged">
+                    <!--
+                        One shared ContextMenu, re-parented at open time to whichever of
+                        CategoriesTree/PoliciesList was right-clicked (see ShowPolicyObjectContext in
+                        code-behind) - a WPF ContextMenu, like any FrameworkElement, can only be the
+                        logical child of one control at a time, unlike a WinForms ContextMenuStrip
+                        which could be assigned to several controls simultaneously. Declared here (not
+                        in FluentWindow.Resources) because named elements inside a keyed resource
+                        entry get their own separate NameScope and never get x:Name fields wired up.
+                        Tag "P"/"C" marks policy-only/category-only items for ShowPolicyObjectContext's
+                        visibility filter, matching the original Designer-time item tagging.
+                    -->
+                    <TreeView.ContextMenu>
+                        <ContextMenu x:Name="PolicyObjectContext">
+                            <MenuItem
+                                x:Name="CmeCatOpen"
+                                Click="CmeCatOpen_Click"
+                                FontWeight="Bold"
+                                Header="Open"
+                                Tag="C" />
+                            <MenuItem
+                                x:Name="CmePolEdit"
+                                Click="CmePolEdit_Click"
+                                FontWeight="Bold"
+                                Header="Edit"
+                                Tag="P" />
+                            <MenuItem
+                                x:Name="CmeFavoriteToggle"
+                                Click="CmeFavoriteToggle_Click"
+                                Header="Add to Favorites"
+                                Tag="P" />
+                            <MenuItem x:Name="CmeAllDetails" Click="CmeAllDetails_Click" Header="Details" />
+                            <MenuItem
+                                x:Name="CmePolInspectElements"
+                                Click="CmePolInspectElements_Click"
+                                Header="Element Inspector"
+                                Tag="P" />
+                            <MenuItem
+                                x:Name="CmePolSpolFragment"
+                                Click="CmePolSpolFragment_Click"
+                                Header="Semantic Policy Fragment"
+                                Tag="P" />
+                            <Separator x:Name="CmeCopySeparator" />
+                            <MenuItem
+                                x:Name="CmeCopyId"
+                                Click="CmeCopyId_Click"
+                                Header="Copy ID"
+                                Tag="P" />
+                            <MenuItem
+                                x:Name="CmeCopyName"
+                                Click="CmeCopyName_Click"
+                                Header="Copy Name"
+                                Tag="P" />
+                            <MenuItem
+                                x:Name="CmeCopyRegPath"
+                                Click="CmeCopyRegPath_Click"
+                                Header="Copy Registry Path"
+                                Tag="P" />
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                </TreeView>
+            </Grid>
+
+            <GridSplitter
+                Grid.Column="1"
+                Width="4"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent" />
+
+            <ScrollViewer
+                Grid.Column="2"
+                Margin="4,0,0,0"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="SettingInfoPanel" Margin="4">
+                    <TextBlock
+                        x:Name="PolicyTitleLabel"
+                        Margin="0,0,0,8"
+                        FontWeight="Bold"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        x:Name="PolicySupportedLabel"
+                        Margin="0,0,0,8"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <StackPanel
+                        x:Name="PolicyIsPrefPanel"
+                        Margin="0,0,0,8"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <Image
+                            x:Name="PolicyIsPrefIcon"
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Top" />
+                        <TextBlock
+                            x:Name="PolicyIsPrefLabel"
+                            Text="Because it is not stored in a Policies section of the Registry, this policy is a preference and will not be automatically undone if the setting is removed."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <TextBlock x:Name="PolicyDescLabel" Text="Select an item to see its description." TextWrapping="Wrap" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <GridSplitter
+                Grid.Column="3"
+                Width="4"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent" />
+
+            <ui:ListView
+                x:Name="PoliciesList"
+                Grid.Column="4"
+                Margin="4,0,0,0"
+                KeyDown="PoliciesList_KeyDown"
+                MouseDoubleClick="PoliciesList_MouseDoubleClick"
+                PreviewMouseRightButtonDown="PoliciesList_PreviewMouseRightButtonDown"
+                SelectionChanged="PoliciesList_SelectionChanged"
+                SelectionMode="Single"
+                SizeChanged="PoliciesList_SizeChanged">
+                <ui:ListView.View>
+                    <GridView>
+                        <GridViewColumn x:Name="NameColumn" Width="200" CellTemplate="{StaticResource PolicyNameCellTemplate}">
+                            <GridViewColumnHeader x:Name="NameColumnHeader" Click="ColumnHeader_Click" Content="Name" Tag="0" />
+                        </GridViewColumn>
+                        <GridViewColumn x:Name="StateColumn" Width="107" DisplayMemberBinding="{Binding State}">
+                            <GridViewColumnHeader x:Name="StateColumnHeader" Click="ColumnHeader_Click" Content="State" Tag="1" />
+                        </GridViewColumn>
+                        <GridViewColumn x:Name="CommentColumn" Width="90" DisplayMemberBinding="{Binding Comment}">
+                            <GridViewColumnHeader x:Name="CommentColumnHeader" Click="ColumnHeader_Click" Content="Comment" Tag="2" />
+                        </GridViewColumn>
+                        <GridViewColumn x:Name="IdColumn" Width="180" DisplayMemberBinding="{Binding Id}">
+                            <GridViewColumnHeader x:Name="IdColumnHeader" Click="ColumnHeader_Click" Content="ID" Tag="3" />
+                        </GridViewColumn>
+                    </GridView>
+                </ui:ListView.View>
+            </ui:ListView>
+        </Grid>
+
+        <StatusBar Grid.Row="3">
+            <StatusBarItem>
+                <TextBlock Text="Computer source:" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock x:Name="ComputerSourceLabel" Text="Computer info" />
+            </StatusBarItem>
+            <Separator />
+            <StatusBarItem>
+                <TextBlock Text="User source:" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock x:Name="UserSourceLabel" Text="User info" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</ui:FluentWindow>

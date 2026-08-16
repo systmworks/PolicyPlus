@@ -96,74 +96,6 @@ namespace PolicyPlus.My
 {
 
     /* TODO ERROR: Skipped IfDirectiveTrivia
-    #If _MYAPPLICATIONTYPE = "WindowsForms" OrElse _MYAPPLICATIONTYPE = "Windows" OrElse _MYAPPLICATIONTYPE = "Console" Then
-    */
-    [System.CodeDom.Compiler.GeneratedCode("MyTemplate", "11.0.0.0")]
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-
-    /* TODO ERROR: Skipped IfDirectiveTrivia
-    #If _MYAPPLICATIONTYPE = "WindowsForms" Then
-    */
-    internal partial class MyApplication : Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase
-    {
-        /* TODO ERROR: Skipped IfDirectiveTrivia
-        #If TARGET = "winexe" Then
-        */
-        [STAThread()]
-        [DebuggerHidden()]
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static void Main(string[] Args)
-        {
-            // Microsoft's documented init order for dark mode support: EnableVisualStyles -> SetCompatibleTextRenderingDefault
-            // -> SetColorMode -> Run.
-            Application.EnableVisualStyles();
-            try
-            {
-                Application.SetCompatibleTextRenderingDefault(UseCompatibleTextRendering);
-            }
-            finally
-            {
-            }
-            // Must run before any form is created - changing color mode later doesn't re-theme existing controls
-            string colorMode = (string)new ConfigurationStorage(RegistryHive.CurrentUser, @"Software\Policy Plus").GetValue("ColorMode", "System");
-            SystemColorMode mode = colorMode switch
-            {
-                "Light" => SystemColorMode.Classic,
-                "Dark" => SystemColorMode.Dark,
-                _ => SystemColorMode.System,
-            };
-#pragma warning disable WFO5001 // SystemColorMode/SetColorMode are experimental as of .NET 9/10
-            Application.SetColorMode(mode);
-#pragma warning restore WFO5001
-            // WindowsFormsApplicationBase.Run() (the VB My.Application startup path, MyProject.Application.Run)
-            // silently resets whatever SetColorMode configures above - confirmed via an isolated repro (an
-            // identical minimal app renders dark correctly through a plain Application.Run(form), but not
-            // through WindowsFormsApplicationBase.Run()). This app doesn't use any of WindowsFormsApplicationBase's
-            // actual features (IsSingleInstance is off, no custom splash screen, no command-line arg handling -
-            // see My Project/Application.Designer.cs), so run the main form directly instead. MyProject.Forms.Main
-            // (rather than "new Main()") keeps the same default-instance identity FindById.cs relies on elsewhere.
-            Application.Run(MyProject.Forms.Main);
-        }
-        /* TODO ERROR: Skipped EndIfDirectiveTrivia
-        #End If
-        */
-        /* TODO ERROR: Skipped ElifDirectiveTrivia
-        #ElseIf _MYAPPLICATIONTYPE = "Windows" Then
-        *//* TODO ERROR: Skipped DisabledTextTrivia
-                Inherits Global.Microsoft.VisualBasic.ApplicationServices.ApplicationBase
-        *//* TODO ERROR: Skipped ElifDirectiveTrivia
-        #ElseIf _MYAPPLICATIONTYPE = "Console" Then
-        *//* TODO ERROR: Skipped DisabledTextTrivia
-                Inherits Global.Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase	
-        *//* TODO ERROR: Skipped EndIfDirectiveTrivia
-        #End If '_MYAPPLICATIONTYPE = "WindowsForms"
-        */
-    }
-
-    /* TODO ERROR: Skipped EndIfDirectiveTrivia
-    #End If '#If _MYAPPLICATIONTYPE = "WindowsForms" Or _MYAPPLICATIONTYPE = "Windows" or _MYAPPLICATIONTYPE = "Console"
-    */
-    /* TODO ERROR: Skipped IfDirectiveTrivia
     #If _MYCOMPUTERTYPE <> "" Then
     */
     [System.CodeDom.Compiler.GeneratedCode("MyTemplate", "11.0.0.0")]
@@ -209,22 +141,6 @@ namespace PolicyPlus.My
         }
 
         private readonly static ThreadSafeObjectProvider<MyComputer> m_ComputerObjectProvider = new ThreadSafeObjectProvider<MyComputer>();
-        /* TODO ERROR: Skipped EndIfDirectiveTrivia
-        #End If
-        */
-        /* TODO ERROR: Skipped IfDirectiveTrivia
-        #If _MYAPPLICATIONTYPE = "Windows" Or _MYAPPLICATIONTYPE = "WindowsForms" Or _MYAPPLICATIONTYPE = "Console" Then
-        */
-        [System.ComponentModel.Design.HelpKeyword("My.Application")]
-        internal static MyApplication Application
-        {
-            [DebuggerHidden()]
-            get
-            {
-                return m_AppObjectProvider.GetInstance;
-            }
-        }
-        private readonly static ThreadSafeObjectProvider<MyApplication> m_AppObjectProvider = new ThreadSafeObjectProvider<MyApplication>();
         /* TODO ERROR: Skipped EndIfDirectiveTrivia
         #End If
         */

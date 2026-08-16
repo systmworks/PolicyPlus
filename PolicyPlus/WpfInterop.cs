@@ -9,25 +9,36 @@ namespace PolicyPlus
 {
     internal static class WpfInterop
     {
+        private static bool _resourcesReady;
+
         public static void EnsureApplication()
         {
             if (Application.Current is null)
             {
-                var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-                // A normal WPF-UI app merges both of these via App.xaml. This app has no App.xaml
-                // (WinForms Main is still the real entry point), so they're merged here instead,
-                // matching the same baseline every WPF-UI app starts with:
-                //  - ThemesDictionary: the color tokens (ApplicationBackgroundBrush,
-                //    ControlFillColorDefaultBrush, ...) every control template binds to via
-                //    DynamicResource. Without it, controls render with no fill/border at all - visible
-                //    but colorless. ThemeService.Apply/ApplicationThemeManager swaps this at runtime.
-                //  - ControlsDictionary: the actual control templates for every ui: control (Button,
-                //    TextBox, TitleBar, ...). Without it, ui: controls have no template at all and
-                //    render as nothing.
-                app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ThemesDictionary());
-                app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ControlsDictionary());
-                AddOpaqueListSurfaceStyles(app);
+                // Every dialog still calls this before showing itself, since most of them are opened
+                // from a WinForms owner with no WPF Application running yet. App.Main (the WPF-native
+                // entry point) constructs the real App/MainWindow itself before calling this, so
+                // Application.Current is already set by the time it gets here - only the resource
+                // merge below still needs to happen.
+                _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             }
+
+            if (_resourcesReady)
+                return;
+            _resourcesReady = true;
+            var app = Application.Current;
+            // A normal WPF-UI app merges both of these via App.xaml. This app has no App.xaml,
+            // so they're merged here instead, matching the same baseline every WPF-UI app starts with:
+            //  - ThemesDictionary: the color tokens (ApplicationBackgroundBrush,
+            //    ControlFillColorDefaultBrush, ...) every control template binds to via
+            //    DynamicResource. Without it, controls render with no fill/border at all - visible
+            //    but colorless. ThemeService.Apply/ApplicationThemeManager swaps this at runtime.
+            //  - ControlsDictionary: the actual control templates for every ui: control (Button,
+            //    TextBox, TitleBar, ...). Without it, ui: controls have no template at all and
+            //    render as nothing.
+            app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ThemesDictionary());
+            app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ControlsDictionary());
+            AddOpaqueListSurfaceStyles(app);
         }
 
         // ListView/DataGrid rows and TreeView items render with a transparent background in their

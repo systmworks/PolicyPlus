@@ -38,7 +38,7 @@ namespace PolicyPlus.Views
         {
             SettingNameLabel.Text = _currentSetting.DisplayName;
             SupportedTextbox.Text = _currentSetting.SupportedOn is null ? "" : _currentSetting.SupportedOn.DisplayName;
-            HelpTextbox.Text = Main.PrettifyDescription(_currentSetting.DisplayExplanation);
+            HelpTextbox.Text = MainWindow.PrettifyDescription(_currentSetting.DisplayExplanation);
 
             if (_currentSetting.RawPolicy.Section == AdmxPolicySection.Both)
             {
