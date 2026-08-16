@@ -48,6 +48,12 @@ internal static class PInvoke
     // Imaging.CreateBitmapSourceFromHBitmap to avoid leaking GDI objects.
     [DllImport("gdi32.dll")]
     public static extern bool DeleteObject(IntPtr Object);
+
+    // OS-level, so it finds whichever window is actually active regardless of whether it's a
+    // WinForms Form or a WPF Window - used to center message boxes on the real active window
+    // instead of the screen.
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetActiveWindow();
 }
 
 [StructLayout(LayoutKind.Sequential)]

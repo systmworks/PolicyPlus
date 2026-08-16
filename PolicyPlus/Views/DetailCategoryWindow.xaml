@@ -5,7 +5,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Category Details"
     Width="420"
-    Height="330"
+    SizeToContent="Height"
     ExtendsContentIntoTitleBar="True"
     KeyDown="Window_KeyDown"
     ResizeMode="NoResize"
