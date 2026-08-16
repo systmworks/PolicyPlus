@@ -5,6 +5,38 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.27] - 2026-08-16
+
+### Changed
+- Collapsed the identical `ThemeService.ApplyPersisted()`/`WpfInterop.SetOwner()` prefix
+  duplicated across all 37 `PresentDialog` methods into one `WpfInterop.PreparePresented<T>`
+  helper. (`846bdd6`)
+- De-duplicated an identical Escape-to-close handler across 32 dialog windows into one
+  shared `WpfInterop.HandleEscapeToClose` helper. (`d8d9e2e`)
+- Replaced `PolicySearch`'s `Microsoft.VisualBasic` dependency (`Strings`, `ControlChars`,
+  `LikeOperator`) with plain C# and a small wildcard-to-regex translator; added the first
+  test coverage for it in the process. (`8b8c453`)
+- Split `AdmxFile.Load`'s ~360-line single method into 10 per-section methods; added the
+  first ADMX-parsing test coverage. (`06a3b52`)
+
+### Removed
+- Dead WinForms-era `Resources.resx`/`.Designer.cs` and `Views/MainWindow.resx` scaffolding
+  left behind by earlier migrations, and an unused `Row.Policy` field in
+  `FindResultsWindow`. (`0fa9d16`)
+
+### Fixed
+- A handful of correctness bugs from a code review: `ValuePresent` crashed on ADMX enum
+  items missing a `<value>` child; `loadOnOffValList` matched raw element names instead of
+  local names, silently breaking namespaced ADMX; `Privilege.EnablePrivilege` ignored all
+  three Win32 return codes; `AdmxBundle.AddSingleAdmx` built ADML paths with a substring
+  `.Replace()` that could corrupt unrelated path segments. Also guards three lookups
+  (element inspector, setting editor, filter options) that threw on mismatched/stale
+  ADMX+ADML data instead of degrading gracefully. (`9f6ed9a`)
+- 16 dialogs missing `WpfInterop.FixSizeToContent()` still had the oversized-dialog symptom
+  the WPF-UI migration's fix only reached 3 windows for. (`cf762dd`)
+- `MainWindow`'s category-tree selection could re-enter itself and redo work on routine
+  navigation; Favorites' listing silently went empty after any workspace reload. (`66d07c4`)
+
 ## [1.26] - 2026-08-16
 
 ### Changed
