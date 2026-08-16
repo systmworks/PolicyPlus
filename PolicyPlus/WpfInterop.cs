@@ -12,7 +12,12 @@ namespace PolicyPlus
         {
             if (Application.Current is null)
             {
-                _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                // ApplicationThemeManager.Apply only merges the color-token dictionary (Light/Dark
+                // swap). The actual control templates for every ui: control (Button, TextBox,
+                // TitleBar, ...) live in this separate dictionary - without it, ui: controls have no
+                // template at all and render as nothing.
+                app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ControlsDictionary());
             }
         }
 
