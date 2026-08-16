@@ -5,6 +5,18 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.26] - 2026-08-16
+
+### Changed
+- Migrated the entire app from WinForms to WPF-UI (Fluent design) — every window, dialog,
+  and popup now shares one consistent look. (`86b993b`, `e17df1e`)
+- Import REG now infers the target hive (Computer/User) from the file instead of always
+  asking. (`68b82e5`)
+
+### Fixed
+- Menu bar spacing, oversized popups, and invisible list/tree text — several rounds of
+  polish following the Fluent redesign. (`3132ad9`)
+
 ## [1.25] - 2026-08-15
 
 ### Added
