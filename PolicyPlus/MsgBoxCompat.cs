@@ -5,12 +5,13 @@ using System.Windows.Forms;
 // converting from the VB MsgBox convention only need to swap style flags for buttons/icon.
 public static class MsgBoxCompat
 {
-    // MessageBox.Show(text, ...) with no owner centers on the screen, not the app - re-queries
-    // the active window's handle on every call so it works whether the active window is a
-    // WinForms Form or a WPF Window.
+    // MessageBox.Show(text, ...) with no owner centers on the screen, not the app - re-queries the
+    // active window's handle on every call. Form.ActiveForm is WinForms' own reliable bookkeeping
+    // and covers the common case (called from Main or another still-WinForms dialog); it's null
+    // when a WPF window is on top, so GetForegroundWindow() covers that case instead.
     private sealed class ActiveWindowOwner : IWin32Window
     {
-        public IntPtr Handle => PInvoke.GetActiveWindow();
+        public IntPtr Handle => Form.ActiveForm?.Handle ?? PInvoke.GetForegroundWindow();
     }
 
     private static readonly IWin32Window Owner = new ActiveWindowOwner();
