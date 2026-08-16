@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    C# port of ../PolicyPlus (VB.NET). Not yet wired in as the solution's active project.
-    See ../CHANGELOG.md for progress and translation notes.
+    Originally a C# port of an earlier VB.NET codebase; that VB project no longer exists in this
+    repo. UI layer migrated from WinForms to WPF-UI (Fluent design) - see CHANGELOG.md for
+    progress. UseWindowsForms stays true: WinForms interop (dialog owner windows, MessageBox,
+    file pickers, the icon list) is still used throughout the WPF UI and hasn't been migrated off.
   -->
 
   <PropertyGroup>
@@ -43,10 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="My Project\MyNamespace.Dynamic.Designer.cs" />
-    <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
-    <Compile Include="My Project\MyNamespace.Static.2.Designer.cs" />
-    <Compile Include="My Project\MyNamespace.Static.3.Designer.cs" />
     <Compile Include="AdmlFile.cs" />
     <Compile Include="AdmxBundle.cs" />
     <Compile Include="AdmxFile.cs" />
