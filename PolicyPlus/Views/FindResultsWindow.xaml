@@ -51,18 +51,18 @@
 
             <TextBlock x:Name="ProgressLabel" Grid.Row="1" Margin="0,0,0,8" Text="Results: 0 (searching)" />
 
-            <ListView
+            <ui:ListView
                 x:Name="ResultsListview"
                 Grid.Row="2"
                 Margin="0,0,0,8"
                 MouseDoubleClick="GoClicked">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="220" DisplayMemberBinding="{Binding Title}" Header="Title" />
                         <GridViewColumn Width="140" DisplayMemberBinding="{Binding Category}" Header="Category" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="3"

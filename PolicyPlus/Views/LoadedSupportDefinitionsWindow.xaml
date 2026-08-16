@@ -45,19 +45,19 @@
                     TextChanged="TextFilter_TextChanged" />
             </Grid>
 
-            <ListView
+            <ui:ListView
                 x:Name="LsvSupport"
                 Grid.Row="1"
                 Margin="0,0,0,8"
                 KeyDown="LsvSupport_KeyDown"
                 MouseDoubleClick="LsvSupport_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="340" DisplayMemberBinding="{Binding Name}" Header="Name" />
                         <GridViewColumn Width="110" DisplayMemberBinding="{Binding DefinedIn}" Header="ADMX File" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="2"

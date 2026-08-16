@@ -34,52 +34,52 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Margin="0,0,0,4" Text="Top-level products" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvTopLevelProducts"
                 Grid.Row="1"
                 Margin="0,0,0,8"
                 KeyDown="ListView_KeyDown"
                 MouseDoubleClick="LsvTopLevelProducts_MouseDoubleClick"
                 SelectionChanged="LsvTopLevelProducts_SelectionChanged">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="300" DisplayMemberBinding="{Binding Name}" Header="Name" />
                         <GridViewColumn Width="70" DisplayMemberBinding="{Binding Children}" Header="Children" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <TextBlock x:Name="LabelMajorVersion" Grid.Row="2" Margin="0,0,0,4" Text="Select a product to show its major versions" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvMajorVersions"
                 Grid.Row="3"
                 Margin="0,0,0,8"
                 KeyDown="ListView_KeyDown"
                 MouseDoubleClick="LsvMajorVersions_MouseDoubleClick"
                 SelectionChanged="LsvMajorVersions_SelectionChanged">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
                         <GridViewColumn Width="70" DisplayMemberBinding="{Binding Version}" Header="Version" />
                         <GridViewColumn Width="70" DisplayMemberBinding="{Binding Children}" Header="Children" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <TextBlock x:Name="LabelMinorVersion" Grid.Row="4" Margin="0,0,0,4" Text="Select a major version to show its minor versions" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvMinorVersions"
                 Grid.Row="5"
                 Margin="0,0,0,8"
                 KeyDown="ListView_KeyDown"
                 MouseDoubleClick="LsvMinorVersions_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="300" DisplayMemberBinding="{Binding Name}" Header="Name" />
                         <GridViewColumn Width="70" DisplayMemberBinding="{Binding Version}" Header="Version" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="6"

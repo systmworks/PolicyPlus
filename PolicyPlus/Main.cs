@@ -49,16 +49,6 @@ namespace PolicyPlus
             // isn't publicly settable on TreeView/ListView, hence the reflection.
             SetDoubleBuffered(CategoriesTree);
             SetDoubleBuffered(PoliciesList);
-            // Phase 0 WPF-UI migration proof of concept - removed once Phase 1 dialogs land.
-            var wpfProofItem = new ToolStripMenuItem("WPF-UI Proof of Concept (Phase 0)");
-            wpfProofItem.Click += (s, e) =>
-            {
-                ThemeService.ApplyPersisted();
-                var proofWindow = new Views.Phase0ProofWindow();
-                WpfInterop.SetOwner(proofWindow, this);
-                proofWindow.ShowDialog();
-            };
-            HelpToolStripMenuItem.DropDownItems.Add(wpfProofItem);
         }
         private static void SetDoubleBuffered(Control control)
         {

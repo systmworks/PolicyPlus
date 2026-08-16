@@ -57,12 +57,12 @@
                     Content="Edit" />
             </StackPanel>
 
-            <ListView
+            <ui:ListView
                 x:Name="LsvPol"
                 Grid.Row="1"
                 Margin="0,0,0,10"
                 SelectionChanged="LsvPol_SelectionChanged">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="360" Header="Name">
                             <GridViewColumn.CellTemplate>
@@ -80,8 +80,8 @@
                         </GridViewColumn>
                         <GridViewColumn Width="180" DisplayMemberBinding="{Binding Value}" Header="Value" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>

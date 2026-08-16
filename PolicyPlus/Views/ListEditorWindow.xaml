@@ -37,14 +37,14 @@
                 Text="List element name"
                 TextWrapping="Wrap" />
 
-            <DataGrid
+            <ui:DataGrid
                 x:Name="EntriesGrid"
                 Grid.Row="1"
                 Margin="0,0,0,12"
                 AutoGenerateColumns="False"
                 CanUserSortColumns="False"
                 HeadersVisibility="Column">
-                <DataGrid.Columns>
+                <ui:DataGrid.Columns>
                     <DataGridTextColumn
                         x:Name="NameColumn"
                         Width="*"
@@ -55,8 +55,8 @@
                         Width="*"
                         Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
                         Header="Value" />
-                </DataGrid.Columns>
-            </DataGrid>
+                </ui:DataGrid.Columns>
+            </ui:DataGrid>
 
             <StackPanel
                 Grid.Row="2"

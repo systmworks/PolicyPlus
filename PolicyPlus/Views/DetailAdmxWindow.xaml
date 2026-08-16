@@ -62,60 +62,60 @@
                 IsReadOnly="True" />
 
             <TextBlock Grid.Row="6" Margin="0,0,0,4" Text="Policies" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvPolicies"
                 Grid.Row="7"
                 Margin="0,0,0,10"
                 MouseDoubleClick="LsvPolicies_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="90" DisplayMemberBinding="{Binding Id}" Header="Local ID" />
                         <GridViewColumn Width="280" DisplayMemberBinding="{Binding Name}" Header="Name" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <TextBlock Grid.Row="8" Margin="0,0,0,4" Text="Categories" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvCategories"
                 Grid.Row="9"
                 Margin="0,0,0,10"
                 MouseDoubleClick="LsvCategories_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="90" DisplayMemberBinding="{Binding Id}" Header="Local ID" />
                         <GridViewColumn Width="280" DisplayMemberBinding="{Binding Name}" Header="Name" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <TextBlock Grid.Row="10" Margin="0,0,0,4" Text="Products" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvProducts"
                 Grid.Row="11"
                 Margin="0,0,0,10"
                 MouseDoubleClick="LsvProducts_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="90" DisplayMemberBinding="{Binding Id}" Header="Local ID" />
                         <GridViewColumn Width="280" DisplayMemberBinding="{Binding Name}" Header="Name" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <TextBlock Grid.Row="12" Margin="0,0,0,4" Text="Support rules" />
-            <ListView
+            <ui:ListView
                 x:Name="LsvSupportDefinitions"
                 Grid.Row="13"
                 Margin="0,0,0,10"
                 MouseDoubleClick="LsvSupportDefinitions_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="90" DisplayMemberBinding="{Binding Id}" Header="Local ID" />
                         <GridViewColumn Width="280" DisplayMemberBinding="{Binding Name}" Header="Name" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="14"

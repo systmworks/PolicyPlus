@@ -28,14 +28,14 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <ListView x:Name="SubfoldersListview" Grid.Row="0" Margin="0,0,0,10">
-                <ListView.View>
+            <ui:ListView x:Name="SubfoldersListview" Grid.Row="0" Margin="0,0,0,10">
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="220" DisplayMemberBinding="{Binding Folder}" Header="Folder Name" />
                         <GridViewColumn Width="120" DisplayMemberBinding="{Binding Access}" Header="Accessible" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="1"

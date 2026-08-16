@@ -49,18 +49,18 @@
                 Margin="0,0,0,10"
                 IsReadOnly="True" />
             <TextBlock Margin="0,0,0,4" Text="Products" />
-            <ListView
+            <ui:ListView
                 x:Name="EntriesListview"
                 Height="160"
                 MouseDoubleClick="EntriesListview_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="240" DisplayMemberBinding="{Binding Name}" Header="Name" />
                         <GridViewColumn Width="60" DisplayMemberBinding="{Binding Min}" Header="Min" />
                         <GridViewColumn Width="60" DisplayMemberBinding="{Binding Max}" Header="Max" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
         </StackPanel>
     </Grid>
 </ui:FluentWindow>

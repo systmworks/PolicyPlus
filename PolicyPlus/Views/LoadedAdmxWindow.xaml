@@ -29,18 +29,18 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <ListView
+            <ui:ListView
                 x:Name="LsvAdmx"
                 Grid.Row="0"
                 MouseDoubleClick="LsvAdmx_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="120" DisplayMemberBinding="{Binding FileTitle}" Header="File" />
                         <GridViewColumn Width="260" DisplayMemberBinding="{Binding Folder}" Header="Folder" />
                         <GridViewColumn Width="150" DisplayMemberBinding="{Binding Namespace}" Header="Namespace" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
 
             <StackPanel
                 Grid.Row="1"

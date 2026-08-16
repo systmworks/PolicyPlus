@@ -129,18 +129,18 @@
             </Grid>
 
             <TextBlock Grid.Row="7" Margin="0,0,0,4" VerticalAlignment="Top" Text="Subproducts" />
-            <ListView
+            <ui:ListView
                 x:Name="ChildrenListview"
                 Grid.Row="7"
                 Margin="0,20,0,0"
                 MouseDoubleClick="ChildrenListview_MouseDoubleClick">
-                <ListView.View>
+                <ui:ListView.View>
                     <GridView>
                         <GridViewColumn Width="60" DisplayMemberBinding="{Binding Version}" Header="Version" />
                         <GridViewColumn Width="260" DisplayMemberBinding="{Binding Name}" Header="Name" />
                     </GridView>
-                </ListView.View>
-            </ListView>
+                </ui:ListView.View>
+            </ui:ListView>
         </Grid>
     </Grid>
 </ui:FluentWindow>

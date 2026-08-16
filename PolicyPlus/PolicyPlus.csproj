@@ -192,9 +192,6 @@
     <Compile Include="Views\OpenUserGpoWindow.xaml.cs">
       <DependentUpon>OpenUserGpoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Phase0ProofWindow.xaml.cs">
-      <DependentUpon>Phase0ProofWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\EditSettingWindow.xaml.cs">
       <DependentUpon>EditSettingWindow.xaml</DependentUpon>
     </Compile>
@@ -335,10 +332,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\OpenUserGpoWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Phase0ProofWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

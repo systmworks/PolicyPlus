@@ -43,6 +43,7 @@
                     Text="{Binding Label}" />
                 <ui:NumberBox
                     Width="140"
+                    ClearButtonEnabled="False"
                     IsEnabled="{Binding IsEnabled}"
                     Maximum="{Binding Maximum}"
                     Minimum="{Binding Minimum}"
