@@ -5,6 +5,28 @@ each entry linking to its commit for full detail. Version numbers are custom to 
 (not semver) — upstream's state at fork time is treated as **1.0**, incrementing by **0.1**
 per release.
 
+## [1.28] - 2026-08-16
+
+### Added
+- Replaced the Light/Dark/Match Windows toggle with 6 named color themes (3 light, 3 dark),
+  each with its own background/text/surface/accent palette, under Options > Color Mode.
+  (`3e3fd35`)
+
+### Changed
+- Theme colors now propagate to the whole window (title bar, menu bar, status bar) instead
+  of just the tree/list surfaces, and every palette was pushed toward bolder, more saturated
+  colors. (`3c2eed5`)
+- Pinned `WindowBackdropType`/accent explicitly on every theme switch so a live theme change
+  behaves the same as a fresh launch instead of silently re-enabling the Mica backdrop.
+  (`50943e9`)
+- Renamed the 6 themes to plain primary-color labels, e.g. "(Light) Blue"/"(Dark) Red".
+  (`9647be6`)
+
+### Fixed
+- Menu dropdowns, including the nested Color Mode submenu, rendered illegible white-on-white
+  text in light themes - WPF-UI's own dropdown styling doesn't reliably follow the Light/Dark
+  base swap. (`05a048a`, `1fbe297`)
+
 ## [1.27] - 2026-08-16
 
 ### Changed
