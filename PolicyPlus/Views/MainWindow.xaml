@@ -61,12 +61,174 @@
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
         </Style>
 
+        <!--
+            WPF-UI's stock top-level menu header template is built for touch-friendly menus: its
+            outer Border carries Margin="4" and the inner Grid Margin="10", so each header wants
+            ~47px of height for ~19px of text. In a desktop menu bar that reads as a fat, mostly
+            empty strip above the content. This is a copy of that template with only the vertical
+            margins reduced (horizontal spacing and every trigger/animation kept as-is), bringing a
+            header down to ~29px so the menu row is sized by the 32px search box next to it.
+
+            It has to be a whole template copy rather than a Setter: the margins are baked into
+            WPF-UI's ControlTemplate, and their style resolves the template via StaticResource at
+            its own definition site, so re-keying TopLevelHeaderTemplateKey here would never be
+            seen. Applied through Menu.ItemContainerStyle (below), which reaches only the top-level
+            headers - items inside the dropdowns keep WPF-UI's default look, where the roomier
+            padding is correct.
+        -->
+        <ControlTemplate x:Key="CompactTopLevelHeaderTemplate" TargetType="{x:Type MenuItem}">
+            <Border
+                x:Name="Border"
+                Margin="1,2,1,2"
+                Background="Transparent"
+                CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="10,3,10,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter
+                            x:Name="Icon"
+                            Grid.Column="0"
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Icon}" />
+                        <ContentPresenter
+                            x:Name="Header"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            ContentSource="Header"
+                            RecognizesAccessKey="True"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Grid>
+
+                    <Popup
+                        x:Name="Popup"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        AllowsTransparency="True"
+                        Focusable="False"
+                        HorizontalOffset="-12"
+                        IsOpen="{TemplateBinding IsSubmenuOpen}"
+                        Placement="Bottom"
+                        PlacementTarget="{Binding ElementName=Border}"
+                        PopupAnimation="None"
+                        VerticalOffset="1">
+                        <Grid>
+                            <Border
+                                x:Name="SubmenuBorder"
+                                Margin="12,0,12,18"
+                                Padding="0,3,0,3"
+                                Background="{DynamicResource FlyoutBackground}"
+                                BorderBrush="{DynamicResource FlyoutBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                SnapsToDevicePixels="True">
+                                <Border.RenderTransform>
+                                    <TranslateTransform />
+                                </Border.RenderTransform>
+                                <ui:PassiveScrollViewer CanContentScroll="True" Style="{StaticResource UiMenuItemScrollViewer}">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ui:PassiveScrollViewer>
+                                <Border.Effect>
+                                    <DropShadowEffect
+                                        BlurRadius="20"
+                                        Direction="270"
+                                        Opacity="0.135"
+                                        ShadowDepth="10"
+                                        Color="#202020" />
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                    </Popup>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver" Value="True" />
+                        <Condition Property="IsPressed" Value="False" />
+                    </MultiTrigger.Conditions>
+                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuBarItemBackgroundSelected}" />
+                </MultiTrigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver" Value="True" />
+                        <Condition Property="IsPressed" Value="True" />
+                    </MultiTrigger.Conditions>
+                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuBarItemBackgroundPressed}" />
+                    <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource MenuBarItemTextForegroundPressed}" />
+                    <Setter TargetName="Header" Property="TextElement.Foreground" Value="{DynamicResource MenuBarItemTextForegroundPressed}" />
+                </MultiTrigger>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuBarItemBackgroundSelected}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{DynamicResource TextFillColorDisabled}" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsSubmenuOpen" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="SubmenuBorder"
+                                    Storyboard.TargetProperty="(Border.RenderTransform).(TranslateTransform.Y)"
+                                    From="-90"
+                                    To="0"
+                                    Duration="00:00:00.167">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CircleEase EasingMode="EaseOut" />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!--
+            Standalone (not BasedOn WPF-UI's) so there's no trigger-vs-trigger precedence question
+            over which Template wins for the TopLevelHeader role. Foreground is set explicitly
+            because OverridesDefaultStyle drops WPF-UI's own value and the template binds the
+            header text's Foreground straight from it - without this the menu text renders
+            invisible, the same class of bug as the ListView/TreeView text fixes.
+        -->
+        <Style x:Key="CompactTopLevelMenuItemStyle" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Focusable" Value="True" />
+            <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Style.Triggers>
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Template" Value="{StaticResource CompactTopLevelHeaderTemplate}" />
+                    <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </ui:FluentWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="36" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -77,7 +239,8 @@
             <Menu
                 DockPanel.Dock="Left"
                 VerticalAlignment="Center"
-                Background="Transparent">
+                Background="Transparent"
+                ItemContainerStyle="{StaticResource CompactTopLevelMenuItemStyle}">
                 <MenuItem Header="_File">
                     <MenuItem x:Name="OpenAdmxFolderMenuItem" Click="OpenAdmxFolderMenuItem_Click" Header="Open ADMX Folder" />
                     <MenuItem x:Name="OpenAdmxFileMenuItem" Click="OpenAdmxFileMenuItem_Click" Header="Open ADMX File" />

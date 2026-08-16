@@ -105,13 +105,20 @@ namespace PolicyPlus
             window.Owner = owner;
         }
 
-        // WPF-UI's Mica backdrop is applied via a DWM call queued on Loaded, but the compositor's
-        // own visual update lags behind that call returning - re-measuring at Loaded (tried first)
-        // still raced it and settled on a height taller than the content needs, proportionally more
-        // noticeable the shorter the dialog is. ContentRendered fires after the first real paint,
-        // and deferring the actual toggle to ApplicationIdle priority lets any pending compositor
-        // work drain first. Call from a window's constructor, after InitializeComponent, for any
-        // window seen sizing too tall.
+        // SizeToContent="Height" leaves these windows taller than their content, with the dead space
+        // below it. Re-running the SizeToContent pass (at Loaded, then at ContentRendered on an idle
+        // dispatch) was tried first on the theory that WPF-UI's async Mica backdrop was racing the
+        // measure - neither helped, because it isn't a timing problem: with ExtendsContentIntoTitleBar
+        // the caption is drawn by the window's own content, but WPF still reserves standard
+        // non-client caption space when converting the measured content height into a window height,
+        // so every re-measure lands on the same too-tall answer.
+        //
+        // Measuring the gap directly sidesteps the cause entirely. Once laid out, the content's
+        // DesiredSize is its true height while its ActualHeight is the stretched height it was
+        // given, so the difference between the window and the stretched content is the real
+        // non-client overhead. Guarded to only ever shrink, so a window that's already correct (or
+        // measures oddly) is left alone rather than made worse. Call from a window's constructor,
+        // after InitializeComponent, for any window seen sizing too tall.
         public static void FixSizeToContent(Window window)
         {
             if (window.SizeToContent == SizeToContent.Manual)
@@ -119,16 +126,27 @@ namespace PolicyPlus
                 return;
             }
 
-            var original = window.SizeToContent;
             window.ContentRendered += (s, e) =>
             {
-                window.Dispatcher.BeginInvoke(
-                    System.Windows.Threading.DispatcherPriority.ApplicationIdle,
-                    new Action(() =>
-                    {
-                        window.SizeToContent = SizeToContent.Manual;
-                        window.SizeToContent = original;
-                    }));
+                if (window.Content is not FrameworkElement content)
+                {
+                    return;
+                }
+
+                content.UpdateLayout();
+                double needed = content.DesiredSize.Height;
+                double chrome = window.ActualHeight - content.ActualHeight;
+                if (needed <= 0 || chrome < 0)
+                {
+                    return;
+                }
+
+                double target = needed + chrome;
+                if (target < window.ActualHeight - 1)
+                {
+                    window.SizeToContent = SizeToContent.Manual;
+                    window.Height = target;
+                }
             };
         }
     }
