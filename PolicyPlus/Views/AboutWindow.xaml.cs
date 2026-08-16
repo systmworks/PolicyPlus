@@ -20,7 +20,7 @@ namespace PolicyPlus.Views
                 Close();
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner)
+        public static void PresentDialog(System.Windows.Window owner)
         {
             ThemeService.ApplyPersisted();
             var window = new AboutWindow();

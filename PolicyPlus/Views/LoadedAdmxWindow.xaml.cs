@@ -26,7 +26,7 @@ namespace PolicyPlus.Views
         {
             if (LsvAdmx.SelectedItem is Row row)
             {
-                DetailAdmxWindow.PresentDialog(WpfInterop.AsIWin32Window(this), row.Admx, _bundle);
+                DetailAdmxWindow.PresentDialog(this, row.Admx, _bundle);
             }
         }
 
@@ -52,7 +52,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, AdmxBundle workspace)
+        public static void PresentDialog(System.Windows.Window owner, AdmxBundle workspace)
         {
             ThemeService.ApplyPersisted();
             var window = new LoadedAdmxWindow { _bundle = workspace };

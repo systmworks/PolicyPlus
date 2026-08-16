@@ -109,7 +109,7 @@ namespace PolicyPlus.Views
             bool hasUser = hiveCounts[RegFileHive.User] > 0;
             if (hasComputer && hasUser)
             {
-                var section = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true);
+                var section = OpenSectionWindow.PresentDialog(this, true, true);
                 return section is null ? null : (section == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource);
             }
 
@@ -135,7 +135,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static bool PresentDialog(System.Windows.Forms.IWin32Window owner, IPolicySource userPolicySource, IPolicySource compPolicySource)
+        public static bool PresentDialog(System.Windows.Window owner, IPolicySource userPolicySource, IPolicySource compPolicySource)
         {
             ThemeService.ApplyPersisted();
             var window = new ImportRegWindow { _userPolicySource = userPolicySource, _compPolicySource = compPolicySource };
@@ -145,7 +145,7 @@ namespace PolicyPlus.Views
         }
 
         // For callers with only one possible target regardless of hive (see _fixedTarget).
-        public static bool PresentDialog(System.Windows.Forms.IWin32Window owner, IPolicySource fixedTarget)
+        public static bool PresentDialog(System.Windows.Window owner, IPolicySource fixedTarget)
         {
             ThemeService.ApplyPersisted();
             var window = new ImportRegWindow { _fixedTarget = fixedTarget };

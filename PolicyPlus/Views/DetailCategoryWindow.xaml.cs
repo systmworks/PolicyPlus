@@ -49,7 +49,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusCategory category)
+        public static void PresentDialog(System.Windows.Window owner, PolicyPlusCategory category)
         {
             ThemeService.ApplyPersisted();
             var window = new DetailCategoryWindow();

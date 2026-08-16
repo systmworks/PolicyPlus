@@ -87,7 +87,7 @@ namespace PolicyPlus.Views
                 Close();
         }
 
-        public static ulong? PresentDialog(System.Windows.Forms.IWin32Window owner, string valueName, ulong initialData, bool isQword)
+        public static ulong? PresentDialog(System.Windows.Window owner, string valueName, ulong initialData, bool isQword)
         {
             ThemeService.ApplyPersisted();
             var window = new EditPolNumericDataWindow { _maximum = isQword ? ulong.MaxValue : uint.MaxValue };

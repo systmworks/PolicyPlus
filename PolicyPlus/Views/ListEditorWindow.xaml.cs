@@ -89,7 +89,7 @@ namespace PolicyPlus.Views
                 Close();
         }
 
-        public static object PresentDialog(System.Windows.Forms.IWin32Window owner, string title, object data, bool twoColumn)
+        public static object PresentDialog(System.Windows.Window owner, string title, object data, bool twoColumn)
         {
             ThemeService.ApplyPersisted();
             var window = new ListEditorWindow(title, data, twoColumn);

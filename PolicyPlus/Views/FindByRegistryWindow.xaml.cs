@@ -77,7 +77,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static Func<PolicyPlusPolicy, bool> PresentDialog(System.Windows.Forms.IWin32Window owner)
+        public static Func<PolicyPlusPolicy, bool> PresentDialog(System.Windows.Window owner)
         {
             ThemeService.ApplyPersisted();
             var window = new FindByRegistryWindow();

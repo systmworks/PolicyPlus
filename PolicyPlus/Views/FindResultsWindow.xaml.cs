@@ -187,7 +187,7 @@ namespace PolicyPlus.Views
             return _results[_lastSelectedIndex];
         }
 
-        public static PolicyPlusPolicy PresentDialog(System.Windows.Forms.IWin32Window owner)
+        public static PolicyPlusPolicy PresentDialog(System.Windows.Window owner)
         {
             if (!_hasSearched)
             {
@@ -207,7 +207,7 @@ namespace PolicyPlus.Views
             return window._accepted ? _results[_lastSelectedIndex] : null;
         }
 
-        public static PolicyPlusPolicy PresentDialogStartSearch(System.Windows.Forms.IWin32Window owner, AdmxBundle workspace, Func<PolicyPlusPolicy, bool> searcher)
+        public static PolicyPlusPolicy PresentDialogStartSearch(System.Windows.Window owner, AdmxBundle workspace, Func<PolicyPlusPolicy, bool> searcher)
         {
             ThemeService.ApplyPersisted();
             var window = new FindResultsWindow();

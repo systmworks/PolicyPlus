@@ -35,7 +35,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static AdmxPolicySection? PresentDialog(System.Windows.Forms.IWin32Window owner, bool userEnabled, bool compEnabled)
+        public static AdmxPolicySection? PresentDialog(System.Windows.Window owner, bool userEnabled, bool compEnabled)
         {
             ThemeService.ApplyPersisted();
             var window = new OpenSectionWindow

@@ -74,7 +74,7 @@ namespace PolicyPlus.Views
             var supEntry = row.Entry;
             if (supEntry.Product is not null)
             {
-                DetailProductWindow.PresentDialog(WpfInterop.AsIWin32Window(this), supEntry.Product);
+                DetailProductWindow.PresentDialog(this, supEntry.Product);
             }
             else if (supEntry.SupportDefinition is not null)
             {
@@ -90,7 +90,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusSupport supported)
+        public static void PresentDialog(System.Windows.Window owner, PolicyPlusSupport supported)
         {
             ThemeService.ApplyPersisted();
             var window = new DetailSupportWindow();

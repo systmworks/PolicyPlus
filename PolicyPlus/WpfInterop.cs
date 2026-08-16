@@ -15,11 +15,9 @@ namespace PolicyPlus
         {
             if (Application.Current is null)
             {
-                // Every dialog still calls this before showing itself, since most of them are opened
-                // from a WinForms owner with no WPF Application running yet. App.Main (the WPF-native
-                // entry point) constructs the real App/MainWindow itself before calling this, so
-                // Application.Current is already set by the time it gets here - only the resource
-                // merge below still needs to happen.
+                // Every dialog still calls this before showing itself as a defensive fallback -
+                // in normal operation App.Main (the WPF-native entry point) already constructs the
+                // real Application before any window can open, so this branch shouldn't run.
                 _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             }
 
@@ -103,10 +101,10 @@ namespace PolicyPlus
             app.Resources[typeof(System.Windows.Controls.TreeViewItem)] = buildPlainItemStyle(typeof(System.Windows.Controls.TreeViewItem), System.Windows.Controls.TreeViewItem.IsSelectedProperty);
         }
 
-        public static void SetOwner(Window window, System.Windows.Forms.IWin32Window owner)
+        public static void SetOwner(Window window, Window owner)
         {
             EnsureApplication();
-            _ = new WindowInteropHelper(window) { Owner = owner.Handle };
+            window.Owner = owner;
         }
 
         // WPF-UI's Mica backdrop is applied asynchronously (after the initial layout pass that
@@ -128,18 +126,6 @@ namespace PolicyPlus
                 window.SizeToContent = SizeToContent.Manual;
                 window.SizeToContent = original;
             };
-        }
-
-        // Lets a WPF window act as the "owner" for a PresentDialog(IWin32Window owner, ...) call,
-        // since every PresentDialog signature is IWin32Window-based for uniformity with the many
-        // still-WinForms callers (Main, EditPol, etc.).
-        public static System.Windows.Forms.IWin32Window AsIWin32Window(Window window) =>
-            new Win32WindowAdapter(new WindowInteropHelper(window).EnsureHandle());
-
-        private sealed class Win32WindowAdapter : System.Windows.Forms.IWin32Window
-        {
-            public Win32WindowAdapter(IntPtr handle) => Handle = handle;
-            public IntPtr Handle { get; }
         }
 
         public static ImageSource ToImageSource(System.Drawing.Image image)

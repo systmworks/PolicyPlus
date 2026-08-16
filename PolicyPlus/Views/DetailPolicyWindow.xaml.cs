@@ -83,12 +83,12 @@ namespace PolicyPlus.Views
 
         private void SupportButton_Click(object sender, RoutedEventArgs e)
         {
-            DetailSupportWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _selectedPolicy.SupportedOn);
+            DetailSupportWindow.PresentDialog(this, _selectedPolicy.SupportedOn);
         }
 
         private void CategoryButton_Click(object sender, RoutedEventArgs e)
         {
-            DetailCategoryWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _selectedPolicy.Category);
+            DetailCategoryWindow.PresentDialog(this, _selectedPolicy.Category);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -99,7 +99,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusPolicy policy)
+        public static void PresentDialog(System.Windows.Window owner, PolicyPlusPolicy policy)
         {
             ThemeService.ApplyPersisted();
             var window = new DetailPolicyWindow();

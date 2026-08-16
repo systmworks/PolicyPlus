@@ -47,7 +47,7 @@ namespace PolicyPlus.Views
         {
             if (LsvPolicies.SelectedItem is Row<PolicyPlusPolicy> row)
             {
-                DetailPolicyWindow.PresentDialog(WpfInterop.AsIWin32Window(this), row.Item);
+                DetailPolicyWindow.PresentDialog(this, row.Item);
             }
         }
 
@@ -55,7 +55,7 @@ namespace PolicyPlus.Views
         {
             if (LsvCategories.SelectedItem is Row<PolicyPlusCategory> row)
             {
-                DetailCategoryWindow.PresentDialog(WpfInterop.AsIWin32Window(this), row.Item);
+                DetailCategoryWindow.PresentDialog(this, row.Item);
             }
         }
 
@@ -63,7 +63,7 @@ namespace PolicyPlus.Views
         {
             if (LsvProducts.SelectedItem is Row<PolicyPlusProduct> row)
             {
-                DetailProductWindow.PresentDialog(WpfInterop.AsIWin32Window(this), row.Item);
+                DetailProductWindow.PresentDialog(this, row.Item);
             }
         }
 
@@ -71,7 +71,7 @@ namespace PolicyPlus.Views
         {
             if (LsvSupportDefinitions.SelectedItem is Row<PolicyPlusSupport> row)
             {
-                DetailSupportWindow.PresentDialog(WpfInterop.AsIWin32Window(this), row.Item);
+                DetailSupportWindow.PresentDialog(this, row.Item);
             }
         }
 
@@ -88,7 +88,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, AdmxFile admx, AdmxBundle workspace)
+        public static void PresentDialog(System.Windows.Window owner, AdmxFile admx, AdmxBundle workspace)
         {
             ThemeService.ApplyPersisted();
             var window = new DetailAdmxWindow();

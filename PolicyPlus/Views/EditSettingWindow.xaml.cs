@@ -234,7 +234,7 @@ namespace PolicyPlus.Views
             if ((sender as FrameworkElement)?.DataContext is not ListElementViewModel vm)
                 return;
 
-            var result = ListEditorWindow.PresentDialog(WpfInterop.AsIWin32Window(this), vm.Label, vm.Data, vm.UserProvidesNames);
+            var result = ListEditorWindow.PresentDialog(this, vm.Label, vm.Data, vm.UserProvidesNames);
             if (result is not null)
                 vm.Data = result;
         }
@@ -267,7 +267,7 @@ namespace PolicyPlus.Views
         }
 
         public static bool PresentDialog(
-            System.Windows.Forms.IWin32Window owner,
+            System.Windows.Window owner,
             PolicyPlusPolicy policy,
             AdmxPolicySection section,
             AdmxBundle workspace,

@@ -41,7 +41,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static string PresentDialog(System.Windows.Forms.IWin32Window owner, string initialName)
+        public static string PresentDialog(System.Windows.Window owner, string initialName)
         {
             ThemeService.ApplyPersisted();
             var window = new EditPolKeyWindow { TextName = { Text = initialName } };

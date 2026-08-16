@@ -203,7 +203,7 @@ namespace PolicyPlus.Views
             });
         }
 
-        public static string PresentDialog(System.Windows.Forms.IWin32Window owner)
+        public static string PresentDialog(System.Windows.Window owner)
         {
             ThemeService.ApplyPersisted();
             var window = new DownloadAdmxWindow();

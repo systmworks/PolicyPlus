@@ -80,7 +80,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusProduct product)
+        public static void PresentDialog(System.Windows.Window owner, PolicyPlusProduct product)
         {
             ThemeService.ApplyPersisted();
             var window = new DetailProductWindow();

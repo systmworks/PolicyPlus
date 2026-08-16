@@ -95,7 +95,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static (string Folder, bool ClearWorkspace)? PresentDialog(System.Windows.Forms.IWin32Window owner)
+        public static (string Folder, bool ClearWorkspace)? PresentDialog(System.Windows.Window owner)
         {
             ThemeService.ApplyPersisted();
             var window = new OpenAdmxFolderWindow();

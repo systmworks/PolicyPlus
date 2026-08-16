@@ -55,7 +55,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, string branch, PolFile pol, bool isUser)
+        public static void PresentDialog(System.Windows.Window owner, string branch, PolFile pol, bool isUser)
         {
             ThemeService.ApplyPersisted();
             var window = new ExportRegWindow

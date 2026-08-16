@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Wpf.Ui.Controls;
@@ -97,7 +96,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static Result PresentDialog(IWin32Window owner, AdmxBundle admxWorkspace, ImageSource[] policyIcons)
+        public static Result PresentDialog(System.Windows.Window owner, AdmxBundle admxWorkspace, ImageSource[] policyIcons)
         {
             ThemeService.ApplyPersisted();
             var window = new FindByIdWindow

@@ -39,7 +39,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static string PresentDialog(System.Windows.Forms.IWin32Window owner, string currentLanguage)
+        public static string PresentDialog(System.Windows.Window owner, string currentLanguage)
         {
             ThemeService.ApplyPersisted();
             var window = new LanguageOptionsWindow { _originalLanguage = currentLanguage, TextAdmlLanguage = { Text = currentLanguage } };

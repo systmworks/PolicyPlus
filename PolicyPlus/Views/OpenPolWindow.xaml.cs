@@ -109,7 +109,7 @@ namespace PolicyPlus.Views
 
         private void UserBrowseRegistryButton_Click(object sender, RoutedEventArgs e)
         {
-            var hivePath = OpenUserRegistryWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var hivePath = OpenUserRegistryWindow.PresentDialog(this);
             if (hivePath is not null)
             {
                 UserHivePathTextbox.Text = hivePath;
@@ -118,7 +118,7 @@ namespace PolicyPlus.Views
 
         private void UserBrowseGpoButton_Click(object sender, RoutedEventArgs e)
         {
-            var sid = OpenUserGpoWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var sid = OpenUserGpoWindow.PresentDialog(this);
             if (sid is not null)
             {
                 UserGpoSidTextbox.Text = sid;
@@ -198,7 +198,7 @@ namespace PolicyPlus.Views
         }
 
         public static (PolicyLoader User, PolicyLoader Computer)? PresentDialog(
-            System.Windows.Forms.IWin32Window owner,
+            System.Windows.Window owner,
             PolicyLoaderSource compType,
             string compData,
             PolicyLoaderSource userType,

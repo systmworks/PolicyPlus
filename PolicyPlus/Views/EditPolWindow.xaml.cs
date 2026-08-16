@@ -193,7 +193,7 @@ namespace PolicyPlus.Views
 
         private void ButtonAddKey_Click(object sender, RoutedEventArgs e)
         {
-            string keyName = EditPolKeyWindow.PresentDialog(WpfInterop.AsIWin32Window(this), "");
+            string keyName = EditPolKeyWindow.PresentDialog(this, "");
             if (string.IsNullOrEmpty(keyName))
             {
                 return;
@@ -222,16 +222,16 @@ namespace PolicyPlus.Views
         {
             if (kind == RegistryValueKind.String || kind == RegistryValueKind.ExpandString)
             {
-                return EditPolStringDataWindow.PresentDialog(WpfInterop.AsIWin32Window(this), valueName, currentData?.ToString());
+                return EditPolStringDataWindow.PresentDialog(this, valueName, currentData?.ToString());
             }
             else if (kind == RegistryValueKind.DWord || kind == RegistryValueKind.QWord)
             {
-                var result = EditPolNumericDataWindow.PresentDialog(WpfInterop.AsIWin32Window(this), valueName, Convert.ToUInt64(currentData), kind == RegistryValueKind.QWord);
+                var result = EditPolNumericDataWindow.PresentDialog(this, valueName, Convert.ToUInt64(currentData), kind == RegistryValueKind.QWord);
                 return result.HasValue ? (object)result.Value : null;
             }
             else if (kind == RegistryValueKind.MultiString)
             {
-                return EditPolMultiStringDataWindow.PresentDialog(WpfInterop.AsIWin32Window(this), valueName, (string[])currentData);
+                return EditPolMultiStringDataWindow.PresentDialog(this, valueName, (string[])currentData);
             }
             else
             {
@@ -243,7 +243,7 @@ namespace PolicyPlus.Views
         private void ButtonAddValue_Click(object sender, RoutedEventArgs e)
         {
             string keyPath = (LsvPol.SelectedItem as Row)?.Tag as string;
-            var chosen = EditPolValueWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var chosen = EditPolValueWindow.PresentDialog(this);
             if (chosen is null)
             {
                 return;
@@ -272,7 +272,7 @@ namespace PolicyPlus.Views
             var tag = selectedRow?.Tag;
             if (tag is string keyPath)
             {
-                var deleteChoice = EditPolDeleteWindow.PresentDialog(WpfInterop.AsIWin32Window(this), keyPath.Split('\\').Last());
+                var deleteChoice = EditPolDeleteWindow.PresentDialog(this, keyPath.Split('\\').Last());
                 if (deleteChoice is null)
                 {
                     return;
@@ -421,7 +421,7 @@ namespace PolicyPlus.Views
 
         private void ButtonImport_Click(object sender, RoutedEventArgs e)
         {
-            if (ImportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _editingPol))
+            if (ImportRegWindow.PresentDialog(this, _editingPol))
             {
                 UpdateTree();
             }
@@ -430,7 +430,7 @@ namespace PolicyPlus.Views
         private void ButtonExport_Click(object sender, RoutedEventArgs e)
         {
             string branch = (LsvPol.SelectedItem as Row)?.Tag as string ?? "";
-            ExportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), branch, _editingPol, _editingUserSource);
+            ExportRegWindow.PresentDialog(this, branch, _editingPol, _editingUserSource);
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -446,7 +446,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, ImageSource[] icons, PolFile pol, bool isUser)
+        public static void PresentDialog(System.Windows.Window owner, ImageSource[] icons, PolFile pol, bool isUser)
         {
             ThemeService.ApplyPersisted();
             var window = new EditPolWindow

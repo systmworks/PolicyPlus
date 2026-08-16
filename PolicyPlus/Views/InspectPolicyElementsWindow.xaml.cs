@@ -294,7 +294,7 @@ namespace PolicyPlus.Views
 
         private void PolicyDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            DetailPolicyWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _selectedPolicy);
+            DetailPolicyWindow.PresentDialog(this, _selectedPolicy);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -310,7 +310,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusPolicy policy, ImageSource[] icons, AdmxBundle admxWorkspace)
+        public static void PresentDialog(System.Windows.Window owner, PolicyPlusPolicy policy, ImageSource[] icons, AdmxBundle admxWorkspace)
         {
             ThemeService.ApplyPersisted();
             var window = new InspectPolicyElementsWindow();

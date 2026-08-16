@@ -489,7 +489,7 @@ namespace PolicyPlus.Views
 
         public void ShowSettingEditor(PolicyPlusPolicy policy, AdmxPolicySection section)
         {
-            if (EditSettingWindow.PresentDialog(WpfInterop.AsIWin32Window(this), policy, section, _admxWorkspace, _compPolicySource, _userPolicySource, _compPolicyLoader, _userPolicyLoader, _compComments, _userComments))
+            if (EditSettingWindow.PresentDialog(this, policy, section, _admxWorkspace, _compPolicySource, _userPolicySource, _compPolicyLoader, _userPolicyLoader, _compComments, _userComments))
             {
                 _isDirty = true;
                 if (_currentCategory is null || ShouldShowCategory(_currentCategory))
@@ -577,8 +577,8 @@ namespace PolicyPlus.Views
         public void ShowSearchDialog(Func<PolicyPlusPolicy, bool> searcher)
         {
             var selPol = searcher is null
-                ? FindResultsWindow.PresentDialog(WpfInterop.AsIWin32Window(this))
-                : FindResultsWindow.PresentDialogStartSearch(WpfInterop.AsIWin32Window(this), _admxWorkspace, searcher);
+                ? FindResultsWindow.PresentDialog(this)
+                : FindResultsWindow.PresentDialogStartSearch(this, _admxWorkspace, searcher);
             if (selPol is not null)
             {
                 ShowSettingEditor(selPol, _viewPolicyTypes);
@@ -811,16 +811,16 @@ namespace PolicyPlus.Views
         private void CmeAllDetails_Click(object sender, RoutedEventArgs e)
         {
             if (_contextTarget is PolicyPlusCategory category)
-                DetailCategoryWindow.PresentDialog(WpfInterop.AsIWin32Window(this), category);
+                DetailCategoryWindow.PresentDialog(this, category);
             else
-                DetailPolicyWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget);
+                DetailPolicyWindow.PresentDialog(this, (PolicyPlusPolicy)_contextTarget);
         }
 
         private void CmePolInspectElements_Click(object sender, RoutedEventArgs e) =>
-            InspectPolicyElementsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget, _icons, _admxWorkspace);
+            InspectPolicyElementsWindow.PresentDialog(this, (PolicyPlusPolicy)_contextTarget, _icons, _admxWorkspace);
 
         private void CmePolSpolFragment_Click(object sender, RoutedEventArgs e) =>
-            InspectSpolFragmentWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget, _admxWorkspace, _compPolicySource, _userPolicySource, _compComments, _userComments);
+            InspectSpolFragmentWindow.PresentDialog(this, (PolicyPlusPolicy)_contextTarget, _admxWorkspace, _compPolicySource, _userPolicySource, _compComments, _userComments);
 
         private void CmeCopyId_Click(object sender, RoutedEventArgs e) => Clipboard.SetText(((PolicyPlusPolicy)_contextTarget).UniqueID);
 
@@ -955,7 +955,7 @@ namespace PolicyPlus.Views
 
         private void FilterOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var newFilter = FilterOptionsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _currentFilter, _admxWorkspace);
+            var newFilter = FilterOptionsWindow.PresentDialog(this, _currentFilter, _admxWorkspace);
             if (newFilter is not null)
             {
                 _currentFilter = newFilter;
@@ -976,11 +976,11 @@ namespace PolicyPlus.Views
             UpdatePolicyInfo();
         }
 
-        private void LoadedAdmxFilesMenuItem_Click(object sender, RoutedEventArgs e) => LoadedAdmxWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace);
+        private void LoadedAdmxFilesMenuItem_Click(object sender, RoutedEventArgs e) => LoadedAdmxWindow.PresentDialog(this, _admxWorkspace);
 
-        private void AllProductsMenuItem_Click(object sender, RoutedEventArgs e) => LoadedProductsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace);
+        private void AllProductsMenuItem_Click(object sender, RoutedEventArgs e) => LoadedProductsWindow.PresentDialog(this, _admxWorkspace);
 
-        private void AllSupportDefinitionsMenuItem_Click(object sender, RoutedEventArgs e) => LoadedSupportDefinitionsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace);
+        private void AllSupportDefinitionsMenuItem_Click(object sender, RoutedEventArgs e) => LoadedSupportDefinitionsWindow.PresentDialog(this, _admxWorkspace);
 
         // ------------------------------------------------------------------
         // File menu
@@ -988,7 +988,7 @@ namespace PolicyPlus.Views
 
         private void OpenAdmxFolderMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var openAdmxResult = OpenAdmxFolderWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var openAdmxResult = OpenAdmxFolderWindow.PresentDialog(this);
             if (openAdmxResult is not null)
             {
                 try
@@ -1033,7 +1033,7 @@ namespace PolicyPlus.Views
 
         private void SetAdmlLanguageMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var newLanguage = LanguageOptionsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), GetPreferredLanguageCode());
+            var newLanguage = LanguageOptionsWindow.PresentDialog(this, GetPreferredLanguageCode());
             if (newLanguage is not null)
             {
                 _configuration.SetValue("LanguageCode", newLanguage);
@@ -1048,7 +1048,7 @@ namespace PolicyPlus.Views
 
         private void OpenPolicyResourcesMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var openPolResult = OpenPolWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _compPolicyLoader.Source, _compPolicyLoader.LoaderData, _userPolicyLoader.Source, _userPolicyLoader.LoaderData);
+            var openPolResult = OpenPolWindow.PresentDialog(this, _compPolicyLoader.Source, _compPolicyLoader.LoaderData, _userPolicyLoader.Source, _userPolicyLoader.LoaderData);
             if (openPolResult is not null)
             {
                 OpenPolicyLoaders(openPolResult.Value.User, openPolResult.Value.Computer, false);
@@ -1214,10 +1214,10 @@ namespace PolicyPlus.Views
                 _configuration.SetValue("EditPolDangerAcknowledged", 1);
             }
 
-            var editPolSection = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), userIsPol, compIsPol);
+            var editPolSection = OpenSectionWindow.PresentDialog(this, userIsPol, compIsPol);
             if (editPolSection is not null)
             {
-                EditPolWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _icons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource), editPolSection == AdmxPolicySection.User);
+                EditPolWindow.PresentDialog(this, _icons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource), editPolSection == AdmxPolicySection.User);
                 _isDirty = true;
             }
 
@@ -1232,7 +1232,7 @@ namespace PolicyPlus.Views
 
         private void ByIdMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var findByIdResult = FindByIdWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace, _icons);
+            var findByIdResult = FindByIdWindow.PresentDialog(this, _admxWorkspace, _icons);
             if (findByIdResult is not null)
             {
                 var selCat = findByIdResult.SelectedCategory;
@@ -1258,11 +1258,11 @@ namespace PolicyPlus.Views
                 }
                 else if (selPro is not null)
                 {
-                    DetailProductWindow.PresentDialog(WpfInterop.AsIWin32Window(this), selPro);
+                    DetailProductWindow.PresentDialog(this, selPro);
                 }
                 else if (selSup is not null)
                 {
-                    DetailSupportWindow.PresentDialog(WpfInterop.AsIWin32Window(this), selSup);
+                    DetailSupportWindow.PresentDialog(this, selSup);
                 }
                 else
                 {
@@ -1273,7 +1273,7 @@ namespace PolicyPlus.Views
 
         private void ByTextMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var textSearcher = FindByTextWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _userComments, _compComments);
+            var textSearcher = FindByTextWindow.PresentDialog(this, _userComments, _compComments);
             if (textSearcher is not null)
                 ShowSearchDialog(textSearcher);
         }
@@ -1301,7 +1301,7 @@ namespace PolicyPlus.Views
 
         private void ByRegistryMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var registrySearcher = FindByRegistryWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var registrySearcher = FindByRegistryWindow.PresentDialog(this);
             if (registrySearcher is not null)
                 ShowSearchDialog(registrySearcher);
         }
@@ -1312,7 +1312,7 @@ namespace PolicyPlus.Views
 
         private void ImportSemanticPolicyMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var spol = ImportSpolWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var spol = ImportSpolWindow.PresentDialog(this);
             if (spol is not null)
             {
                 int fails = spol.ApplyAll(_admxWorkspace, _userPolicySource, _compPolicySource, _userComments, _compComments);
@@ -1341,7 +1341,7 @@ namespace PolicyPlus.Views
                 return;
             }
 
-            var importSection = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true);
+            var importSection = OpenSectionWindow.PresentDialog(this, true, true);
             if (importSection is not null)
             {
                 var section = importSection == AdmxPolicySection.User ? _userPolicySource : _compPolicySource;
@@ -1356,7 +1356,7 @@ namespace PolicyPlus.Views
         {
             // ImportRegWindow infers Computer vs User from the REG file's own hive path once a
             // file is chosen, only falling back to asking if the file genuinely mixes both hives.
-            if (ImportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _userPolicySource, _compPolicySource))
+            if (ImportRegWindow.PresentDialog(this, _userPolicySource, _compPolicySource))
             {
                 _isDirty = true;
                 MoveToVisibleCategoryAndReload();
@@ -1366,7 +1366,7 @@ namespace PolicyPlus.Views
         private void ExportPolMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var sfd = new Microsoft.Win32.SaveFileDialog { Filter = "POL files|*.pol" };
-            AdmxPolicySection? exportSection = sfd.ShowDialog() == true ? OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true) : null;
+            AdmxPolicySection? exportSection = sfd.ShowDialog() == true ? OpenSectionWindow.PresentDialog(this, true, true) : null;
             if (exportSection is not null)
             {
                 var section = exportSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource;
@@ -1384,11 +1384,11 @@ namespace PolicyPlus.Views
 
         private void ExportRegMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var exportRegSection = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true);
+            var exportRegSection = OpenSectionWindow.PresentDialog(this, true, true);
             if (exportRegSection is not null)
             {
                 var source = exportRegSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource;
-                ExportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), "", GetOrCreatePolFromPolicySource(source), exportRegSection == AdmxPolicySection.User);
+                ExportRegWindow.PresentDialog(this, "", GetOrCreatePolFromPolicySource(source), exportRegSection == AdmxPolicySection.User);
             }
         }
 
@@ -1419,11 +1419,11 @@ namespace PolicyPlus.Views
         // Help menu
         // ------------------------------------------------------------------
 
-        private void AboutMenuItem_Click(object sender, RoutedEventArgs e) => AboutWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+        private void AboutMenuItem_Click(object sender, RoutedEventArgs e) => AboutWindow.PresentDialog(this);
 
         private void AcquireAdmxFilesMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var newAdmxFolder = DownloadAdmxWindow.PresentDialog(WpfInterop.AsIWin32Window(this));
+            var newAdmxFolder = DownloadAdmxWindow.PresentDialog(this);
             if (!string.IsNullOrEmpty(newAdmxFolder))
             {
                 ClearAdmxWorkspace();

@@ -60,7 +60,7 @@ namespace PolicyPlus.Views
         }
 
         public static void PresentDialog(
-            System.Windows.Forms.IWin32Window owner,
+            System.Windows.Window owner,
             PolicyPlusPolicy policy,
             AdmxBundle admxWorkspace,
             IPolicySource compSource,
