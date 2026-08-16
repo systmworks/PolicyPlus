@@ -35,6 +35,32 @@ namespace PolicyPlus
             app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ThemesDictionary());
             app.Resources.MergedDictionaries.Add(new Wpf.Ui.Markup.ControlsDictionary());
             AddOpaqueListSurfaceStyles(app);
+            AddCompactTitleBarStyle(app);
+        }
+
+        // Wpf.Ui.Controls.TitleBar's stock style hardcodes Height="48" as a plain Setter (not a
+        // MinHeight or a natural desired size), and its own template top/center-anchors the icon,
+        // title text, and caption buttons rather than filling that height - the caption buttons are
+        // a fixed 30px, Top-aligned, so roughly the bottom third of the stock 48px is genuine dead
+        // space by design (most likely sized for apps that put a taller custom app-bar in the title
+        // row - this app doesn't). That dead space is what repeatedly looked like "extra space above
+        // the menu" and "extra space below Close" on short dialogs across several earlier fix
+        // attempts that targeted the Menu/dialog-content side instead of the TitleBar itself.
+        //
+        // Re-based on WPF-UI's own style (not an independent one - unlike the list/tree item fix,
+        // there's no Trigger/VisualState fight to route around here, just one Setter to override) so
+        // every other Setter and the whole Template carry over unchanged; only Height moves from 48
+        // to 32, verified by measurement to still fully contain the 30px caption buttons.
+        private static void AddCompactTitleBarStyle(Application app)
+        {
+            if (app.TryFindResource(typeof(Wpf.Ui.Controls.TitleBar)) is not Style stockStyle)
+            {
+                return;
+            }
+
+            var compactStyle = new Style(typeof(Wpf.Ui.Controls.TitleBar), stockStyle);
+            compactStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty, 32.0));
+            app.Resources[typeof(Wpf.Ui.Controls.TitleBar)] = compactStyle;
         }
 
         // ListView/DataGrid rows and TreeView items render with a transparent background in their
