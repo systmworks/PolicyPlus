@@ -13,32 +13,48 @@ every issue should be investigated properly (re-read the live issue thread for a
 comments, confirm the suggested approach still fits the current code) before implementing.
 For quick status, see `CHANGELOG.md`; this file carries the full detail.
 
+**Re-triaged 2026-08-16** against the app's current state (post `[1.26]` WPF-UI migration).
+File references below use current `Views/*.xaml.cs` paths, not the WinForms-era filenames
+(`Main.cs`, `EditSetting.Designer.cs`, etc.) this doc originally used before the migration.
+
 ## How this fork relates to upstream
 
-This fork underwent a full migration from VB.NET/.NET Framework 4.5.2 to C#/.NET 10
-(see `CHANGELOG.md` for the full history), plus a from-scratch code review that fixed
-10 findings and a redesign of the core `PolFile` class. None of the 18 issues below are
-already fixed by that work, but two (#73, #78) had their *prerequisite* resolved by it —
-see their entries.
+This fork underwent a full migration from VB.NET/.NET Framework 4.5.2 to C#/.NET 10, then a
+second migration from WinForms to WPF-UI (Fluent design) (see `CHANGELOG.md` for the full
+history), plus two from-scratch code reviews. A substantial amount of feature work landed on
+top of both migrations since this file was first written — **8 of the original 18 issues are
+now resolved** (see below) and weren't previously marked as such.
 
-## Summary table
+## Resolved since this file was first written
+
+None of these were closed out in this doc at the time — cross-checked against `CHANGELOG.md`
+and current source this session:
+
+| # | Title | Resolved by |
+|---|---|---|
+| [#10](https://github.com/Fleex255/PolicyPlus/issues/10) | Resizable divider between description/list panes | `[1.15]` "Description/policy-list divider is now a real draggable splitter" (`2f77f9e`) — confirmed live: `Views/MainWindow.xaml` uses `GridSplitter` (2 instances). |
+| [#104](https://github.com/Fleex255/PolicyPlus/issues/104) | "Supported on" field may overflow | `[1.15]` "'Supported on' field in Edit Policy Setting now scrolls instead of silently truncating" (`2f77f9e`). |
+| [#51](https://github.com/Fleex255/PolicyPlus/issues/51) | Prompt to save on close | `[1.15]` "Prompt to Save/Discard/Cancel when closing with unsaved changes" (`bee465d`) — confirmed live: `Views/MainWindow.xaml.cs:1488` `Window_Closing`, line 1494 prompts via `MsgBoxCompat.Show(...YesNoCancel...)`. |
+| [#74](https://github.com/Fleex255/PolicyPlus/issues/74) | Reset all to default | `[1.16]` "File > Reset All to Default: resets every configured policy back to Not Configured, after confirmation" (`2ed5003`) — confirmed live: `Views/MainWindow.xaml.cs:1168` `ResetAllToDefaultMenuItem_Click`. |
+| [#66](https://github.com/Fleex255/PolicyPlus/issues/66) | Edit imported REG file only | `[1.16]` "File > Open REG File: imports a .reg file as a standalone editable source, independent of the currently-open source" (`1d11a7b`) — confirmed live: `Views/MainWindow.xaml:251` `OpenRegFileMenuItem`. |
+| [#68](https://github.com/Fleex255/PolicyPlus/issues/68) | Favorites | `[1.16]` "Favorites: pin frequently-used policies to a dedicated node at the top of the category tree" (`86b4fad`) — confirmed live: `Views/MainWindow.xaml.cs:84,189,235,787,809`. |
+| [#73](https://github.com/Fleex255/PolicyPlus/issues/73) | Dark Mode support | `[1.15]` "Dark Mode support, with an Options > Color Mode menu" (`c48d762`), implemented via `ThemeService.cs` (wraps `Wpf.Ui.Appearance.ApplicationThemeManager`) rather than this doc's original suggested `.NET`-experimental-API approach — WPF-UI shipped a first-class solution once the app migrated off WinForms. |
+| [#78](https://github.com/Fleex255/PolicyPlus/issues/78) | Proper HiDPI support | `[1.15]` "HiDPI displays no longer render blurry or wrongly sized" (`21ca6af`). **Correcting this doc's own prior error**: an earlier version of this entry claimed `app.manifest`'s `dpiAware`/`dpiAwareness` block was "entirely commented out" — verified directly this session, it is **not**; it's live and correctly configured (`dpiAware=true/PM`, `dpiAwareness=PerMonitorV2`), with a comment explaining `ApplicationHighDpiMode` is deliberately not used because the custom manifest already covers it. |
+
+**Partially addressed** — worth a closer look rather than fully closed:
+
+- [#17](https://github.com/Fleex255/PolicyPlus/issues/17) — see its entry below. An always-visible toolbar search box now exists (`[1.16]`/`[1.20]`/`[1.25]`), replacing the old modal-only Find flow for the common case — but it filters on **Enter**/button click (`Views/MainWindow.xaml.cs:917-944`, `SearchTextbox_KeyDown`/`RunSearch`), not live as-you-type as the issue specifically asked for.
+
+## Summary table — still open
 
 | # | Title | Complexity | Overlaps / flags |
 |---|---|---|---|
-| [#10](https://github.com/Fleex255/PolicyPlus/issues/10) | Resizable divider between description/list panes | Low | — |
-| [#104](https://github.com/Fleex255/PolicyPlus/issues/104) | "Supported on" field may overflow | Low | — |
-| [#51](https://github.com/Fleex255/PolicyPlus/issues/51) | Prompt to save on close | Low | — |
-| [#74](https://github.com/Fleex255/PolicyPlus/issues/74) | Reset all to default | Low-Medium | — |
-| [#66](https://github.com/Fleex255/PolicyPlus/issues/66) | Edit imported REG file only | Low-Medium | — |
-| [#56](https://github.com/Fleex255/PolicyPlus/issues/56) | Winget installer | Low-Medium | Blocked on a real tagged release existing |
-| [#73](https://github.com/Fleex255/PolicyPlus/issues/73) | Dark Mode support | Medium | Foundation laid by the .NET 10 migration |
-| [#78](https://github.com/Fleex255/PolicyPlus/issues/78) | Proper HiDPI support | Medium | Foundation laid by the .NET 10 migration |
-| [#68](https://github.com/Fleex255/PolicyPlus/issues/68) | Favorites | Medium | — |
-| [#47](https://github.com/Fleex255/PolicyPlus/issues/47) | Hotkey to change policy state | Considered, declined | Key-scheme problem — see detail entry |
+| [#56](https://github.com/Fleex255/PolicyPlus/issues/56) | Winget installer | Low-Medium | Blocker resolved — see entry |
+| [#47](https://github.com/Fleex255/PolicyPlus/issues/47) | Hotkey to change policy state | Considered, declined | Key-scheme problem — see detail entry; decision predates WPF migration, worth reverifying |
 | [#75](https://github.com/Fleex255/PolicyPlus/issues/75) | Policies missing under "User or Computer" | Investigated, no code bug found | Likely `DeduplicatePolicies` behavior, not a visibility defect — see detail entry |
 | [#77](https://github.com/Fleex255/PolicyPlus/issues/77) | Export part of the policies | Medium-High | Overlaps #19 |
 | [#19](https://github.com/Fleex255/PolicyPlus/issues/19) | Export/Import POL improvements | Medium-High | Overlaps #77 |
-| [#17](https://github.com/Fleex255/PolicyPlus/issues/17) | Search UI improvement | Medium-High | Interacts with code touched for finding #5 |
+| [#17](https://github.com/Fleex255/PolicyPlus/issues/17) | Search UI improvement | Medium-High | Partially addressed already — see above |
 | [#60](https://github.com/Fleex255/PolicyPlus/issues/60) | CLI navigation to policy by ID | Medium-High | Overlaps #46 |
 | [#46](https://github.com/Fleex255/PolicyPlus/issues/46) | Command line options | High | Overlaps #60, needs scoping |
 | [#72](https://github.com/Fleex255/PolicyPlus/issues/72) | Offline system editing | High | Largest single ask |
@@ -46,180 +62,26 @@ see their entries.
 
 ---
 
-## Low complexity
-
-### [#10 — Resizable divider between description and setting list](https://github.com/Fleex255/PolicyPlus/issues/10)
-
-**Issue summary**: the divider between the policy description pane and the policy list is
-fixed-width. The user wants a draggable splitter so the description area can be widened.
-
-**Suggested fix**: replace the fixed-position controls in `Main.Designer.cs` with a
-`SplitContainer` (or a `Splitter` control) between the two panes. This is a standard,
-well-documented WinForms pattern — no novel design work needed, mostly mechanical
-Designer-file surgery plus anchor/dock adjustments on the panes involved.
-
-**Files**: `Main.cs`, `Main.Designer.cs`.
-
----
-
-### [#104 — Edit Policy Setting dialog: "Supported on" field may overflow](https://github.com/Fleex255/PolicyPlus/issues/104)
-
-**Issue summary**: the "Supported on" field in the Edit Policy Setting dialog is designed
-to show a maximum of 3 lines of text, which isn't always enough (example given:
-`Microsoft.Policies.WindowsUpdate:AutoUpdateCfg`). The text can technically be scrolled by
-clicking in and pressing the down arrow, but there's no visible scrollbar, so this isn't
-discoverable.
-
-**Suggested fix**: either let the control auto-size to fit its content, or make sure a
-scrollbar actually renders when the text overflows (this may already be a scrollable
-control with the scrollbar just not showing — check the exact control type and its
-`ScrollBars`/`AutoSize` properties in `EditSetting.cs`/`EditSetting.Designer.cs`).
-
-**Files**: `EditSetting.cs`, `EditSetting.Designer.cs`.
-
----
-
-### [#51 — Prompt to save or discard when closing the software](https://github.com/Fleex255/PolicyPlus/issues/51)
-
-**Issue summary**: closing the app after making changes doesn't prompt to save — changes
-are silently lost unless the user explicitly used *Save Policies* or Ctrl+S first. Wants a
-save/discard/cancel prompt on close if there are unsaved changes.
-
-**Suggested fix**: needs a "dirty" flag that gets set wherever policy state actually
-changes (likely centered around wherever `PolicyProcessing.SetPolicyState`/`PolicySource`
-mutations happen from the UI layer), checked in `Main`'s `FormClosing` event handler to
-show a Save/Discard/Cancel prompt (via the now-native `MessageBox.Show`, post finding #9).
-The tricky part isn't the prompt itself, it's finding every UI path that mutates policy
-state and making sure the flag gets set consistently.
-
-**Files**: `Main.cs` (primarily), wherever policy-state-mutating UI actions live.
-
----
-
 ## Low-Medium complexity
-
-### [#74 — Reset all to default?](https://github.com/Fleex255/PolicyPlus/issues/74)
-
-**Issue summary**: wants a bulk action to reset all currently-configured policies back to
-Not Configured in one step, rather than doing it one at a time.
-
-**Suggested fix**: iterate all policies with a non-`NotConfigured` state (via
-`PolicyProcessing.GetPolicyState`) and call `SetPolicyState(..., PolicyState.NotConfigured, ...)`
-on each, behind a confirmation dialog (this could affect a lot of policies at once — a
-destructive bulk action, so the confirmation matters). Mostly reuses existing,
-already-tested state-setting logic; the main new work is the iteration + UI entry point
-(a menu item) + confirmation prompt.
-
-**Files**: `Main.cs`, `PolicyProcessing.cs` (read-only reuse, no changes expected there).
-
----
-
-### [#66 — Edit imported REG file only?](https://github.com/Fleex255/PolicyPlus/issues/66)
-
-**Issue summary**: importing a REG file merges it with the live local-machine policies
-instead of acting as a standalone editable source — the user wants to import, edit, and
-export a REG file in isolation (this already works via POL files through *Open Policy
-Resources*, just not REG).
-
-**Suggested fix**: either (a) have REG import build a standalone in-memory `PolFile`-like
-source instead of merging into the currently-open source, or (b) add REG as a first-class
-selectable source type in `OpenPol.cs`'s *Open Policy Resources* dialog, alongside the
-existing POL/Registry/user-hive options. `RegFile.cs` already implements enough of the
-policy-source surface to make this plausible without a from-scratch rewrite (per
-`Docs/Components.md`: "It implements just enough of `IPolicySource` to allow
-`PolFile.Apply` to work on it, but it cannot be used as an actual policy source" — that
-last part is exactly the gap this issue is asking to close).
-
-**Files**: `RegFile.cs`, `OpenPol.cs`, `ImportReg.cs`.
-
----
 
 ### [#56 — Add an application installer so this can be made available to install using winget-cli](https://github.com/Fleex255/PolicyPlus/issues/56)
 
 **Issue summary**: wants the app installable via `winget install`.
 
 **Suggested fix**: write a winget package manifest (YAML) and submit it to the
-`microsoft/winget-pkgs` repo. **Blocked on this fork actually having a tagged release to
-point the manifest at** — right now, CI (`.github/workflows/latest.yml`) only produces a
-per-commit downloadable Actions artifact, there's no Releases page. Cutting real releases
-(with version tags) is a prerequisite, not part of this issue itself.
+`microsoft/winget-pkgs` repo. **Blocker resolved**: this doc originally noted the fork had
+no tagged releases, only per-commit CI artifacts. That's no longer true — releases are now
+tagged (`v<X.Y>`, e.g. `v1.19`+) via `.github/workflows/latest.yml`'s `softprops/action-gh-release`
+step, with both a self-contained `PolicyPlus.exe` and a framework-dependent zip published per
+release (`[1.18]`/`[1.19]`). This issue is now actually actionable — the only remaining work
+is writing and submitting the manifest itself.
 
 **Files**: none in this repo directly (a new manifest lives in the separate
-`winget-pkgs` repo); prerequisite work would touch release/tagging process, possibly
-`.github/workflows/latest.yml` or a new release workflow.
+`winget-pkgs` repo).
 
 ---
 
 ## Medium complexity
-
-### [#73 — Dark Mode support](https://github.com/Fleex255/PolicyPlus/issues/73)
-
-**Issue summary**: request for a dark mode option. Minimal issue body, but 3 comments
-indicate ongoing interest.
-
-**Foundation laid, not wired up**: this was one of two issues (with #78) that directly
-motivated this fork's .NET Framework → .NET 10 migration — dark mode support didn't exist
-in WinForms under .NET Framework at all. It does now.
-
-**Suggested fix**: .NET 9 introduced `Application.SetColorMode(SystemColorMode mode)`
-(`Classic` = light/legacy, `System` = follow the OS setting, `Dark` = force dark), carried
-into .NET 10. Must be called once before `Application.Run()`. Still marked `[Experimental]`
-(requires suppressing warning `WFO5001`), but control coverage matches this app's actual
-usage well: `TreeView`, `ListView`, `MenuStrip`/`ToolStrip`, `ComboBox`, `DataGridView`,
-`TextBox`, `Button` are all covered by the built-in dark renderer.
-
-Recommended shape: wire the API call at startup, add a persisted `Light`/`Dark`/`System`
-setting via the existing `ConfigurationStorage.cs` (same pattern already used for other
-app settings), expose it as a menu toggle (e.g. under *View* or a new *Settings* menu).
-Expect a manual QA pass across the ~30 forms afterward — experimental coverage can have
-gaps, and custom-drawn elements (e.g. the category tree's folder icons) may need
-dark-aware variants.
-
-**Files**: `Program`/startup entry point (wherever `Application.Run` is called —
-check `My Project\Application.myapp`/`MyApplication` startup path), `ConfigurationStorage.cs`,
-`Main.cs` (menu wiring).
-
----
-
-### [#78 — Proper support for HiDPI displays](https://github.com/Fleex255/PolicyPlus/issues/78)
-
-**Issue summary**: on HiDPI displays, depending on Windows settings, the main window is
-either too small or blurry.
-
-**Foundation laid, not wired up**: the other migration-driving issue. Confirmed directly
-this session: `PolicyPlus\My Project\app.manifest` has a `dpiAware`/`dpiAwareness` block,
-but it's entirely commented out (lines 52-58), and `PolicyPlus.csproj` has no
-`ApplicationHighDpiMode` setting either. So the app currently runs with no explicit DPI
-awareness declaration at all — Windows falls back to bitmap-scaling it, which is exactly
-the blurriness/wrong-sizing symptom reported.
-
-**Suggested fix**: add `<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>` to
-`PolicyPlus.csproj`. Modern SDK-style projects generate the correct manifest entries from
-this property automatically — cleaner than hand-editing the legacy commented-out manifest
-block. After enabling, needs a real test on a HiDPI or mixed-DPI multi-monitor setup to
-catch any fixed-pixel-size layout assumptions left over in the older ported Designer files
-(the VB→C# port was mechanical; Designer-generated fixed coordinates wouldn't have been
-touched).
-
-**Files**: `PolicyPlus.csproj` (one-line change), then whichever `*.Designer.cs` files
-show layout problems during testing.
-
----
-
-### [#68 — Feature Request: Favorites](https://github.com/Fleex255/PolicyPlus/issues/68)
-
-**Issue summary**: wants a way to pin/favorite frequently-accessed policies (example given:
-AppLocker exceptions) for quick access, rather than navigating the full tree each time.
-
-**Suggested fix**: new UI element (a favorites panel, dropdown, or a dedicated pseudo-category
-at the top of the tree) plus persistence of the favorited policy IDs. `ConfigurationStorage.cs`
-already handles similar app-setting persistence (registry-backed) and is a reusable pattern
-for storing a favorites list. Main design question: how favorites should behave across
-different loaded ADMX workspaces (a favorited policy ID might not exist in every workspace).
-
-**Files**: `Main.cs`, `ConfigurationStorage.cs`, likely a new small form or panel.
-
----
 
 ### [#47 — FR: Hotkey to fast change state of selected policy from main UI](https://github.com/Fleex255/PolicyPlus/issues/47)
 
@@ -227,25 +89,29 @@ different loaded ADMX workspaces (a favorited policy ID might not exist in every
 policy's state (Not Configured/Enabled/Disabled) directly from the main policy list,
 without opening the full Edit Setting dialog. Suggests this could extend to multi-selection.
 
-**Suggested fix**: a `KeyDown` handler on the policy `ListView` that calls
-`PolicyProcessing.SetPolicyState` directly for simple policies. Complication: policies
-with required additional elements (e.g. a list-type or text-type element) can't be
-meaningfully "Enabled" via a single keystroke with no further input — needs a fallback
-(e.g. open the full dialog for those, or skip/no-op the hotkey). Multi-select support
-needs the same per-policy fallback logic applied across the selection.
+**Suggested fix**: a `KeyDown` handler on the policy list (`Views/MainWindow.xaml.cs`,
+`PoliciesList`) that calls `PolicyProcessing.SetPolicyState` directly for simple policies.
+Complication: policies with required additional elements (e.g. a list-type or text-type
+element) can't be meaningfully "Enabled" via a single keystroke with no further input —
+needs a fallback (e.g. open the full dialog for those, or skip/no-op the hotkey).
+Multi-select support needs the same per-policy fallback logic applied across the selection.
 
-**Considered and declined.** Fully scoped, verified directly against
+**Considered and declined** (decision made pre-WPF-migration, against the old WinForms
+`ListView`). Fully scoped at the time, verified directly against
 `PolicyProcessing.SetPolicyState`'s actual behavior: Not Configured (`ForgetPolicy`) and
 Disabled are always safe to apply directly with no element values; Enabled is too, but only
 when the policy has no elements — with elements, it falls back to opening the full Edit
 Setting dialog, same as the issue's own suggested fix. The blocker was the key scheme: the
-mnemonic option (N/E/D) would silently override `ListView`'s built-in type-ahead-to-select
-behavior for any policy name starting with those letters, so the only collision-free option
-was digits (1/2/3) — judged too unintuitive for what the feature is worth, so it wasn't
-implemented. Revisit if a better key scheme comes up (e.g. a modifier-based combo like
-Ctrl+Alt+letter, which wouldn't collide with type-ahead).
+mnemonic option (N/E/D) would silently override WinForms `ListView`'s built-in
+type-ahead-to-select behavior for any policy name starting with those letters, so the only
+collision-free option was digits (1/2/3) — judged too unintuitive for what the feature is
+worth, so it wasn't implemented. **Worth reverifying**: `PoliciesList` is now a WPF control
+post-migration, which may have different (or no) built-in type-ahead-to-select behavior —
+the original collision concern may no longer apply, which would reopen the N/E/D option.
+Revisit if a better key scheme comes up either way (e.g. a modifier-based combo like
+Ctrl+Alt+letter, which wouldn't collide with type-ahead regardless).
 
-**Files**: `Main.cs`.
+**Files**: `Views/MainWindow.xaml.cs`.
 
 ---
 
@@ -257,7 +123,7 @@ policies combined. Reporter suspects this may affect other policies too and is c
 about silently missing policies as a result.
 
 **Investigated — no code bug found.** `ShouldShowPolicy`/`PolicyVisibleInSection`
-(`Main.cs`) were read line-by-line: the section-filter check is
+(`Views/MainWindow.xaml.cs`) were read line-by-line: the section-filter check is
 `(int)(Policy.RawPolicy.Section & Section) > 0`, which is correct bitwise-flag logic for
 `AdmxPolicySection`'s `Machine=1, User=2, Both=3` — a User-only (`Section=2`) policy is
 not excluded when the combined view (`Section&3`) is active. `PopulateAdmxUi`'s list
@@ -275,8 +141,11 @@ one twin (`Workspace.Policies.Remove(a.UniqueID)`) and relabels the survivor as
 identical display name, explanation, and registry key (`SOFTWARE\Policies\Microsoft\InputPersonalization`)
 — the historical "Turn off handwriting personalization data sharing" pair (renamed to
 "Turn off automatic learning" in current ADML strings), exactly the issue's own example.
-This is `Main.cs`'s "Deduplicate Policies" feature, currently hidden from the View menu
-(`Visible = false` at `Main.Designer.cs`) but still wired and reachable if re-enabled.
+This is the app's "Deduplicate Policies" feature — **its current menu visibility/entry point
+should be reverified against `Views/MainWindow.xaml`** (this doc previously cited a WinForms
+`Main.Designer.cs` `Visible = false` setting for it, which no longer exists in that form
+post-migration; confirm whether/how it's currently exposed before treating this conclusion
+as final).
 
 **Conclusion**: most likely explanation is that Deduplicate was run (or some other path
 triggered it) against a workspace containing this pair, which is expected, working-as-designed
@@ -286,8 +155,9 @@ than treating as an open defect, unless the reporter can confirm they never ran 
 and share the exact ADMX/policy where they saw this — that would point at a different,
 still-unidentified cause.
 
-**Files**: `Main.cs` (`ShouldShowPolicy`, `PolicyVisibleInSection` — read, not modified),
-`PolicyProcessing.cs` (`DeduplicatePolicies` — the actual mechanism, also not modified).
+**Files**: `Views/MainWindow.xaml.cs` (`ShouldShowPolicy`, `PolicyVisibleInSection`, "Deduplicate
+Policies" menu wiring — read, not modified), `PolicyProcessing.cs` (`DeduplicatePolicies` — the
+actual mechanism, also not modified).
 
 ---
 
@@ -303,8 +173,9 @@ changes to only walk the selected subtree instead of the whole workspace. **Over
 #19**, which asks for essentially the same capability plus comment preservation — worth
 designing these together rather than separately.
 
-**Files**: `ExportReg.cs`, `Main.cs` (export menu wiring), possibly `RegFile.cs`/`SpolFile.cs`
-depending on which export format(s) this is scoped to cover.
+**Files**: `Views/ExportRegWindow.xaml.cs`, `Views/MainWindow.xaml.cs` (export menu wiring),
+possibly `RegFile.cs`/`SpolFile.cs` depending on which export format(s) this is scoped to
+cover.
 
 ---
 
@@ -326,8 +197,9 @@ the loaded policy *definitions*, separate from the policy *state* sources being 
 save/apply procedure is already documented behavior, just non-obvious). These would be
 better addressed by clarifying the README/in-app UI copy than by a code change.
 
-**Files**: `ExportReg.cs` (or wherever export logic lives), `EditPol.cs` (POL content
-viewing), `README.md`/in-app help text for the procedural questions.
+**Files**: `Views/ExportRegWindow.xaml.cs` (or wherever export logic lives),
+`Views/EditPolWindow.xaml.cs` (POL content viewing), `README.md`/in-app help text for the
+procedural questions.
 
 ---
 
@@ -339,16 +211,21 @@ filtering the category tree as you type — comparable to the "Everything" searc
 Explicitly describes wanting search results to prune the tree down to just matching items
 and their ancestor categories.
 
-**Suggested fix**: a genuine UX rework, not a small tweak — replacing (or supplementing)
-the modal `FindByText.cs`/`FindResults.cs` flow with an inline, always-visible search box
-that live-filters as the user types. **Directly interacts with code modified this session**:
-finding #5 added `ShouldShowCategoryCore`, a memoized category-visibility check scoped to
-one `PopulateAdmxUi()` tree walk — a live-filter-as-you-type search is exactly the
-workload that caching was built for (many tree repopulations in quick succession as the
-user types), so that recent perf fix is directly relevant groundwork, not just adjacent.
+**Partially addressed already** (see "Resolved" section above for the full picture): the app
+now has exactly the "integrated search bar, not a modal dialog" part of this request —
+`Views/MainWindow.xaml.cs:917-944` (`SearchTextbox_KeyDown`/`RunSearch`) — an always-visible
+toolbar search box that drives `MoveToVisibleCategoryAndReload()` to filter the tree/list via
+`PolicySearch.BuildMatcher`. **What's still missing**: it requires pressing Enter or clicking
+the search button — it does not live-filter as the user types character-by-character, which
+is the specific UX the issue asks for (comparing it to "Everything").
 
-**Files**: `Main.cs` (`PopulateAdmxUi`, `ShouldShowCategory`/`ShouldShowPolicy`),
-`FindByText.cs` (reusable matching logic), likely new UI in `Main.Designer.cs`.
+**Suggested fix for the remaining gap**: wire a `TextChanged` handler on `SearchTextbox` (debounced,
+since re-running `MoveToVisibleCategoryAndReload()` on every keystroke against a large ADMX
+workspace could be expensive) instead of/alongside the current Enter-only trigger.
+
+**Files**: `Views/MainWindow.xaml.cs` (`SearchTextbox_KeyDown`/`RunSearch`/
+`MoveToVisibleCategoryAndReload`, `PopulateAdmxUi`/`ShouldShowCategory`/`ShouldShowPolicy`),
+`PolicySearch.cs` (matching logic, already reusable).
 
 ---
 
@@ -361,16 +238,16 @@ single-instance, with a second launch's arguments routed to the first instance v
 cross-process communication.
 
 **Suggested fix**: three pieces: (1) single-instance enforcement (named `Mutex` is the
-standard WinForms approach); (2) cross-process argument routing to the already-running
-instance (named pipe is the standard approach); (3) argument parsing + programmatic
-navigation to a policy by ID — this last part **partly exists already** via `FindById.cs`,
-which already implements "jump to a policy object by its unique ID" as a user-facing
-dialog; the new work is triggering that same navigation programmatically from parsed CLI
-args instead of a dialog. **Overlaps #46** (broader/vaguer CLI request) — this issue is
-the more concretely-specified one of the two.
+standard approach, works the same under WPF as WinForms); (2) cross-process argument routing
+to the already-running instance (named pipe is the standard approach); (3) argument parsing +
+programmatic navigation to a policy by ID — this last part **partly exists already** via
+`Views/FindByIdWindow.xaml.cs`, which already implements "jump to a policy object by its
+unique ID" as a user-facing dialog; the new work is triggering that same navigation
+programmatically from parsed CLI args instead of a dialog. **Overlaps #46** (broader/vaguer
+CLI request) — this issue is the more concretely-specified one of the two.
 
-**Files**: new: single-instance/IPC plumbing (likely in the startup path, `Program`/
-`MyApplication`). Existing: `FindById.cs` (navigation logic to reuse).
+**Files**: new: single-instance/IPC plumbing (likely in `App.cs`'s startup path). Existing:
+`Views/FindByIdWindow.xaml.cs` (navigation logic to reuse).
 
 ---
 
@@ -411,18 +288,19 @@ point could be addressed independently and much more cheaply than the main featu
 
 **Suggested fix**: the author's own sketch is a reasonable starting design: use
 `RegLoadAppKey`/`RegLoadKey`-style hive mounting (P/Invoke — `PInvoke.cs` already exists
-as the home for native interop declarations), parse the offline `PolicyDefinitions` folder
-from the mounted drive instead of the live system's, and thread an offline key-path prefix
-through the existing `RegistryPolicyProxy`/`IPolicySource` machinery. This is the largest
-single ask across all 18 issues — real new subsystem work (hive mounting/unmounting
-lifecycle, error handling for locked/in-use hives, user-profile discovery), not an
-extension of existing code paths. The author themselves calls it "a sizeable task."
-The documentation-clarity note (save/apply confusion) is worth splitting off as its own
-much smaller, independent fix regardless of whether the main feature gets picked up.
+as the home for native interop declarations, and `Privilege.cs`'s `EnablePrivilege` already
+covers acquiring the backup/restore privileges hive-loading needs), parse the offline
+`PolicyDefinitions` folder from the mounted drive instead of the live system's, and thread an
+offline key-path prefix through the existing `RegistryPolicyProxy`/`IPolicySource` machinery.
+This is the largest single ask across all 18 issues — real new subsystem work (hive
+mounting/unmounting lifecycle, error handling for locked/in-use hives, user-profile
+discovery), not an extension of existing code paths. The author themselves calls it "a
+sizeable task." The documentation-clarity note (save/apply confusion) is worth splitting off
+as its own much smaller, independent fix regardless of whether the main feature gets picked up.
 
-**Files**: `PInvoke.cs` (new native declarations), `OpenAdmxFolder.cs`/`OpenPol.cs` (new UI
-entry point), `PolicySource.cs`/`RegistryPolicyProxy` (offline-prefixed operations), plus
-likely a new dedicated form for offline-system selection.
+**Files**: `PInvoke.cs` (new native declarations), `Views/OpenAdmxFolderWindow.xaml.cs`/
+`Views/OpenPolWindow.xaml.cs` (new UI entry point), `PolicySource.cs`/`RegistryPolicyProxy`
+(offline-prefixed operations), plus likely a new dedicated window for offline-system selection.
 
 ---
 
