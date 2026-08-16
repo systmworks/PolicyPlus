@@ -105,12 +105,13 @@ namespace PolicyPlus
             window.Owner = owner;
         }
 
-        // WPF-UI's Mica backdrop is applied asynchronously (after the initial layout pass that
-        // SizeToContent uses), so on some windows SizeToContent="Height" settles on a height taller
-        // than the content actually needs - proportionally more noticeable the shorter the dialog is.
-        // Re-running the SizeToContent pass once the window (and its backdrop) has fully loaded fixes
-        // it without a hardcoded pixel guess that would drift across DPI/font/scaling. Call from a
-        // window's constructor, after InitializeComponent, for any window seen sizing too tall.
+        // WPF-UI's Mica backdrop is applied via a DWM call queued on Loaded, but the compositor's
+        // own visual update lags behind that call returning - re-measuring at Loaded (tried first)
+        // still raced it and settled on a height taller than the content needs, proportionally more
+        // noticeable the shorter the dialog is. ContentRendered fires after the first real paint,
+        // and deferring the actual toggle to ApplicationIdle priority lets any pending compositor
+        // work drain first. Call from a window's constructor, after InitializeComponent, for any
+        // window seen sizing too tall.
         public static void FixSizeToContent(Window window)
         {
             if (window.SizeToContent == SizeToContent.Manual)
@@ -119,10 +120,15 @@ namespace PolicyPlus
             }
 
             var original = window.SizeToContent;
-            window.Loaded += (s, e) =>
+            window.ContentRendered += (s, e) =>
             {
-                window.SizeToContent = SizeToContent.Manual;
-                window.SizeToContent = original;
+                window.Dispatcher.BeginInvoke(
+                    System.Windows.Threading.DispatcherPriority.ApplicationIdle,
+                    new Action(() =>
+                    {
+                        window.SizeToContent = SizeToContent.Manual;
+                        window.SizeToContent = original;
+                    }));
             };
         }
     }

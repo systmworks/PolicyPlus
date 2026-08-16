@@ -893,7 +893,7 @@ namespace PolicyPlus.Views
             // whatever's left wastes huge amounts of space on wide windows.
             double fixedWidth = StateColumn.Width + CommentColumn.Width + IdColumn.Width;
             double available = PoliciesList.ActualWidth - fixedWidth - 30;
-            NameColumn.Width = Math.Max(150, Math.Min(available, 460));
+            NameColumn.Width = Math.Max(300, Math.Min(available, 460));
         }
 
         // ------------------------------------------------------------------
