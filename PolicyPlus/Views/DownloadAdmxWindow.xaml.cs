@@ -19,6 +19,7 @@ namespace PolicyPlus.Views
         public DownloadAdmxWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) =>
             {
                 TextDestFolder.Text = Environment.ExpandEnvironmentVariables(@"%windir%\PolicyDefinitions");

@@ -21,6 +21,7 @@ namespace PolicyPlus.Views
         public ImportRegWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void ButtonBrowse_Click(object sender, RoutedEventArgs e)

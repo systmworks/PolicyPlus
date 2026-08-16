@@ -74,7 +74,10 @@
         <ui:TitleBar Grid.Row="0" Title="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
 
         <DockPanel Grid.Row="1" Margin="8,0,8,0" LastChildFill="False">
-            <Menu DockPanel.Dock="Left" Background="Transparent">
+            <Menu
+                DockPanel.Dock="Left"
+                VerticalAlignment="Center"
+                Background="Transparent">
                 <MenuItem Header="_File">
                     <MenuItem x:Name="OpenAdmxFolderMenuItem" Click="OpenAdmxFolderMenuItem_Click" Header="Open ADMX Folder" />
                     <MenuItem x:Name="OpenAdmxFileMenuItem" Click="OpenAdmxFileMenuItem_Click" Header="Open ADMX File" />
@@ -135,22 +138,26 @@
 
             <StackPanel
                 DockPanel.Dock="Right"
+                VerticalAlignment="Center"
                 Orientation="Horizontal">
                 <ui:Button
                     x:Name="ClearSearchButton"
+                    Height="32"
                     Margin="4,0,0,0"
                     Click="ClearSearchButton_Click"
                     Content="✕"
                     ToolTip="Clear search (Esc)" />
                 <ui:Button
                     x:Name="SearchButton"
+                    Height="32"
                     Margin="4,0,0,0"
                     Click="SearchButton_Click"
                     Content="🔍"
                     ToolTip="Search (Enter)" />
                 <ui:TextBox
                     x:Name="SearchTextbox"
-                    Width="260"
+                    Width="390"
+                    Height="32"
                     Margin="8,0,0,0"
                     KeyDown="SearchTextbox_KeyDown"
                     PlaceholderText="Search policies..." />
@@ -311,7 +318,7 @@
                 SizeChanged="PoliciesList_SizeChanged">
                 <ui:ListView.View>
                     <GridView>
-                        <GridViewColumn x:Name="NameColumn" Width="200" CellTemplate="{StaticResource PolicyNameCellTemplate}">
+                        <GridViewColumn x:Name="NameColumn" Width="300" CellTemplate="{StaticResource PolicyNameCellTemplate}">
                             <GridViewColumnHeader x:Name="NameColumnHeader" Click="ColumnHeader_Click" Content="Name" Tag="0" />
                         </GridViewColumn>
                         <GridViewColumn x:Name="StateColumn" Width="107" DisplayMemberBinding="{Binding State}">

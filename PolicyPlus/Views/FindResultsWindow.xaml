@@ -56,10 +56,24 @@
                 Grid.Row="2"
                 Margin="0,0,0,8"
                 MouseDoubleClick="GoClicked">
+                <ui:ListView.Resources>
+                    <!--
+                        Explicit Foreground on the cell TextBlock itself, not DisplayMemberBinding's
+                        plain auto-generated one - after three rounds of container/item-style fixes
+                        for invisible ListView text, this is the one thing that can't be silently
+                        out-prioritized by whatever WPF-UI's real item template does internally.
+                    -->
+                    <DataTemplate x:Key="TitleCellTemplate">
+                        <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding Title}" />
+                    </DataTemplate>
+                    <DataTemplate x:Key="CategoryCellTemplate">
+                        <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="{Binding Category}" />
+                    </DataTemplate>
+                </ui:ListView.Resources>
                 <ui:ListView.View>
                     <GridView>
-                        <GridViewColumn Width="480" DisplayMemberBinding="{Binding Title}" Header="Title" />
-                        <GridViewColumn Width="280" DisplayMemberBinding="{Binding Category}" Header="Category" />
+                        <GridViewColumn Width="480" CellTemplate="{StaticResource TitleCellTemplate}" Header="Title" />
+                        <GridViewColumn Width="280" CellTemplate="{StaticResource CategoryCellTemplate}" Header="Category" />
                     </GridView>
                 </ui:ListView.View>
             </ui:ListView>

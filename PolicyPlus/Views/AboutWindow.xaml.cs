@@ -9,6 +9,7 @@ namespace PolicyPlus.Views
         public AboutWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();

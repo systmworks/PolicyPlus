@@ -109,6 +109,27 @@ namespace PolicyPlus
             _ = new WindowInteropHelper(window) { Owner = owner.Handle };
         }
 
+        // WPF-UI's Mica backdrop is applied asynchronously (after the initial layout pass that
+        // SizeToContent uses), so on some windows SizeToContent="Height" settles on a height taller
+        // than the content actually needs - proportionally more noticeable the shorter the dialog is.
+        // Re-running the SizeToContent pass once the window (and its backdrop) has fully loaded fixes
+        // it without a hardcoded pixel guess that would drift across DPI/font/scaling. Call from a
+        // window's constructor, after InitializeComponent, for any window seen sizing too tall.
+        public static void FixSizeToContent(Window window)
+        {
+            if (window.SizeToContent == SizeToContent.Manual)
+            {
+                return;
+            }
+
+            var original = window.SizeToContent;
+            window.Loaded += (s, e) =>
+            {
+                window.SizeToContent = SizeToContent.Manual;
+                window.SizeToContent = original;
+            };
+        }
+
         // Lets a WPF window act as the "owner" for a PresentDialog(IWin32Window owner, ...) call,
         // since every PresentDialog signature is IWin32Window-based for uniformity with the many
         // still-WinForms callers (Main, EditPol, etc.).
