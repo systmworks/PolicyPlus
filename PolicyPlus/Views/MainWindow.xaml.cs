@@ -1354,15 +1354,12 @@ namespace PolicyPlus.Views
 
         private void ImportRegMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var importRegSection = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true);
-            if (importRegSection is not null)
+            // ImportRegWindow infers Computer vs User from the REG file's own hive path once a
+            // file is chosen, only falling back to asking if the file genuinely mixes both hives.
+            if (ImportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _userPolicySource, _compPolicySource))
             {
-                var source = importRegSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource;
-                if (ImportRegWindow.PresentDialog(WpfInterop.AsIWin32Window(this), source))
-                {
-                    _isDirty = true;
-                    MoveToVisibleCategoryAndReload();
-                }
+                _isDirty = true;
+                MoveToVisibleCategoryAndReload();
             }
         }
 

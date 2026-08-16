@@ -7,7 +7,15 @@ namespace PolicyPlus.Views
 {
     public partial class ImportRegWindow : FluentWindow
     {
-        private IPolicySource _policySource;
+        private IPolicySource _userPolicySource;
+        private IPolicySource _compPolicySource;
+
+        // Set instead of _userPolicySource/_compPolicySource when there's only ever one possible
+        // target regardless of the REG file's hive (EditPolWindow's "Import" button, which always
+        // imports into the specific raw POL section already being edited) - skips hive detection
+        // and any prompt entirely.
+        private IPolicySource _fixedTarget;
+
         private bool _accepted;
 
         public ImportRegWindow()
@@ -56,10 +64,26 @@ namespace PolicyPlus.Views
                 return;
             }
 
+            RegFile reg;
             try
             {
-                var reg = RegFile.Load(TextReg.Text, TextRoot.Text);
-                reg.Apply(_policySource);
+                reg = RegFile.Load(TextReg.Text, TextRoot.Text);
+            }
+            catch (Exception)
+            {
+                MsgBoxCompat.Show("Failed to import the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            var target = ResolveTarget(reg);
+            if (target is null)
+            {
+                return; // Either the user cancelled the (mixed-hive) section prompt, or the file has nothing importable
+            }
+
+            try
+            {
+                reg.Apply(target);
                 _accepted = true;
                 Close();
             }
@@ -67,6 +91,39 @@ namespace PolicyPlus.Views
             {
                 MsgBoxCompat.Show("Failed to import the REG file.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
             }
+        }
+
+        // Infers the target policy source from the REG file's own hive path
+        // (HKEY_LOCAL_MACHINE vs HKEY_CURRENT_USER/HKEY_USERS) instead of always asking - only
+        // prompts when the file genuinely mixes both hives and the choice can't be inferred.
+        private IPolicySource ResolveTarget(RegFile reg)
+        {
+            if (_fixedTarget is not null)
+            {
+                return _fixedTarget;
+            }
+
+            var hiveCounts = reg.CountKeysByHive();
+            bool hasComputer = hiveCounts[RegFileHive.Computer] > 0;
+            bool hasUser = hiveCounts[RegFileHive.User] > 0;
+            if (hasComputer && hasUser)
+            {
+                var section = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), true, true);
+                return section is null ? null : (section == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource);
+            }
+
+            if (hasComputer)
+            {
+                return _compPolicySource;
+            }
+
+            if (hasUser)
+            {
+                return _userPolicySource;
+            }
+
+            MsgBoxCompat.Show("This REG file doesn't contain any Computer (HKEY_LOCAL_MACHINE) or User (HKEY_CURRENT_USER/HKEY_USERS) entries to import.", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+            return null;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -77,10 +134,20 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static bool PresentDialog(System.Windows.Forms.IWin32Window owner, IPolicySource target)
+        public static bool PresentDialog(System.Windows.Forms.IWin32Window owner, IPolicySource userPolicySource, IPolicySource compPolicySource)
         {
             ThemeService.ApplyPersisted();
-            var window = new ImportRegWindow { _policySource = target };
+            var window = new ImportRegWindow { _userPolicySource = userPolicySource, _compPolicySource = compPolicySource };
+            WpfInterop.SetOwner(window, owner);
+            window.ShowDialog();
+            return window._accepted;
+        }
+
+        // For callers with only one possible target regardless of hive (see _fixedTarget).
+        public static bool PresentDialog(System.Windows.Forms.IWin32Window owner, IPolicySource fixedTarget)
+        {
+            ThemeService.ApplyPersisted();
+            var window = new ImportRegWindow { _fixedTarget = fixedTarget };
             WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
             return window._accepted;
