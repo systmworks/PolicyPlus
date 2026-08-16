@@ -226,12 +226,8 @@ namespace PolicyPlus.Views
             }
             else if (kind == RegistryValueKind.DWord || kind == RegistryValueKind.QWord)
             {
-                if (My.MyProject.Forms.EditPolNumericData.PresentDialog(valueName, Convert.ToUInt64(currentData), kind == RegistryValueKind.QWord) == System.Windows.Forms.DialogResult.OK)
-                {
-                    return My.MyProject.Forms.EditPolNumericData.NumData.Value;
-                }
-
-                return null;
+                var result = EditPolNumericDataWindow.PresentDialog(WpfInterop.AsIWin32Window(this), valueName, Convert.ToUInt64(currentData), kind == RegistryValueKind.QWord);
+                return result.HasValue ? (object)result.Value : null;
             }
             else if (kind == RegistryValueKind.MultiString)
             {

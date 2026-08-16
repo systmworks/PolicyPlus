@@ -55,12 +55,6 @@
     <Compile Include="CmtxFile.cs" />
     <Compile Include="CompiledStructures.cs" />
     <Compile Include="ConfigurationStorage.cs" />
-    <Compile Include="EditPolNumericData.Designer.cs">
-      <DependentUpon>EditPolNumericData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditPolNumericData.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FilterConfiguration.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -110,6 +104,9 @@
     </Compile>
     <Compile Include="Views\EditPolMultiStringDataWindow.xaml.cs">
       <DependentUpon>EditPolMultiStringDataWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditPolNumericDataWindow.xaml.cs">
+      <DependentUpon>EditPolNumericDataWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditPolStringDataWindow.xaml.cs">
       <DependentUpon>EditPolStringDataWindow.xaml</DependentUpon>
@@ -222,6 +219,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditPolMultiStringDataWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditPolNumericDataWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -348,9 +349,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="EditPolNumericData.resx">
-      <DependentUpon>EditPolNumericData.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
