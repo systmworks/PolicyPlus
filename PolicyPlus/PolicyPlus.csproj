@@ -65,6 +65,7 @@
     <Compile Include="RegFile.cs" />
     <Compile Include="SpolFile.cs" />
     <Compile Include="SystemInfo.cs" />
+    <Compile Include="ThemeDefinitions.cs" />
     <Compile Include="ThemeService.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="Views\EditPolDeleteWindow.xaml.cs">

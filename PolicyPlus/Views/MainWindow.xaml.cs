@@ -56,6 +56,12 @@ namespace PolicyPlus.Views
 
         public MainWindow()
         {
+            // Unlike every other window, MainWindow isn't shown via WpfInterop.PreparePresented
+            // (there's no owner to hand it), so it's the one place that still needs its own
+            // explicit persisted-theme apply before InitializeComponent runs - otherwise the
+            // window's first render uses WPF-UI's un-customized default palette instead of the
+            // saved theme, only picking up the right colors once some other dialog opens.
+            ThemeService.ApplyPersisted();
             InitializeComponent();
             LoadIcons();
             CategoriesTree.ItemsSource = _treeRoot;
@@ -91,7 +97,7 @@ namespace PolicyPlus.Views
             Title = $"Policy Plus {VersionHolder.AppVersion}";
             RestoreWindowBounds();
             RestorePaneLayout();
-            SetColorModeMenuChecks(Convert.ToString(_configuration.GetValue("ColorMode", "System")));
+            SetColorModeMenuChecks(ThemeService.CurrentThemeName);
             _favoriteIds = ((string[])_configuration.GetValue("Favorites", Array.Empty<string>())).ToList();
 
             OpenLastAdmxSource();
@@ -1423,9 +1429,12 @@ namespace PolicyPlus.Views
 
         private void SetColorModeMenuChecks(string colorMode)
         {
-            LightMenuItem.IsChecked = colorMode == "Light";
-            DarkMenuItem.IsChecked = colorMode == "Dark";
-            SystemMenuItem.IsChecked = colorMode == "System";
+            SolarizedLightMenuItem.IsChecked = colorMode == "SolarizedLight";
+            GruvboxLightMenuItem.IsChecked = colorMode == "GruvboxLight";
+            CatppuccinLatteMenuItem.IsChecked = colorMode == "CatppuccinLatte";
+            NordMenuItem.IsChecked = colorMode == "Nord";
+            DraculaMenuItem.IsChecked = colorMode == "Dracula";
+            RosePineMenuItem.IsChecked = colorMode == "RosePine";
         }
 
         private void ApplyColorModeChoice(string colorMode)
@@ -1434,11 +1443,17 @@ namespace PolicyPlus.Views
             SetColorModeMenuChecks(colorMode);
         }
 
-        private void LightMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("Light");
+        private void SolarizedLightMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("SolarizedLight");
 
-        private void DarkMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("Dark");
+        private void GruvboxLightMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("GruvboxLight");
 
-        private void SystemMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("System");
+        private void CatppuccinLatteMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("CatppuccinLatte");
+
+        private void NordMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("Nord");
+
+        private void DraculaMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("Dracula");
+
+        private void RosePineMenuItem_Click(object sender, RoutedEventArgs e) => ApplyColorModeChoice("RosePine");
 
         // ------------------------------------------------------------------
         // Help menu

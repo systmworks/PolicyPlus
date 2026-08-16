@@ -288,9 +288,12 @@
                 </MenuItem>
                 <MenuItem Header="_Options">
                     <MenuItem Header="Color Mode">
-                        <MenuItem x:Name="LightMenuItem" Click="LightMenuItem_Click" Header="Light" IsCheckable="True" />
-                        <MenuItem x:Name="DarkMenuItem" Click="DarkMenuItem_Click" Header="Dark" IsCheckable="True" />
-                        <MenuItem x:Name="SystemMenuItem" Click="SystemMenuItem_Click" Header="Match Windows" IsCheckable="True" />
+                        <MenuItem x:Name="SolarizedLightMenuItem" Click="SolarizedLightMenuItem_Click" Header="(Light) Solarized Light" IsCheckable="True" />
+                        <MenuItem x:Name="GruvboxLightMenuItem" Click="GruvboxLightMenuItem_Click" Header="(Light) Gruvbox Light" IsCheckable="True" />
+                        <MenuItem x:Name="CatppuccinLatteMenuItem" Click="CatppuccinLatteMenuItem_Click" Header="(Light) Catppuccin Latte" IsCheckable="True" />
+                        <MenuItem x:Name="NordMenuItem" Click="NordMenuItem_Click" Header="(Dark) Nord" IsCheckable="True" />
+                        <MenuItem x:Name="DraculaMenuItem" Click="DraculaMenuItem_Click" Header="(Dark) Dracula" IsCheckable="True" />
+                        <MenuItem x:Name="RosePineMenuItem" Click="RosePineMenuItem_Click" Header="(Dark) Rosé Pine" IsCheckable="True" />
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Help">
