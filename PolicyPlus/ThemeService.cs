@@ -34,7 +34,15 @@ namespace PolicyPlus
             WpfInterop.EnsureApplication();
             var option = ThemeDefinitions.Find(themeId) ?? ThemeDefinitions.Find(DefaultThemeId);
 
-            ApplicationThemeManager.Apply(option.Base);
+            // ApplicationThemeManager.Apply(ApplicationTheme) alone defaults to
+            // WindowBackdropType.Mica and updateAccent: true - harmless on the very first call
+            // (during MainWindow's constructor, before the window/its XAML-declared
+            // WindowBackdropType="None" exists), but on every later live theme switch it was
+            // silently re-enabling the Mica backdrop on the already-open window (washing out
+            // every region without a rock-solid opaque local Background) and re-syncing WPF-UI's
+            // own system accent color over the custom per-theme accent applied right below.
+            // Both are pinned off explicitly here so a live switch behaves the same as startup.
+            ApplicationThemeManager.Apply(option.Base, Wpf.Ui.Controls.WindowBackdropType.None, updateAccent: false);
             ApplicationAccentColorManager.Apply(option.Accent, option.Base, false, false);
 
             var resources = Application.Current.Resources;
