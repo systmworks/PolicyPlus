@@ -1,0 +1,37 @@
+using System.Windows;
+using System.Windows.Input;
+using Wpf.Ui.Controls;
+
+namespace PolicyPlus.Views
+{
+    public partial class AboutWindow : FluentWindow
+    {
+        public AboutWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+                Close();
+        }
+
+        public static void PresentDialog(System.Windows.Forms.IWin32Window owner)
+        {
+            ThemeService.ApplyPersisted();
+            var window = new AboutWindow();
+
+            string version = VersionHolder.AppVersion.Trim();
+            window.VersionText.Text = string.IsNullOrEmpty(version)
+                ? ""
+                : $"Version {version} (commit {VersionHolder.Version.Trim()})";
+            window.VersionText.Visibility = string.IsNullOrEmpty(version) ? Visibility.Collapsed : Visibility.Visible;
+
+            WpfInterop.SetOwner(window, owner);
+            window.ShowDialog();
+        }
+    }
+}

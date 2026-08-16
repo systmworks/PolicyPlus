@@ -195,6 +195,9 @@
     <Compile Include="Views\EditSettingWindow.xaml.cs">
       <DependentUpon>EditSettingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PolicyElementTemplateSelector.cs" />
     <Compile Include="Views\SpinButtonPlacementConverter.cs" />
     <Compile Include="ViewModels\PolicyElementViewModels.cs" />
@@ -336,6 +339,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditSettingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

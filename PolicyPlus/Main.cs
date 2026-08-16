@@ -1229,11 +1229,7 @@ namespace PolicyPlus
         }
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Show author and version information if it was compiled into the program
-            string about = $"Policy Plus, maintained by Darren Milne, originally created by Ben Nordick.{Constants.vbCrLf}{Constants.vbCrLf}Available on GitHub: systmworks/PolicyPlus.";
-            if (!string.IsNullOrEmpty(VersionHolder.AppVersion.Trim()))
-                about += $" Version {VersionHolder.AppVersion.Trim()} (commit {VersionHolder.Version.Trim()}).";
-            MsgBoxCompat.Show(about, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Views.AboutWindow.PresentDialog(this);
         }
         private void ByTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
