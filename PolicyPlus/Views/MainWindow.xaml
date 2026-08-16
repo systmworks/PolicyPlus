@@ -122,12 +122,22 @@
                         PopupAnimation="None"
                         VerticalOffset="1">
                         <Grid>
+                            <!--
+                                Background/BorderBrush use the same AppChromeBackgroundBrush/
+                                AppChromeTextBrush pair as the menu bar (not WPF-UI's own
+                                FlyoutBackground) - WPF-UI's stock dropdown MenuItem foreground
+                                doesn't reliably follow the Light/Dark base swap on its own (stays
+                                white regardless of theme), so rather than chase that token down,
+                                the dropdown is guaranteed readable the same way the menu bar
+                                already is: a bold theme-colored background paired with the theme's
+                                own white/near-white chrome text, set explicitly below.
+                            -->
                             <Border
                                 x:Name="SubmenuBorder"
                                 Margin="12,0,12,18"
                                 Padding="0,3,0,3"
-                                Background="{DynamicResource FlyoutBackground}"
-                                BorderBrush="{DynamicResource FlyoutBorderBrush}"
+                                Background="{DynamicResource AppChromeBackgroundBrush}"
+                                BorderBrush="{DynamicResource AppChromeTextBrush}"
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 SnapsToDevicePixels="True">
@@ -135,7 +145,13 @@
                                     <TranslateTransform />
                                 </Border.RenderTransform>
                                 <ui:PassiveScrollViewer CanContentScroll="True" Style="{StaticResource UiMenuItemScrollViewer}">
-                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle">
+                                        <StackPanel.Resources>
+                                            <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                                <Setter Property="Foreground" Value="{DynamicResource AppChromeTextBrush}" />
+                                            </Style>
+                                        </StackPanel.Resources>
+                                    </StackPanel>
                                 </ui:PassiveScrollViewer>
                                 <Border.Effect>
                                     <DropShadowEffect
