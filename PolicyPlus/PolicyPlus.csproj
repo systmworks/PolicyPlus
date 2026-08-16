@@ -3,19 +3,16 @@
   <!--
     Originally a C# port of an earlier VB.NET codebase; that VB project no longer exists in this
     repo. UI layer migrated from WinForms to WPF-UI (Fluent design) - see CHANGELOG.md for
-    progress. UseWindowsForms stays true: WinForms interop (dialog owner windows, MessageBox,
-    file pickers, the icon list) is still used throughout the WPF UI and hasn't been migrated off.
+    progress. No WinForms interop remains as of this csproj revision.
   -->
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <StartupObject>PolicyPlus.App</StartupObject>
     <RootNamespace>PolicyPlus</RootNamespace>
     <AssemblyName>PolicyPlus</AssemblyName>
-    <MyType>WindowsForms</MyType>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -354,6 +351,10 @@
 
   <ItemGroup>
     <None Include="My Project\app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\*.png" />
   </ItemGroup>
 
 </Project>

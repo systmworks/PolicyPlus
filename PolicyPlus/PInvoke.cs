@@ -32,18 +32,6 @@ internal static class PInvoke
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern bool SendNotifyMessageW(IntPtr Handle, int Message, UIntPtr WParam, IntPtr LParam);
-
-    // Releases the GDI handle produced by Bitmap.GetHbitmap() - required after
-    // Imaging.CreateBitmapSourceFromHBitmap to avoid leaking GDI objects.
-    [DllImport("gdi32.dll")]
-    public static extern bool DeleteObject(IntPtr Object);
-
-    // GetActiveWindow() is thread-queue-scoped and proved unreliable right after a menu click
-    // (still returning the app instead of the just-closed menu's own transient window in some
-    // cases) - GetForegroundWindow() is the OS-wide "what does the user see as active" query and
-    // is used as the fallback when no WinForms Form is active (e.g. a WPF window is on top).
-    [DllImport("user32.dll")]
-    public static extern IntPtr GetForegroundWindow();
 }
 
 [StructLayout(LayoutKind.Sequential)]

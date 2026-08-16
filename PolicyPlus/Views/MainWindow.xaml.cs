@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using PolicyPlus.ViewModels;
 using Wpf.Ui.Controls;
@@ -49,24 +50,26 @@ namespace PolicyPlus.Views
             CategoriesTree.ItemsSource = _treeRoot;
         }
 
-        // The resx-embedded icon strip is still decoded via a locally-scoped WinForms
-        // ImageList/ImageListStreamer (that resource format is itself WinForms-typed) - but the
-        // ImageList never leaves this method. Every consumer (this window's own TreeView/ListView
-        // rendering, plus InspectPolicyElementsWindow/FindByIdWindow/EditPolWindow) works from the
-        // shared ImageSource[] instead.
+        // Icons live as individual PNGs under Resources/Icons (icon_00.png..icon_42.png, plus
+        // pref_warning.png), embedded as WPF pack resources - loaded once here and shared as
+        // ImageSource[] with this window's own TreeView/ListView rendering, plus
+        // InspectPolicyElementsWindow/FindByIdWindow/EditPolWindow.
+        private const int IconCount = 43;
+
         private void LoadIcons()
         {
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            var policyIcons = new System.Windows.Forms.ImageList
-            {
-                ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("PolicyIcons.ImageStream"),
-                TransparentColor = System.Drawing.Color.Transparent,
-            };
-            _icons = new ImageSource[policyIcons.Images.Count];
+            _icons = new ImageSource[IconCount];
             for (int i = 0; i < _icons.Length; i++)
-                _icons[i] = WpfInterop.ToImageSource(policyIcons.Images[i]);
-            _prefWarningIcon = WpfInterop.ToImageSource((System.Drawing.Image)resources.GetObject("PictureBox1.Image"));
+                _icons[i] = LoadIcon($"icon_{i:D2}.png");
+            _prefWarningIcon = LoadIcon("pref_warning.png");
             PolicyIsPrefIcon.Source = _prefWarningIcon;
+        }
+
+        private static ImageSource LoadIcon(string fileName)
+        {
+            var image = new BitmapImage(new Uri($"pack://application:,,,/Resources/Icons/{fileName}"));
+            image.Freeze();
+            return image;
         }
 
         private ImageSource Icon(int index) => index >= 0 && index < _icons.Length ? _icons[index] : null;

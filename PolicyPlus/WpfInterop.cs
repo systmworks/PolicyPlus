@@ -1,9 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace PolicyPlus
 {
@@ -126,28 +124,6 @@ namespace PolicyPlus
                 window.SizeToContent = SizeToContent.Manual;
                 window.SizeToContent = original;
             };
-        }
-
-        public static ImageSource ToImageSource(System.Drawing.Image image)
-        {
-            if (image is null)
-            {
-                return null;
-            }
-
-            using var bitmap = new System.Drawing.Bitmap(image);
-            IntPtr hBitmap = bitmap.GetHbitmap();
-            try
-            {
-                var source = Imaging.CreateBitmapSourceFromHBitmap(
-                    hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                source.Freeze();
-                return source;
-            }
-            finally
-            {
-                PInvoke.DeleteObject(hBitmap);
-            }
         }
     }
 }
