@@ -45,6 +45,12 @@ namespace PolicyPlus
             resources["ControlFillColorSecondaryBrush"] = Brush(option.SurfaceHover);
             resources["ControlFillColorTertiaryBrush"] = Brush(option.SelectedFill);
             resources["ControlStrokeColorDefaultBrush"] = Brush(option.Border);
+
+            // App-specific tokens (not part of WPF-UI's own set) - MainWindow.xaml's TitleBar,
+            // menu-bar row, and StatusBar bind to these directly so those regions carry the theme
+            // too instead of only the tree/list surfaces above.
+            resources["AppChromeBackgroundBrush"] = Brush(option.Chrome);
+            resources["AppChromeTextBrush"] = Brush(option.ChromeText);
         }
 
         private static SolidColorBrush Brush(Color color)

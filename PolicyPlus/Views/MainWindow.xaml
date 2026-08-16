@@ -13,9 +13,10 @@
     Closed="Window_Closed"
     Loaded="Window_Loaded"
     PreviewKeyDown="Window_PreviewKeyDown"
+    Background="{DynamicResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
     ShowInTaskbar="True"
-    WindowBackdropType="Mica"
+    WindowBackdropType="None"
     WindowCornerPreference="Round">
 
     <ui:FluentWindow.Resources>
@@ -211,7 +212,7 @@
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Focusable" Value="True" />
             <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppChromeTextBrush}" />
             <Style.Triggers>
                 <Trigger Property="Role" Value="TopLevelHeader">
                     <Setter Property="Template" Value="{StaticResource CompactTopLevelHeaderTemplate}" />
@@ -233,9 +234,18 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
+        <ui:TitleBar
+            Grid.Row="0"
+            Background="{DynamicResource AppChromeBackgroundBrush}"
+            ButtonsForeground="{DynamicResource AppChromeTextBrush}"
+            Foreground="{DynamicResource AppChromeTextBrush}"
+            Title="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
 
-        <DockPanel Grid.Row="1" Margin="8,0,8,0" LastChildFill="False">
+        <DockPanel
+            Grid.Row="1"
+            Margin="8,0,8,0"
+            Background="{DynamicResource AppChromeBackgroundBrush}"
+            LastChildFill="False">
             <Menu
                 DockPanel.Dock="Left"
                 VerticalAlignment="Center"
@@ -501,7 +511,10 @@
             </ui:ListView>
         </Grid>
 
-        <StatusBar Grid.Row="3">
+        <StatusBar
+            Grid.Row="3"
+            Background="{DynamicResource AppChromeBackgroundBrush}"
+            Foreground="{DynamicResource AppChromeTextBrush}">
             <StatusBarItem>
                 <TextBlock Text="Computer source:" />
             </StatusBarItem>
