@@ -67,16 +67,17 @@ public class AdmxBundle
 
         // Find the ADML file
         string fileTitle = Path.GetFileName(AdmxPath);
-        string admlPath = Path.ChangeExtension(AdmxPath.Replace(fileTitle, LanguageCode + "\\" + fileTitle), "adml");
+        string admxDir = Path.GetDirectoryName(AdmxPath);
+        string admlPath = Path.ChangeExtension(Path.Combine(admxDir, LanguageCode, fileTitle), "adml");
         if (!File.Exists(admlPath))
         {
             string language = LanguageCode.Split('-')[0];
-            foreach (var langSubdir in Directory.EnumerateDirectories(Path.GetDirectoryName(AdmxPath)))
+            foreach (var langSubdir in Directory.EnumerateDirectories(admxDir))
             {
                 string langSubdirTitle = Path.GetFileName(langSubdir);
                 if (langSubdirTitle.Split('-')[0] == language)
                 {
-                    string similarLanguagePath = Path.ChangeExtension(AdmxPath.Replace(fileTitle, langSubdirTitle + "\\" + fileTitle), "adml");
+                    string similarLanguagePath = Path.ChangeExtension(Path.Combine(admxDir, langSubdirTitle, fileTitle), "adml");
                     if (File.Exists(similarLanguagePath))
                     {
                         admlPath = similarLanguagePath;
@@ -85,7 +86,7 @@ public class AdmxBundle
                 }
             }
         }
-        if (!File.Exists(admlPath)) admlPath = Path.ChangeExtension(AdmxPath.Replace(fileTitle, "en-US\\" + fileTitle), "adml");
+        if (!File.Exists(admlPath)) admlPath = Path.ChangeExtension(Path.Combine(admxDir, "en-US", fileTitle), "adml");
         if (!File.Exists(admlPath)) return new AdmxLoadFailure(AdmxLoadFailType.NoAdml, AdmxPath);
 
         // Load the ADML

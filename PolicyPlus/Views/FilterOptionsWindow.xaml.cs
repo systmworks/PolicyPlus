@@ -113,7 +113,10 @@ namespace PolicyPlus.Views
                 SupportedCheckbox.IsChecked = true;
                 foreach (var product in configuration.AllowedProducts)
                 {
-                    _productNodes[product].IsChecked = true;
+                    // A saved filter can reference a product from an ADMX that's since been
+                    // unloaded - skip it rather than throw.
+                    if (_productNodes.TryGetValue(product, out var productNode))
+                        productNode.IsChecked = true;
                 }
 
                 AlwaysMatchAnyCheckbox.IsChecked = configuration.AlwaysMatchAny;

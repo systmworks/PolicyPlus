@@ -68,15 +68,21 @@ namespace PolicyPlus.Views
                 var elemDict = _currentSetting.RawPolicy.Elements.ToDictionary(el => el.ID);
                 foreach (var pres in _currentSetting.Presentation.Elements)
                 {
+                    // Presentation element references an ID the ADMX doesn't define - skip
+                    // rather than throw, so one mismatched element doesn't block the whole dialog.
+                    elemDict.TryGetValue(pres.ID ?? "", out var rawElem);
+                    if (rawElem is null && (pres.ElementType ?? "") is "decimalTextBox" or "textBox" or "comboBox" or "dropdownList" or "listBox")
+                        continue;
+
                     PolicyElementViewModel vm = (pres.ElementType ?? "") switch
                     {
                         "text" => BuildLabel((LabelPresentationElement)pres),
-                        "decimalTextBox" => BuildDecimal((NumericBoxPresentationElement)pres, (DecimalPolicyElement)elemDict[pres.ID]),
-                        "textBox" => BuildTextBox((TextBoxPresentationElement)pres, (TextPolicyElement)elemDict[pres.ID]),
+                        "decimalTextBox" => BuildDecimal((NumericBoxPresentationElement)pres, (DecimalPolicyElement)rawElem),
+                        "textBox" => BuildTextBox((TextBoxPresentationElement)pres, (TextPolicyElement)rawElem),
                         "checkBox" => BuildCheckBox((CheckBoxPresentationElement)pres),
-                        "comboBox" => BuildComboBox((ComboBoxPresentationElement)pres, (TextPolicyElement)elemDict[pres.ID]),
-                        "dropdownList" => BuildDropDown((DropDownPresentationElement)pres, (EnumPolicyElement)elemDict[pres.ID]),
-                        "listBox" => BuildListBox((ListPresentationElement)pres, (ListPolicyElement)elemDict[pres.ID]),
+                        "comboBox" => BuildComboBox((ComboBoxPresentationElement)pres, (TextPolicyElement)rawElem),
+                        "dropdownList" => BuildDropDown((DropDownPresentationElement)pres, (EnumPolicyElement)rawElem),
+                        "listBox" => BuildListBox((ListPresentationElement)pres, (ListPolicyElement)rawElem),
                         "multiTextBox" => BuildMultiTextBox((MultiTextPresentationElement)pres),
                         _ => null,
                     };

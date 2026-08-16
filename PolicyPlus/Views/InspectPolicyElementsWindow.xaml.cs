@@ -201,7 +201,12 @@ namespace PolicyPlus.Views
 
                     if (string.IsNullOrEmpty(presElem.ID))
                         continue;
-                    var elem = policy.RawPolicy.Elements.First(e => (e.ID ?? "") == (presElem.ID ?? ""));
+                    var elem = policy.RawPolicy.Elements.FirstOrDefault(e => (e.ID ?? "") == (presElem.ID ?? ""));
+                    if (elem is null)
+                    {
+                        AddNode(presPartNode.Children, "Policy element (unknown - no matching ID \"" + presElem.ID + "\" in ADMX)", 31);
+                        continue;
+                    }
                     var elemNode = AddNode(presPartNode.Children, "Policy element (type: " + elem.ElementType + ")", 31); // Brick
                     if (!string.IsNullOrEmpty(elem.ClientExtension))
                         AddNode(elemNode.Children, "Client extension: " + elem.ClientExtension, 19);

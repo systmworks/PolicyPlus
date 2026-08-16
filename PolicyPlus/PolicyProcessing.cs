@@ -139,6 +139,7 @@ public class PolicyProcessing
     // Determine whether the given value is found in the Registry
     private static bool ValuePresent(PolicyRegistryValue Value, IPolicySource Source, string Key, string ValueName)
     {
+        if (Value is null) return false;
         switch (Value.RegistryType)
         {
             case PolicyRegistryValueType.Delete:

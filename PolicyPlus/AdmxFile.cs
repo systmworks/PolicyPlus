@@ -220,19 +220,19 @@ public class AdmxFile
                         var regList = new PolicyRegistryList();
                         foreach (XmlNode subElement in Node.ChildNodes)
                         {
-                            if (subElement.Name == OnValueName)
+                            if (subElement.LocalName == OnValueName)
                             {
                                 regList.OnValue = loadRegItem(subElement);
                             }
-                            else if (subElement.Name == OffValueName)
+                            else if (subElement.LocalName == OffValueName)
                             {
                                 regList.OffValue = loadRegItem(subElement);
                             }
-                            else if (subElement.Name == OnListName)
+                            else if (subElement.LocalName == OnListName)
                             {
                                 regList.OnValueList = loadOneRegList(subElement);
                             }
-                            else if (subElement.Name == OffListName)
+                            else if (subElement.LocalName == OffListName)
                             {
                                 regList.OffValueList = loadOneRegList(subElement);
                             }
