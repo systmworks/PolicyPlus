@@ -79,7 +79,7 @@ namespace PolicyPlus
             // text instead of its softer base01/base00, for stronger contrast.
             new ThemeOption(
                 id: "SolarizedLight",
-                displayName: "(Light) Solarized Light",
+                displayName: "(Light) Blue",
                 baseTheme: ApplicationTheme.Light,
                 background: "#FDF6E3",
                 textPrimary: "#073642",
@@ -93,7 +93,7 @@ namespace PolicyPlus
             // Bold burnt-orange, Gruvbox's own near-black text.
             new ThemeOption(
                 id: "GruvboxLight",
-                displayName: "(Light) Gruvbox Light",
+                displayName: "(Light) Orange",
                 baseTheme: ApplicationTheme.Light,
                 background: "#F9E8B8",
                 textPrimary: "#282828",
@@ -108,7 +108,7 @@ namespace PolicyPlus
             // softer body-text tone) so this reads as vivid rather than pastel.
             new ThemeOption(
                 id: "CatppuccinLatte",
-                displayName: "(Light) Catppuccin Latte",
+                displayName: "(Light) Purple",
                 baseTheme: ApplicationTheme.Light,
                 background: "#E0E4EF",
                 textPrimary: "#181825",
@@ -123,7 +123,7 @@ namespace PolicyPlus
             // "Tron" feel.
             new ThemeOption(
                 id: "Nord",
-                displayName: "(Dark) Nord",
+                displayName: "(Dark) Blue",
                 baseTheme: ApplicationTheme.Dark,
                 background: "#242933",
                 textPrimary: "#ECEFF4",
@@ -138,7 +138,7 @@ namespace PolicyPlus
             // punchier identity; deep magenta chrome band.
             new ThemeOption(
                 id: "Dracula",
-                displayName: "(Dark) Dracula",
+                displayName: "(Dark) Pink",
                 baseTheme: ApplicationTheme.Dark,
                 background: "#21222C",
                 textPrimary: "#F8F8F2",
@@ -154,7 +154,7 @@ namespace PolicyPlus
             // band for a deliberately bold identity.
             new ThemeOption(
                 id: "RosePine",
-                displayName: "(Dark) Rosé Pine",
+                displayName: "(Dark) Red",
                 baseTheme: ApplicationTheme.Dark,
                 background: "#14121F",
                 textPrimary: "#E0DEF4",

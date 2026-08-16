@@ -298,12 +298,12 @@
                 </MenuItem>
                 <MenuItem Header="_Options">
                     <MenuItem Header="Color Mode">
-                        <MenuItem x:Name="SolarizedLightMenuItem" Click="SolarizedLightMenuItem_Click" Header="(Light) Solarized Light" IsCheckable="True" />
-                        <MenuItem x:Name="GruvboxLightMenuItem" Click="GruvboxLightMenuItem_Click" Header="(Light) Gruvbox Light" IsCheckable="True" />
-                        <MenuItem x:Name="CatppuccinLatteMenuItem" Click="CatppuccinLatteMenuItem_Click" Header="(Light) Catppuccin Latte" IsCheckable="True" />
-                        <MenuItem x:Name="NordMenuItem" Click="NordMenuItem_Click" Header="(Dark) Nord" IsCheckable="True" />
-                        <MenuItem x:Name="DraculaMenuItem" Click="DraculaMenuItem_Click" Header="(Dark) Dracula" IsCheckable="True" />
-                        <MenuItem x:Name="RosePineMenuItem" Click="RosePineMenuItem_Click" Header="(Dark) Rosé Pine" IsCheckable="True" />
+                        <MenuItem x:Name="SolarizedLightMenuItem" Click="SolarizedLightMenuItem_Click" Header="(Light) Blue" IsCheckable="True" />
+                        <MenuItem x:Name="GruvboxLightMenuItem" Click="GruvboxLightMenuItem_Click" Header="(Light) Orange" IsCheckable="True" />
+                        <MenuItem x:Name="CatppuccinLatteMenuItem" Click="CatppuccinLatteMenuItem_Click" Header="(Light) Purple" IsCheckable="True" />
+                        <MenuItem x:Name="NordMenuItem" Click="NordMenuItem_Click" Header="(Dark) Blue" IsCheckable="True" />
+                        <MenuItem x:Name="DraculaMenuItem" Click="DraculaMenuItem_Click" Header="(Dark) Pink" IsCheckable="True" />
+                        <MenuItem x:Name="RosePineMenuItem" Click="RosePineMenuItem_Click" Header="(Dark) Red" IsCheckable="True" />
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Help">
