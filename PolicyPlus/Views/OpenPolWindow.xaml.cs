@@ -12,6 +12,7 @@ namespace PolicyPlus.Views
         public OpenPolWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void SetLastSources(PolicyLoaderSource compType, string compData, PolicyLoaderSource userType, string userData)

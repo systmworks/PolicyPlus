@@ -24,6 +24,7 @@ namespace PolicyPlus.Views
         public FindByIdWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) =>
             {
                 IdTextbox.Focus();

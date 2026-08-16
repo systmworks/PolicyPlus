@@ -12,6 +12,7 @@ namespace PolicyPlus.Views
         public DetailPolicyWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void PrepareDialog(PolicyPlusPolicy policy)

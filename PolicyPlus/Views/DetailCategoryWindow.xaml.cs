@@ -11,6 +11,7 @@ namespace PolicyPlus.Views
         public DetailCategoryWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void PrepareDialog(PolicyPlusCategory category)

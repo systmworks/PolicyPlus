@@ -15,6 +15,7 @@ namespace PolicyPlus.Views
         public OpenAdmxFolderWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += OpenAdmxFolderWindow_Loaded;
         }
 

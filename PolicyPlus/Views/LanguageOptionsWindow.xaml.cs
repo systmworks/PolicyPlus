@@ -12,6 +12,7 @@ namespace PolicyPlus.Views
         public LanguageOptionsWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void ButtonOK_Click(object sender, RoutedEventArgs e)

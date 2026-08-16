@@ -11,6 +11,7 @@ namespace PolicyPlus.Views
         public EditPolStringDataWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) =>
             {
                 TextData.Focus();

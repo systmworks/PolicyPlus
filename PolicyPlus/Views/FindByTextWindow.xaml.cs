@@ -14,6 +14,7 @@ namespace PolicyPlus.Views
         public FindByTextWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) => StringTextbox.Focus();
         }
 

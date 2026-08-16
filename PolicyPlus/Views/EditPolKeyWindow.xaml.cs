@@ -11,6 +11,7 @@ namespace PolicyPlus.Views
         public EditPolKeyWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) =>
             {
                 TextName.Focus();

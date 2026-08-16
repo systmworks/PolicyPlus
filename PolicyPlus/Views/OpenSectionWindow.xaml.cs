@@ -11,6 +11,7 @@ namespace PolicyPlus.Views
         public OpenSectionWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void ButtonOK_Click(object sender, RoutedEventArgs e)

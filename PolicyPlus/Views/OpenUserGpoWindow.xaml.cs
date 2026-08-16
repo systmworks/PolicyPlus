@@ -13,6 +13,7 @@ namespace PolicyPlus.Views
         public OpenUserGpoWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)

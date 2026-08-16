@@ -15,6 +15,7 @@ namespace PolicyPlus.Views
         public FindByRegistryWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) => KeyTextbox.Focus();
         }
 

@@ -11,6 +11,7 @@ namespace PolicyPlus.Views
         public EditPolDeleteWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
         }
 
         private void OptDeleteOne_CheckedChanged(object sender, RoutedEventArgs e)

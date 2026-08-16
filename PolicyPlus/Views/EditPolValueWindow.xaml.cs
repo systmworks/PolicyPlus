@@ -21,6 +21,7 @@ namespace PolicyPlus.Views
         public EditPolValueWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) => TextName.Focus();
         }
 

@@ -20,6 +20,7 @@ namespace PolicyPlus.Views
         public EditPolNumericDataWindow()
         {
             InitializeComponent();
+            WpfInterop.FixSizeToContent(this);
             Loaded += (s, e) =>
             {
                 ValueTextBox.Focus();
