@@ -446,19 +446,15 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, System.Windows.Forms.ImageList images, PolFile pol, bool isUser)
+        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, ImageSource[] icons, PolFile pol, bool isUser)
         {
             ThemeService.ApplyPersisted();
             var window = new EditPolWindow
             {
-                _icons = new ImageSource[images.Images.Count],
+                _icons = icons,
                 _editingPol = pol,
                 _editingUserSource = isUser,
             };
-            for (int i = 0; i < images.Images.Count; i++)
-            {
-                window._icons[i] = WpfInterop.ToImageSource(images.Images[i]);
-            }
 
             window.UpdateTree();
             window.UpdateButtonStates();

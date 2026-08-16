@@ -97,17 +97,17 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static Result PresentDialog(IWin32Window owner, AdmxBundle admxWorkspace, ImageList policyIcons)
+        public static Result PresentDialog(IWin32Window owner, AdmxBundle admxWorkspace, ImageSource[] policyIcons)
         {
             ThemeService.ApplyPersisted();
             var window = new FindByIdWindow
             {
-                _categoryImage = WpfInterop.ToImageSource(policyIcons.Images[0]),
-                _policyImage = WpfInterop.ToImageSource(policyIcons.Images[4]),
-                _productImage = WpfInterop.ToImageSource(policyIcons.Images[10]),
-                _supportImage = WpfInterop.ToImageSource(policyIcons.Images[11]),
-                _notFoundImage = WpfInterop.ToImageSource(policyIcons.Images[8]),
-                _blankImage = WpfInterop.ToImageSource(policyIcons.Images[9]),
+                _categoryImage = policyIcons[0],
+                _policyImage = policyIcons[4],
+                _productImage = policyIcons[10],
+                _supportImage = policyIcons[11],
+                _notFoundImage = policyIcons[8],
+                _blankImage = policyIcons[9],
                 _admxWorkspace = admxWorkspace,
             };
             WpfInterop.SetOwner(window, owner);

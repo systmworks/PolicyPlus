@@ -37,7 +37,6 @@ namespace PolicyPlus.Views
         private int _sortColumn = -1;
         private bool _sortAscending = true;
 
-        private System.Windows.Forms.ImageList _policyIcons;
         private ImageSource[] _icons;
         private ImageSource _prefWarningIcon;
         private readonly ObservableCollection<CategoryNodeViewModel> _treeRoot = new();
@@ -50,21 +49,22 @@ namespace PolicyPlus.Views
             CategoriesTree.ItemsSource = _treeRoot;
         }
 
-        // Exposes PolicyIcons to the still-WinForms-typed dialogs (InspectPolicyElementsWindow,
-        // FindByIdWindow, EditPolWindow, ...) that take System.Windows.Forms.ImageList - the same
-        // shared icon set just also gets converted to ImageSource[] for this window's own WPF
-        // TreeView/ListView rendering.
+        // The resx-embedded icon strip is still decoded via a locally-scoped WinForms
+        // ImageList/ImageListStreamer (that resource format is itself WinForms-typed) - but the
+        // ImageList never leaves this method. Every consumer (this window's own TreeView/ListView
+        // rendering, plus InspectPolicyElementsWindow/FindByIdWindow/EditPolWindow) works from the
+        // shared ImageSource[] instead.
         private void LoadIcons()
         {
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            _policyIcons = new System.Windows.Forms.ImageList
+            var policyIcons = new System.Windows.Forms.ImageList
             {
                 ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("PolicyIcons.ImageStream"),
                 TransparentColor = System.Drawing.Color.Transparent,
             };
-            _icons = new ImageSource[_policyIcons.Images.Count];
+            _icons = new ImageSource[policyIcons.Images.Count];
             for (int i = 0; i < _icons.Length; i++)
-                _icons[i] = WpfInterop.ToImageSource(_policyIcons.Images[i]);
+                _icons[i] = WpfInterop.ToImageSource(policyIcons.Images[i]);
             _prefWarningIcon = WpfInterop.ToImageSource((System.Drawing.Image)resources.GetObject("PictureBox1.Image"));
             PolicyIsPrefIcon.Source = _prefWarningIcon;
         }
@@ -817,7 +817,7 @@ namespace PolicyPlus.Views
         }
 
         private void CmePolInspectElements_Click(object sender, RoutedEventArgs e) =>
-            InspectPolicyElementsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget, _policyIcons, _admxWorkspace);
+            InspectPolicyElementsWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget, _icons, _admxWorkspace);
 
         private void CmePolSpolFragment_Click(object sender, RoutedEventArgs e) =>
             InspectSpolFragmentWindow.PresentDialog(WpfInterop.AsIWin32Window(this), (PolicyPlusPolicy)_contextTarget, _admxWorkspace, _compPolicySource, _userPolicySource, _compComments, _userComments);
@@ -1217,7 +1217,7 @@ namespace PolicyPlus.Views
             var editPolSection = OpenSectionWindow.PresentDialog(WpfInterop.AsIWin32Window(this), userIsPol, compIsPol);
             if (editPolSection is not null)
             {
-                EditPolWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _policyIcons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource), editPolSection == AdmxPolicySection.User);
+                EditPolWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _icons, (PolFile)(editPolSection == AdmxPolicySection.Machine ? _compPolicySource : _userPolicySource), editPolSection == AdmxPolicySection.User);
                 _isDirty = true;
             }
 
@@ -1232,7 +1232,7 @@ namespace PolicyPlus.Views
 
         private void ByIdMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var findByIdResult = FindByIdWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace, _policyIcons);
+            var findByIdResult = FindByIdWindow.PresentDialog(WpfInterop.AsIWin32Window(this), _admxWorkspace, _icons);
             if (findByIdResult is not null)
             {
                 var selCat = findByIdResult.SelectedCategory;
@@ -1513,9 +1513,12 @@ namespace PolicyPlus.Views
             int height = Convert.ToInt32(_configuration.GetValue("WindowHeight", 0));
             if (left == int.MinValue || top == int.MinValue || width <= 0 || height <= 0)
                 return;
-            var bounds = new System.Drawing.Rectangle(left, top, width, height);
-            // Guard against a saved position from a monitor/resolution that's since changed
-            if (!System.Windows.Forms.Screen.AllScreens.Any(s => s.WorkingArea.IntersectsWith(bounds)))
+            var bounds = new Rect(left, top, width, height);
+            // Guard against a saved position from a monitor/resolution that's since changed -
+            // WPF has no per-monitor enumeration without P/Invoke, so this checks against the
+            // combined bounding box of all monitors instead of each one individually.
+            var virtualScreen = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+            if (!virtualScreen.IntersectsWith(bounds))
                 return;
             Left = left;
             Top = top;

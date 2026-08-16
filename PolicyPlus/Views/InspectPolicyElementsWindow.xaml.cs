@@ -31,14 +31,10 @@ namespace PolicyPlus.Views
             return node;
         }
 
-        private void PrepareDialog(PolicyPlusPolicy policy, System.Windows.Forms.ImageList images, AdmxBundle admxWorkspace)
+        private void PrepareDialog(PolicyPlusPolicy policy, ImageSource[] icons, AdmxBundle admxWorkspace)
         {
             _selectedPolicy = policy;
-            _icons = new ImageSource[images.Images.Count];
-            for (int i = 0; i < images.Images.Count; i++)
-            {
-                _icons[i] = WpfInterop.ToImageSource(images.Images[i]);
-            }
+            _icons = icons;
 
             PolicyNameTextbox.Text = policy.DisplayName;
             var root = new ObservableCollection<InfoNode>();
@@ -314,11 +310,11 @@ namespace PolicyPlus.Views
             }
         }
 
-        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusPolicy policy, System.Windows.Forms.ImageList images, AdmxBundle admxWorkspace)
+        public static void PresentDialog(System.Windows.Forms.IWin32Window owner, PolicyPlusPolicy policy, ImageSource[] icons, AdmxBundle admxWorkspace)
         {
             ThemeService.ApplyPersisted();
             var window = new InspectPolicyElementsWindow();
-            window.PrepareDialog(policy, images, admxWorkspace);
+            window.PrepareDialog(policy, icons, admxWorkspace);
             WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
