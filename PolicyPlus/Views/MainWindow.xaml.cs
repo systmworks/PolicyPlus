@@ -34,6 +34,17 @@ namespace PolicyPlus.Views
         private List<string> _favoriteIds = new();
         private CategoryNodeViewModel _favoritesNode;
         private CategoryNodeViewModel _selectedTreeNode;
+        // Tracks whether Favorites is the active selection independent of node identity - the
+        // CategoryNodeViewModel instances (including _favoritesNode itself) are all recreated on
+        // every PopulateAdmxUi() rebuild, so comparing _selectedTreeNode against _favoritesNode by
+        // reference always mismatches after a reload and silently emptied the Favorites listing.
+        private bool _favoritesSelected;
+        // Re-entrancy guard: setting a CategoryNodeViewModel's IsSelected (bound TwoWay to the real
+        // TreeViewItem) synchronously re-fires SelectedItemChanged, which would otherwise re-enter
+        // this method mid-update and redo the same work (visible flicker, wasted work; several UI
+        // actions navigate to a category by setting _currentCategory directly and calling this
+        // method, which itself drives tree selection as a side effect at the end).
+        private bool _isUpdatingCategoryListing;
         private Func<PolicyPlusPolicy, bool> _searchMatcher;
         private int _sortColumn = -1;
         private bool _sortAscending = true;
@@ -197,37 +208,47 @@ namespace PolicyPlus.Views
 
         public void UpdateCategoryListing()
         {
-            if (ReferenceEquals(_selectedTreeNode, _favoritesNode))
-            {
-                UpdateFavoritesListing();
+            if (_isUpdatingCategoryListing)
                 return;
-            }
-
-            bool inSameCategory = false;
-            var rows = new List<PolicyRowViewModel>();
-            if (_currentCategory is not null)
+            _isUpdatingCategoryListing = true;
+            try
             {
-                if (_currentSetting is not null && ReferenceEquals(_currentSetting.Category, _currentCategory))
-                    inSameCategory = true;
-                if (_currentCategory.Parent is not null)
+                if (_favoritesSelected)
                 {
-                    rows.Add(new PolicyRowViewModel("Up: " + _currentCategory.Parent.DisplayName, "", "", "", Icon(6), _currentCategory.Parent, isUpRow: true));
+                    UpdateFavoritesListing();
+                    return;
                 }
 
-                foreach (var category in _currentCategory.Children.Where(ShouldShowCategory).OrderBy(c => c.DisplayName, StringComparer.CurrentCulture))
-                    rows.Add(new PolicyRowViewModel(category.DisplayName, "", "", "", Icon(GetImageIndexForCategory(category)), category));
-                foreach (var policy in _currentCategory.Policies.Where(ShouldShowPolicy).OrderBy(p => p.DisplayName, StringComparer.CurrentCulture))
-                    rows.Add(BuildPolicyRow(policy));
+                bool inSameCategory = false;
+                var rows = new List<PolicyRowViewModel>();
+                if (_currentCategory is not null)
+                {
+                    if (_currentSetting is not null && ReferenceEquals(_currentSetting.Category, _currentCategory))
+                        inSameCategory = true;
+                    if (_currentCategory.Parent is not null)
+                    {
+                        rows.Add(new PolicyRowViewModel("Up: " + _currentCategory.Parent.DisplayName, "", "", "", Icon(6), _currentCategory.Parent, isUpRow: true));
+                    }
 
-                if (CategoryNodesContains(_currentCategory))
-                    SelectTreeNode(_categoryNodes[_currentCategory]);
+                    foreach (var category in _currentCategory.Children.Where(ShouldShowCategory).OrderBy(c => c.DisplayName, StringComparer.CurrentCulture))
+                        rows.Add(new PolicyRowViewModel(category.DisplayName, "", "", "", Icon(GetImageIndexForCategory(category)), category));
+                    foreach (var policy in _currentCategory.Policies.Where(ShouldShowPolicy).OrderBy(p => p.DisplayName, StringComparer.CurrentCulture))
+                        rows.Add(BuildPolicyRow(policy));
+
+                    if (CategoryNodesContains(_currentCategory))
+                        SelectTreeNode(_categoryNodes[_currentCategory]);
+                }
+
+                _ = inSameCategory; // Scroll-position preservation isn't replicated - see HANDOVER notes
+                ApplySort(rows);
+                _policyRows = rows;
+                PoliciesList.ItemsSource = _policyRows;
+                ReselectCurrentSetting();
             }
-
-            _ = inSameCategory; // Scroll-position preservation isn't replicated - see HANDOVER notes
-            ApplySort(rows);
-            _policyRows = rows;
-            PoliciesList.ItemsSource = _policyRows;
-            ReselectCurrentSetting();
+            finally
+            {
+                _isUpdatingCategoryListing = false;
+            }
         }
 
         private bool CategoryNodesContains(PolicyPlusCategory category) => _categoryNodes.ContainsKey(category);
@@ -728,6 +749,7 @@ namespace PolicyPlus.Views
         {
             _selectedTreeNode = e.NewValue as CategoryNodeViewModel;
             _currentCategory = _selectedTreeNode?.Category;
+            _favoritesSelected = _selectedTreeNode is not null && _selectedTreeNode.Category is null;
             UpdateCategoryListing();
             ClearSelections();
             UpdatePolicyInfo();
@@ -807,7 +829,7 @@ namespace PolicyPlus.Views
             if (!_favoriteIds.Remove(id))
                 _favoriteIds.Add(id);
             _configuration.SetValue("Favorites", _favoriteIds.ToArray());
-            if (ReferenceEquals(_selectedTreeNode, _favoritesNode))
+            if (_favoritesSelected)
                 UpdateCategoryListing();
         }
 
