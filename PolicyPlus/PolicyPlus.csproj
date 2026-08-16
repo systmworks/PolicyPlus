@@ -54,11 +54,6 @@
     <Compile Include="FilterConfiguration.cs" />
     <Compile Include="MsgBoxCompat.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="PInvoke.cs" />
     <Compile Include="PolicyLoader.cs" />
     <Compile Include="PolicyProcessing.cs" />
@@ -335,18 +330,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Views\MainWindow.resx">
-      <DependentUpon>MainWindow.xaml.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>PolicyPlus.My.Resources</CustomToolNamespace>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

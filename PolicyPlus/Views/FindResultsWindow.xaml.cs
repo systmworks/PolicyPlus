@@ -14,7 +14,6 @@ namespace PolicyPlus.Views
         {
             public string Title;
             public string Category;
-            public PolicyPlusPolicy Policy;
         }
 
         // Search results and selection must survive both across separate PresentDialog calls and
@@ -76,7 +75,7 @@ namespace PolicyPlus.Views
                 foreach (var insert in pendingInsertions)
                 {
                     _results.Add(insert);
-                    _rows.Add(new Row { Title = insert.DisplayName, Category = insert.Category.DisplayName, Policy = insert });
+                    _rows.Add(new Row { Title = insert.DisplayName, Category = insert.Category.DisplayName });
                 }
 
                 pendingInsertions.Clear();
