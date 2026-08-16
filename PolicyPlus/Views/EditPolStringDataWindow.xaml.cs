@@ -34,13 +34,7 @@ namespace PolicyPlus.Views
             }
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-            {
-                Close();
-            }
-        }
+        private void Window_KeyDown(object sender, KeyEventArgs e) => WpfInterop.HandleEscapeToClose(this, e);
 
         public static string PresentDialog(System.Windows.Window owner, string valueName, string initialData)
         {

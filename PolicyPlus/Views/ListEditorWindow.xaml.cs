@@ -83,11 +83,7 @@ namespace PolicyPlus.Views
 
         private void CancelButton_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-                Close();
-        }
+        private void Window_KeyDown(object sender, KeyEventArgs e) => WpfInterop.HandleEscapeToClose(this, e);
 
         public static object PresentDialog(System.Windows.Window owner, string title, object data, bool twoColumn)
         {

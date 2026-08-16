@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace PolicyPlus
@@ -129,6 +130,20 @@ namespace PolicyPlus
         {
             EnsureApplication();
             window.Owner = owner;
+        }
+
+        // Shared Escape-to-close handler for the ~30 simple dialogs that just want Escape to
+        // close them with no further logic. Wire it from XAML as KeyDown="Window_KeyDown" and
+        // delegate: private void Window_KeyDown(object sender, KeyEventArgs e) =>
+        // WpfInterop.HandleEscapeToClose(this, e);
+        // A few windows need different Escape behavior (e.g. not closing while a text selection
+        // is active) - those keep their own full Window_KeyDown instead of calling this.
+        public static void HandleEscapeToClose(Window window, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                window.Close();
+            }
         }
 
         // SizeToContent="Height" left these windows taller than their content, with dead space
