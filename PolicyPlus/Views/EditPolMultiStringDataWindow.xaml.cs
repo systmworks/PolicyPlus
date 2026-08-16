@@ -25,13 +25,11 @@ namespace PolicyPlus.Views
 
         public static string[] PresentDialog(System.Windows.Window owner, string valueName, string[] initialData)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditPolMultiStringDataWindow
+            var window = WpfInterop.PreparePresented(new EditPolMultiStringDataWindow
             {
                 TextName = { Text = valueName },
                 TextData = { Text = string.Join(Environment.NewLine, initialData ?? Array.Empty<string>()) },
-            };
-            WpfInterop.SetOwner(window, owner);
+            }, owner);
             window.ShowDialog();
             return window._accepted ? window.TextData.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None) : null;
         }

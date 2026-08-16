@@ -54,8 +54,7 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, AdmxBundle workspace)
         {
-            ThemeService.ApplyPersisted();
-            var window = new LoadedAdmxWindow { _bundle = workspace };
+            var window = WpfInterop.PreparePresented(new LoadedAdmxWindow { _bundle = workspace }, owner);
             var rows = new List<Row>();
             foreach (var admx in workspace.Sources.Keys)
             {
@@ -69,7 +68,6 @@ namespace PolicyPlus.Views
             }
 
             window.LsvAdmx.ItemsSource = rows;
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

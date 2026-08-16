@@ -280,8 +280,7 @@ namespace PolicyPlus.Views
             Dictionary<string, string> compComments,
             Dictionary<string, string> userComments)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditSettingWindow
+            var window = WpfInterop.PreparePresented(new EditSettingWindow
             {
                 _currentSetting = policy,
                 _currentSection = section,
@@ -292,8 +291,7 @@ namespace PolicyPlus.Views
                 _userPolLoader = userPolLoader,
                 _compComments = compComments,
                 _userComments = userComments,
-            };
-            WpfInterop.SetOwner(window, owner);
+            }, owner);
             window.ShowDialog();
             return window._accepted;
         }

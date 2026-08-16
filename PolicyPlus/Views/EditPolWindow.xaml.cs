@@ -442,17 +442,15 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, ImageSource[] icons, PolFile pol, bool isUser)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditPolWindow
+            var window = WpfInterop.PreparePresented(new EditPolWindow
             {
                 _icons = icons,
                 _editingPol = pol,
                 _editingUserSource = isUser,
-            };
+            }, owner);
 
             window.UpdateTree();
             window.UpdateButtonStates();
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

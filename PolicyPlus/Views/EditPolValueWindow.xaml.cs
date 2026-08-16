@@ -44,9 +44,7 @@ namespace PolicyPlus.Views
 
         public static (string Name, RegistryValueKind Kind)? PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditPolValueWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new EditPolValueWindow(), owner);
             window.ShowDialog();
             if (!window._accepted)
             {

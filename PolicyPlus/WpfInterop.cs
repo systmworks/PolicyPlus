@@ -132,6 +132,20 @@ namespace PolicyPlus
             window.Owner = owner;
         }
 
+        // Every PresentDialog method across ~35 windows repeats
+        // "ThemeService.ApplyPersisted(); var window = new XWindow(...); SetOwner(window, owner);"
+        // before doing its own per-window setup and ShowDialog() - this collapses just that
+        // identical prefix into one call so a future cross-cutting addition (error handling,
+        // telemetry, ...) has one place to land instead of ~35. Each window's own construction,
+        // ShowDialog() call, and result extraction stay exactly as they were - those differ too
+        // much (void/bool/string/custom-type returns, differing constructor args) to unify.
+        public static TWindow PreparePresented<TWindow>(TWindow window, Window owner) where TWindow : Window
+        {
+            ThemeService.ApplyPersisted();
+            SetOwner(window, owner);
+            return window;
+        }
+
         // Shared Escape-to-close handler for the ~30 simple dialogs that just want Escape to
         // close them with no further logic. Wire it from XAML as KeyDown="Window_KeyDown" and
         // delegate: private void Window_KeyDown(object sender, KeyEventArgs e) =>

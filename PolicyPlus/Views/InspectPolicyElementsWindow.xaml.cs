@@ -311,10 +311,8 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, PolicyPlusPolicy policy, ImageSource[] icons, AdmxBundle admxWorkspace)
         {
-            ThemeService.ApplyPersisted();
-            var window = new InspectPolicyElementsWindow();
+            var window = WpfInterop.PreparePresented(new InspectPolicyElementsWindow(), owner);
             window.PrepareDialog(policy, icons, admxWorkspace);
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

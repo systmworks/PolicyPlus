@@ -76,9 +76,7 @@ namespace PolicyPlus.Views
 
         public static SpolFile PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new ImportSpolWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new ImportSpolWindow(), owner);
             window.ShowDialog();
             return window._spol;
         }

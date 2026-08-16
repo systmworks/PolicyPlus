@@ -46,9 +46,7 @@ namespace PolicyPlus.Views
 
         public static Func<PolicyPlusPolicy, bool> PresentDialog(System.Windows.Window owner, params Dictionary<string, string>[] commentDicts)
         {
-            ThemeService.ApplyPersisted();
-            var window = new FindByTextWindow { CommentSources = commentDicts.Where(d => d is not null).ToArray() };
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new FindByTextWindow { CommentSources = commentDicts.Where(d => d is not null).ToArray() }, owner);
             window.ShowDialog();
             return window._searcher;
         }

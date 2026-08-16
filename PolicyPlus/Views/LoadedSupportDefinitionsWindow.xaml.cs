@@ -68,10 +68,8 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, AdmxBundle workspace)
         {
-            ThemeService.ApplyPersisted();
-            var window = new LoadedSupportDefinitionsWindow { _definitions = workspace.SupportDefinitions.Values };
+            var window = WpfInterop.PreparePresented(new LoadedSupportDefinitionsWindow { _definitions = workspace.SupportDefinitions.Values }, owner);
             window.UpdateListing();
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

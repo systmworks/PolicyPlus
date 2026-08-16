@@ -92,9 +92,7 @@ namespace PolicyPlus.Views
 
         public static (string Folder, bool ClearWorkspace)? PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new OpenAdmxFolderWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new OpenAdmxFolderWindow(), owner);
             window.ShowDialog();
             return window._accepted ? (window._selectedFolder, window.ClearWorkspaceCheckbox.IsChecked == true) : null;
         }

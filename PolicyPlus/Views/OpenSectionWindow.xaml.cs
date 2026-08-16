@@ -32,13 +32,11 @@ namespace PolicyPlus.Views
 
         public static AdmxPolicySection? PresentDialog(System.Windows.Window owner, bool userEnabled, bool compEnabled)
         {
-            ThemeService.ApplyPersisted();
-            var window = new OpenSectionWindow
+            var window = WpfInterop.PreparePresented(new OpenSectionWindow
             {
                 OptUser = { IsEnabled = userEnabled },
                 OptComputer = { IsEnabled = compEnabled },
-            };
-            WpfInterop.SetOwner(window, owner);
+            }, owner);
             window.ShowDialog();
             return window._selectedSection;
         }

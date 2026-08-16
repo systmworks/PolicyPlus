@@ -93,8 +93,7 @@ namespace PolicyPlus.Views
 
         public static Result PresentDialog(System.Windows.Window owner, AdmxBundle admxWorkspace, ImageSource[] policyIcons)
         {
-            ThemeService.ApplyPersisted();
-            var window = new FindByIdWindow
+            var window = WpfInterop.PreparePresented(new FindByIdWindow
             {
                 _categoryImage = policyIcons[0],
                 _policyImage = policyIcons[4],
@@ -103,8 +102,7 @@ namespace PolicyPlus.Views
                 _notFoundImage = policyIcons[8],
                 _blankImage = policyIcons[9],
                 _admxWorkspace = admxWorkspace,
-            };
-            WpfInterop.SetOwner(window, owner);
+            }, owner);
             window.ShowDialog();
             return window._accepted ? window._result : null;
         }

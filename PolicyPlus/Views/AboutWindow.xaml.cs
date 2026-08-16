@@ -18,8 +18,7 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new AboutWindow();
+            var window = WpfInterop.PreparePresented(new AboutWindow(), owner);
 
             string version = VersionHolder.AppVersion.Trim();
             window.VersionText.Text = string.IsNullOrEmpty(version)
@@ -27,7 +26,6 @@ namespace PolicyPlus.Views
                 : $"Version {version} (commit {VersionHolder.Version.Trim()})";
             window.VersionText.Visibility = string.IsNullOrEmpty(version) ? Visibility.Collapsed : Visibility.Visible;
 
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

@@ -193,11 +193,9 @@ namespace PolicyPlus.Views
 
         public static FilterConfiguration PresentDialog(System.Windows.Window owner, FilterConfiguration configuration, AdmxBundle workspace)
         {
-            ThemeService.ApplyPersisted();
-            var window = new FilterOptionsWindow();
+            var window = WpfInterop.PreparePresented(new FilterOptionsWindow(), owner);
             window.BuildProductTree(workspace);
             window.PrepareDialog(configuration);
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
             return window._accepted ? window.CurrentFilter : null;
         }

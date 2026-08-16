@@ -38,9 +38,7 @@ namespace PolicyPlus.Views
 
         public static string PresentDialog(System.Windows.Window owner, string initialName)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditPolKeyWindow { TextName = { Text = initialName } };
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new EditPolKeyWindow { TextName = { Text = initialName } }, owner);
             window.ShowDialog();
             return window._accepted ? window.TextName.Text : "";
         }

@@ -38,9 +38,7 @@ namespace PolicyPlus.Views
 
         public static (bool Purge, bool ClearFirst, string ValueName)? PresentDialog(System.Windows.Window owner, string containerKey)
         {
-            ThemeService.ApplyPersisted();
-            var window = new EditPolDeleteWindow { TextKey = { Text = containerKey } };
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new EditPolDeleteWindow { TextKey = { Text = containerKey } }, owner);
             window.ShowDialog();
             if (!window._accepted)
             {

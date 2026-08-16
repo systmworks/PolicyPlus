@@ -62,8 +62,7 @@ namespace PolicyPlus.Views
             Dictionary<string, string> compComments,
             Dictionary<string, string> userComments)
         {
-            ThemeService.ApplyPersisted();
-            var window = new InspectSpolFragmentWindow { TextPolicyName = { Text = policy.DisplayName } };
+            var window = WpfInterop.PreparePresented(new InspectSpolFragmentWindow { TextPolicyName = { Text = policy.DisplayName } }, owner);
 
             var sb = new StringBuilder();
             bool AddSection(AdmxPolicySection section)
@@ -96,7 +95,6 @@ namespace PolicyPlus.Views
             window._spolFragment = sb.ToString();
             window.UpdateTextbox();
 
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

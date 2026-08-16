@@ -205,9 +205,7 @@ namespace PolicyPlus.Views
 
         public static string PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new DownloadAdmxWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new DownloadAdmxWindow(), owner);
             window.ShowDialog();
             return window._newPolicySourceFolder;
         }

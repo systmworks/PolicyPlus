@@ -59,9 +59,7 @@ namespace PolicyPlus.Views
 
         public static string PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new OpenUserGpoWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new OpenUserGpoWindow(), owner);
             window.ShowDialog();
             return window._accepted ? window.SidTextbox.Text : null;
         }

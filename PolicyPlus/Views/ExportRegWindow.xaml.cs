@@ -52,14 +52,12 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, string branch, PolFile pol, bool isUser)
         {
-            ThemeService.ApplyPersisted();
-            var window = new ExportRegWindow
+            var window = WpfInterop.PreparePresented(new ExportRegWindow
             {
                 _source = pol,
                 TextBranch = { Text = branch },
                 TextRoot = { Text = isUser ? @"HKEY_CURRENT_USER\" : @"HKEY_LOCAL_MACHINE\" },
-            };
-            WpfInterop.SetOwner(window, owner);
+            }, owner);
             window.ShowDialog();
         }
     }

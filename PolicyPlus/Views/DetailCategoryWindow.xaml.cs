@@ -46,10 +46,8 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, PolicyPlusCategory category)
         {
-            ThemeService.ApplyPersisted();
-            var window = new DetailCategoryWindow();
+            var window = WpfInterop.PreparePresented(new DetailCategoryWindow(), owner);
             window.PrepareDialog(category);
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

@@ -188,23 +188,19 @@ namespace PolicyPlus.Views
                 return null;
             }
 
-            ThemeService.ApplyPersisted();
-            var window = new FindResultsWindow();
+            var window = WpfInterop.PreparePresented(new FindResultsWindow(), owner);
             window.PopulateFromResults();
             window.StopButton.IsEnabled = false;
             window.ProgressLabel.Text = "Finished searching: " + _results.Count + " hit(s)";
             window.SearchProgress.Maximum = 1;
             window.SearchProgress.Value = 1;
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
             return window._accepted ? _results[_lastSelectedIndex] : null;
         }
 
         public static PolicyPlusPolicy PresentDialogStartSearch(System.Windows.Window owner, AdmxBundle workspace, Func<PolicyPlusPolicy, bool> searcher)
         {
-            ThemeService.ApplyPersisted();
-            var window = new FindResultsWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new FindResultsWindow(), owner);
             window.StartSearch(workspace, searcher);
             window.ShowDialog();
             return window._accepted ? _results[_lastSelectedIndex] : null;

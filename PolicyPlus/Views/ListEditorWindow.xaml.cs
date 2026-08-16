@@ -87,9 +87,7 @@ namespace PolicyPlus.Views
 
         public static object PresentDialog(System.Windows.Window owner, string title, object data, bool twoColumn)
         {
-            ThemeService.ApplyPersisted();
-            var window = new ListEditorWindow(title, data, twoColumn);
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new ListEditorWindow(title, data, twoColumn), owner);
             window.ShowDialog();
             return window._accepted ? window._finalData : null;
         }

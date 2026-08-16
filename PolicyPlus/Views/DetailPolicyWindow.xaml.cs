@@ -96,10 +96,8 @@ namespace PolicyPlus.Views
 
         public static void PresentDialog(System.Windows.Window owner, PolicyPlusPolicy policy)
         {
-            ThemeService.ApplyPersisted();
-            var window = new DetailPolicyWindow();
+            var window = WpfInterop.PreparePresented(new DetailPolicyWindow(), owner);
             window.PrepareDialog(policy);
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
         }
     }

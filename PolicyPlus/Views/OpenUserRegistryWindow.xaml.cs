@@ -80,9 +80,7 @@ namespace PolicyPlus.Views
 
         public static string PresentDialog(System.Windows.Window owner)
         {
-            ThemeService.ApplyPersisted();
-            var window = new OpenUserRegistryWindow();
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new OpenUserRegistryWindow(), owner);
             window.ShowDialog();
             return window._selectedFilePath;
         }

@@ -131,9 +131,7 @@ namespace PolicyPlus.Views
 
         public static bool PresentDialog(System.Windows.Window owner, IPolicySource userPolicySource, IPolicySource compPolicySource)
         {
-            ThemeService.ApplyPersisted();
-            var window = new ImportRegWindow { _userPolicySource = userPolicySource, _compPolicySource = compPolicySource };
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new ImportRegWindow { _userPolicySource = userPolicySource, _compPolicySource = compPolicySource }, owner);
             window.ShowDialog();
             return window._accepted;
         }
@@ -141,9 +139,7 @@ namespace PolicyPlus.Views
         // For callers with only one possible target regardless of hive (see _fixedTarget).
         public static bool PresentDialog(System.Windows.Window owner, IPolicySource fixedTarget)
         {
-            ThemeService.ApplyPersisted();
-            var window = new ImportRegWindow { _fixedTarget = fixedTarget };
-            WpfInterop.SetOwner(window, owner);
+            var window = WpfInterop.PreparePresented(new ImportRegWindow { _fixedTarget = fixedTarget }, owner);
             window.ShowDialog();
             return window._accepted;
         }

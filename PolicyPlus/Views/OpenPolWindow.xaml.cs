@@ -199,10 +199,8 @@ namespace PolicyPlus.Views
             PolicyLoaderSource userType,
             string userData)
         {
-            ThemeService.ApplyPersisted();
-            var window = new OpenPolWindow();
+            var window = WpfInterop.PreparePresented(new OpenPolWindow(), owner);
             window.SetLastSources(compType, compData, userType, userData);
-            WpfInterop.SetOwner(window, owner);
             window.ShowDialog();
             return window._accepted ? (window._selectedUser, window._selectedComputer) : null;
         }
