@@ -43,7 +43,8 @@
                 Margin="0,0,0,12"
                 AutoGenerateColumns="False"
                 CanUserSortColumns="False"
-                HeadersVisibility="Column">
+                HeadersVisibility="Column"
+                RowHeight="36">
                 <ui:DataGrid.Columns>
                     <DataGridTextColumn
                         x:Name="NameColumn"

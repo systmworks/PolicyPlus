@@ -41,7 +41,7 @@ namespace PolicyPlus
         // surfaces like EditSetting's options panel) removes the Mica pass-through for idle rows.
         private static void AddOpaqueListSurfaceStyles(Application app)
         {
-            void addStyle(Type targetType)
+            void addSurfaceStyle(Type targetType)
             {
                 var style = new Style(targetType);
                 style.Setters.Add(new Setter(Control.BackgroundProperty, new DynamicResourceExtension("ControlFillColorDefaultBrush")));
@@ -51,9 +51,37 @@ namespace PolicyPlus
                 app.Resources[targetType] = style;
             }
 
-            addStyle(typeof(Wpf.Ui.Controls.ListView));
-            addStyle(typeof(Wpf.Ui.Controls.DataGrid));
-            addStyle(typeof(System.Windows.Controls.TreeView));
+            addSurfaceStyle(typeof(Wpf.Ui.Controls.ListView));
+            addSurfaceStyle(typeof(Wpf.Ui.Controls.DataGrid));
+            addSurfaceStyle(typeof(System.Windows.Controls.TreeView));
+
+            // The surface fix above wasn't enough for ListView/TreeView rows on their own: WPF-UI's
+            // own ListViewItem/TreeViewItem styles set Foreground via a Setter (ListViewItemForeground/
+            // TreeViewItemForeground) that resolves to a color meant for a colored/accent surface, not
+            // a plain content background - a Style Setter on the item always wins over whatever
+            // Foreground the container above inherits down, so it stayed invisible even against the
+            // new opaque background. Re-base each item style on WPF-UI's own (keeping its hover/
+            // selection behavior intact) and correct just the idle Foreground.
+            Style rebaseWithCorrectForeground(Type itemType)
+            {
+                var baseStyle = (Style)app.Resources[itemType];
+                var style = new Style(itemType, baseStyle);
+                style.Setters.Add(new Setter(Control.ForegroundProperty, new DynamicResourceExtension("TextFillColorPrimaryBrush")));
+                return style;
+            }
+
+            app.Resources[typeof(Wpf.Ui.Controls.ListViewItem)] = rebaseWithCorrectForeground(typeof(Wpf.Ui.Controls.ListViewItem));
+
+            // TreeView has no ui: subclass, so a plain <TreeView> generates native TreeViewItem
+            // containers that never match WPF-UI's Wpf.Ui.Controls.TreeViewItem-keyed style at all
+            // (implicit lookup only walks up an element's own base-type chain) - point it there
+            // explicitly via ItemContainerStyle instead. A window that sets its own local
+            // ItemContainerStyle (e.g. to bind IsExpanded) overrides this, same as any local XAML
+            // value would.
+            var treeViewItemStyle = rebaseWithCorrectForeground(typeof(Wpf.Ui.Controls.TreeViewItem));
+            var treeViewStyle = new Style(typeof(System.Windows.Controls.TreeView), (Style)app.Resources[typeof(System.Windows.Controls.TreeView)]);
+            treeViewStyle.Setters.Add(new Setter(ItemsControl.ItemContainerStyleProperty, treeViewItemStyle));
+            app.Resources[typeof(System.Windows.Controls.TreeView)] = treeViewStyle;
         }
 
         public static void SetOwner(Window window, System.Windows.Forms.IWin32Window owner)

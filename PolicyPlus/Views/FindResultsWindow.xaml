@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Search Results"
-    Width="520"
+    Width="820"
     Height="560"
-    MinWidth="360"
+    MinWidth="480"
     MinHeight="240"
     Closing="Window_Closing"
     ExtendsContentIntoTitleBar="True"
@@ -58,8 +58,8 @@
                 MouseDoubleClick="GoClicked">
                 <ui:ListView.View>
                     <GridView>
-                        <GridViewColumn Width="220" DisplayMemberBinding="{Binding Title}" Header="Title" />
-                        <GridViewColumn Width="140" DisplayMemberBinding="{Binding Category}" Header="Category" />
+                        <GridViewColumn Width="480" DisplayMemberBinding="{Binding Title}" Header="Title" />
+                        <GridViewColumn Width="280" DisplayMemberBinding="{Binding Category}" Header="Category" />
                     </GridView>
                 </ui:ListView.View>
             </ui:ListView>
