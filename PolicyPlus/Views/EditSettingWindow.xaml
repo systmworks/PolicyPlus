@@ -1,0 +1,270 @@
+<ui:FluentWindow
+    x:Class="PolicyPlus.Views.EditSettingWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PolicyPlus.Views"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Edit Policy Setting"
+    Width="760"
+    Height="560"
+    MinWidth="680"
+    MinHeight="500"
+    Closed="Window_Closed"
+    ExtendsContentIntoTitleBar="True"
+    KeyDown="Window_KeyDown"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterOwner">
+
+    <ui:FluentWindow.Resources>
+        <local:SpinButtonPlacementConverter x:Key="SpinButtonPlacementConverter" />
+
+        <DataTemplate x:Key="LabelTemplate">
+            <TextBlock
+                Margin="3,6,3,6"
+                Text="{Binding Text}"
+                TextWrapping="Wrap" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="CheckBoxTemplate">
+            <CheckBox
+                Margin="3,6,3,6"
+                Content="{Binding Text}"
+                IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                IsEnabled="{Binding IsEnabled}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="DecimalTemplate">
+            <WrapPanel Margin="3,6,3,6">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Label}" />
+                <ui:NumberBox
+                    Width="140"
+                    IsEnabled="{Binding IsEnabled}"
+                    Maximum="{Binding Maximum}"
+                    Minimum="{Binding Minimum}"
+                    SmallChange="{Binding Increment}"
+                    SpinButtonPlacementMode="{Binding HasSpinner, Converter={StaticResource SpinButtonPlacementConverter}}"
+                    Value="{Binding Value, Mode=TwoWay}" />
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TextBoxTemplate">
+            <WrapPanel Margin="3,6,3,6">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Label}" />
+                <ui:TextBox
+                    Width="220"
+                    IsEnabled="{Binding IsEnabled}"
+                    MaxLength="{Binding MaxLength}"
+                    Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ComboBoxTemplate">
+            <WrapPanel Margin="3,6,3,6">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Label}" />
+                <ComboBox
+                    Width="220"
+                    IsEditable="True"
+                    IsEnabled="{Binding IsEnabled}"
+                    ItemsSource="{Binding Suggestions}"
+                    Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DropDownTemplate">
+            <WrapPanel Margin="3,6,3,6">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Label}" />
+                <ComboBox
+                    MinWidth="150"
+                    IsEnabled="{Binding IsEnabled}"
+                    ItemsSource="{Binding Items}"
+                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ListTemplate">
+            <WrapPanel Margin="3,6,3,6">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Label}" />
+                <ui:Button
+                    Click="ListEditButton_Click"
+                    Content="Edit..."
+                    IsEnabled="{Binding IsEnabled}" />
+            </WrapPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MultiTextBoxTemplate">
+            <StackPanel Margin="3,6,3,6">
+                <TextBlock Margin="0,0,0,4" Text="{Binding Label}" />
+                <ui:TextBox
+                    Height="80"
+                    AcceptsReturn="True"
+                    HorizontalScrollBarVisibility="Auto"
+                    IsEnabled="{Binding IsEnabled}"
+                    Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="NoWrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </StackPanel>
+        </DataTemplate>
+
+        <local:PolicyElementTemplateSelector
+            x:Key="ElementTemplateSelector"
+            CheckBoxTemplate="{StaticResource CheckBoxTemplate}"
+            ComboBoxTemplate="{StaticResource ComboBoxTemplate}"
+            DecimalTemplate="{StaticResource DecimalTemplate}"
+            DropDownTemplate="{StaticResource DropDownTemplate}"
+            LabelTemplate="{StaticResource LabelTemplate}"
+            ListTemplate="{StaticResource ListTemplate}"
+            MultiTextBoxTemplate="{StaticResource MultiTextBoxTemplate}"
+            TextBoxTemplate="{StaticResource TextBoxTemplate}" />
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Edit Policy Setting" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                x:Name="SettingNameLabel"
+                Grid.Row="0"
+                Margin="0,0,0,10"
+                FontWeight="SemiBold"
+                Text="Policy name"
+                TextTrimming="CharacterEllipsis" />
+
+            <Grid Grid.Row="1" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Text="Editing for" />
+                        <ComboBox
+                            x:Name="SectionDropdown"
+                            Width="120"
+                            SelectionChanged="SectionDropdown_SelectionChanged">
+                            <ComboBoxItem Content="User" />
+                            <ComboBoxItem Content="Computer" />
+                        </ComboBox>
+                    </StackPanel>
+                    <RadioButton
+                        x:Name="NotConfiguredOption"
+                        Margin="0,0,0,6"
+                        Content="Not Configured"
+                        GroupName="PolicyState" />
+                    <RadioButton
+                        x:Name="EnabledOption"
+                        Margin="0,0,0,6"
+                        Content="Enabled"
+                        Checked="StateRadiosChanged"
+                        GroupName="PolicyState"
+                        Unchecked="StateRadiosChanged" />
+                    <RadioButton
+                        x:Name="DisabledOption"
+                        Content="Disabled"
+                        GroupName="PolicyState" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Margin="0,0,0,4" Text="Comment" />
+                    <ui:TextBox
+                        x:Name="CommentTextbox"
+                        Height="60"
+                        Margin="0,0,0,8"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
+                    <TextBlock Margin="0,0,0,4" Text="Supported on" />
+                    <ui:TextBox
+                        x:Name="SupportedTextbox"
+                        Height="44"
+                        IsReadOnly="True"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    Margin="0,0,6,0"
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="ExtraOptionsList" Margin="8" ItemTemplateSelector="{StaticResource ElementTemplateSelector}" />
+                    </ScrollViewer>
+                </Border>
+
+                <ui:TextBox
+                    x:Name="HelpTextbox"
+                    Grid.Column="1"
+                    Margin="6,0,0,0"
+                    AcceptsReturn="True"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </Grid>
+
+            <StackPanel
+                Grid.Row="3"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ui:Button
+                    Margin="0,0,8,0"
+                    Click="CancelButton_Click"
+                    Content="Cancel"
+                    IsCancel="True" />
+                <ui:Button
+                    x:Name="OkButton"
+                    Margin="0,0,8,0"
+                    Appearance="Primary"
+                    Click="OkButton_Click"
+                    Content="OK"
+                    IsDefault="True" />
+                <ui:Button
+                    x:Name="ApplyButton"
+                    Click="ApplyButton_Click"
+                    Content="Apply" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

@@ -33,29 +33,6 @@ namespace PolicyPlus.My
 
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public EditSetting m_EditSetting;
-
-            public EditSetting EditSetting
-            {
-                [DebuggerHidden]
-                get
-                {
-                    m_EditSetting = Create__Instance__(m_EditSetting);
-                    return m_EditSetting;
-                }
-                [DebuggerHidden]
-                set
-                {
-                    if (ReferenceEquals(value, m_EditSetting))
-                        return;
-                    if (value is not null)
-                        throw new ArgumentException("Property can only be set to Nothing");
-                    Dispose__Instance__(ref m_EditSetting);
-                }
-            }
-
-
-            [EditorBrowsable(EditorBrowsableState.Never)]
             public Main m_Main;
 
             public Main Main

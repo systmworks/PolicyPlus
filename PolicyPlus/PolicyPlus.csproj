@@ -61,12 +61,6 @@
     <Compile Include="EditPolNumericData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditSetting.Designer.cs">
-      <DependentUpon>EditSetting.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditSetting.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FilterConfiguration.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -204,6 +198,12 @@
     <Compile Include="Views\Phase0ProofWindow.xaml.cs">
       <DependentUpon>Phase0ProofWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditSettingWindow.xaml.cs">
+      <DependentUpon>EditSettingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PolicyElementTemplateSelector.cs" />
+    <Compile Include="Views\SpinButtonPlacementConverter.cs" />
+    <Compile Include="ViewModels\PolicyElementViewModels.cs" />
     <Compile Include="WpfInterop.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
@@ -341,14 +341,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\EditSettingWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="EditPolNumericData.resx">
       <DependentUpon>EditPolNumericData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EditSetting.resx">
-      <DependentUpon>EditSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
