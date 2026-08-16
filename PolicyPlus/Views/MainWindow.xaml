@@ -48,7 +48,16 @@
             </StackPanel>
         </DataTemplate>
 
-        <Style x:Key="CategoryTreeItemStyle" TargetType="TreeViewItem">
+        <!--
+            BasedOn the app-wide corrected TreeViewItem style (see WpfInterop.AddOpaqueListSurfaceStyles)
+            rather than a bare TargetType="TreeViewItem" style - a local ItemContainerStyle like this
+            one always wins over the app-wide implicit style, so without BasedOn it would silently
+            drop the Foreground fix and the tree would go back to invisible/low-contrast text.
+        -->
+        <Style
+            x:Key="CategoryTreeItemStyle"
+            BasedOn="{StaticResource {x:Type TreeViewItem}}"
+            TargetType="TreeViewItem">
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
         </Style>
 
@@ -62,9 +71,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="Policy Plus" />
+        <ui:TitleBar Grid.Row="0" Title="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
 
-        <DockPanel Grid.Row="1" Margin="8,4,8,4">
+        <DockPanel Grid.Row="1" Margin="8,0,8,0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="Transparent">
                 <MenuItem Header="_File">
                     <MenuItem x:Name="OpenAdmxFolderMenuItem" Click="OpenAdmxFolderMenuItem_Click" Header="Open ADMX Folder" />

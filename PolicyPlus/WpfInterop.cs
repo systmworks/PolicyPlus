@@ -66,33 +66,41 @@ namespace PolicyPlus
             addSurfaceStyle(typeof(Wpf.Ui.Controls.DataGrid));
             addSurfaceStyle(typeof(System.Windows.Controls.TreeView));
 
-            // The surface fix above wasn't enough for ListView/TreeView rows on their own: WPF-UI's
-            // own ListViewItem/TreeViewItem styles set Foreground via a Setter (ListViewItemForeground/
-            // TreeViewItemForeground) that resolves to a color meant for a colored/accent surface, not
-            // a plain content background - a Style Setter on the item always wins over whatever
-            // Foreground the container above inherits down, so it stayed invisible even against the
-            // new opaque background. Re-base each item style on WPF-UI's own (keeping its hover/
-            // selection behavior intact) and correct just the idle Foreground.
-            Style rebaseWithCorrectForeground(Type itemType)
+            // The surface fix above wasn't enough for ListView/TreeView rows on their own, even after
+            // a first attempt at re-basing WPF-UI's own item styles with a corrected Foreground Setter:
+            // rows stayed invisible against the new opaque background too. WPF-UI's real item template
+            // most likely sets Foreground from a VisualState/Trigger (not a plain Setter), which always
+            // wins over a Setter added to a derived style regardless of base/derived order - re-basing
+            // can't reliably out-prioritize that without knowing the exact trigger being fought.
+            // Trading Fluent-specific hover chrome for guaranteed-readable text: a fresh, independent
+            // style (not based on WPF-UI's) with an explicit Foreground and simple hover/selected
+            // Background triggers of its own, so nothing else can silently out-prioritize it.
+            Style buildPlainItemStyle(Type itemType, DependencyProperty isSelectedProperty)
             {
-                var baseStyle = (Style)app.Resources[itemType];
-                var style = new Style(itemType, baseStyle);
+                var style = new Style(itemType);
                 style.Setters.Add(new Setter(Control.ForegroundProperty, new DynamicResourceExtension("TextFillColorPrimaryBrush")));
+                style.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
+                style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(4, 3, 4, 3)));
+
+                var hover = new Trigger { Property = UIElement.IsMouseOverProperty, Value = true };
+                hover.Setters.Add(new Setter(Control.BackgroundProperty, new DynamicResourceExtension("ControlFillColorSecondaryBrush")));
+                style.Triggers.Add(hover);
+
+                var selected = new Trigger { Property = isSelectedProperty, Value = true };
+                selected.Setters.Add(new Setter(Control.BackgroundProperty, new DynamicResourceExtension("ControlFillColorTertiaryBrush")));
+                style.Triggers.Add(selected);
+
                 return style;
             }
 
-            app.Resources[typeof(Wpf.Ui.Controls.ListViewItem)] = rebaseWithCorrectForeground(typeof(Wpf.Ui.Controls.ListViewItem));
+            app.Resources[typeof(Wpf.Ui.Controls.ListViewItem)] = buildPlainItemStyle(typeof(Wpf.Ui.Controls.ListViewItem), ListBoxItem.IsSelectedProperty);
 
             // TreeView has no ui: subclass, so a plain <TreeView> generates native TreeViewItem
-            // containers that never match WPF-UI's Wpf.Ui.Controls.TreeViewItem-keyed style at all
-            // (implicit lookup only walks up an element's own base-type chain) - point it there
-            // explicitly via ItemContainerStyle instead. A window that sets its own local
-            // ItemContainerStyle (e.g. to bind IsExpanded) overrides this, same as any local XAML
-            // value would.
-            var treeViewItemStyle = rebaseWithCorrectForeground(typeof(Wpf.Ui.Controls.TreeViewItem));
-            var treeViewStyle = new Style(typeof(System.Windows.Controls.TreeView), (Style)app.Resources[typeof(System.Windows.Controls.TreeView)]);
-            treeViewStyle.Setters.Add(new Setter(ItemsControl.ItemContainerStyleProperty, treeViewItemStyle));
-            app.Resources[typeof(System.Windows.Controls.TreeView)] = treeViewStyle;
+            // containers - style those directly (implicit lookup on the native type works here,
+            // unlike ListView/DataGrid which needed their WPF-UI subclass targeted instead). A window
+            // that sets its own local ItemContainerStyle (CategoriesTree, FilterOptionsWindow) needs
+            // BasedOn="{StaticResource {x:Type TreeViewItem}}" to inherit this instead of overriding it.
+            app.Resources[typeof(System.Windows.Controls.TreeViewItem)] = buildPlainItemStyle(typeof(System.Windows.Controls.TreeViewItem), System.Windows.Controls.TreeViewItem.IsSelectedProperty);
         }
 
         public static void SetOwner(Window window, System.Windows.Forms.IWin32Window owner)
