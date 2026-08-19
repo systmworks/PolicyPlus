@@ -65,3 +65,7 @@ may cause problems if used recklessly, but it is not malicious.
 If you would prefer to not trust binaries, feel free to read the code and [compile Policy Plus from source](COMPILE.md).
 You can also verify that a build was created from the published code by examining the output of a GitHub Actions run:
 the input commit hash can be found under "checkout master" and the output executable hash can be found under "compute hash."
+
+## License
+Policy Plus is licensed under the [MIT License](LICENSE). See [ATTRIBUTION.md](ATTRIBUTION.md)
+for credit to the original project and other third-party material this fork builds on.

@@ -1,9 +1,11 @@
 # Attribution
 
 Policy Plus was originally created by [Ben Nordick](https://github.com/Fleex255)
-([Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus)), licensed under
-[Creative Commons Attribution 4.0 International](LICENSE.txt). This fork builds on that
-original work.
+([Fleex255/PolicyPlus](https://github.com/Fleex255/PolicyPlus)), released under
+[Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
+This fork builds on that original work. CC BY 4.0 permits adaptations to be licensed
+under different terms provided the original creator is credited, so this fork is
+licensed under the [MIT License](LICENSE) instead, per that permission.
 
 All icons are from the [FamFamFam "Silk" set](https://github.com/legacy-icons/famfamfam-silk) by Mark James, available under Creative Commons Attribution 2.5 (the original famfamfam.com site is no longer online).
 
