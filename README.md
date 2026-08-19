@@ -58,9 +58,12 @@ separate .NET runtime install needed — just download and run); **PolicyPlus-fr
 is much smaller but requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
 already installed.
 
-**N.B.** A few antivirus programs incorrectly flag Policy Plus as malware, and since the
-executable isn't code-signed, Windows SmartScreen will show an "unrecognized app" warning
-on first launch (click *More info* → *Run anyway*). Policy Plus is a powerful tool and so
+This project uses free code signing provided by [SignPath Foundation](https://signpath.io)
+for open-source projects.
+
+**N.B.** A few antivirus programs incorrectly flag Policy Plus as malware, and until
+code signing is live, Windows SmartScreen will show an "unrecognized app" warning on
+first launch (click *More info* → *Run anyway*). Policy Plus is a powerful tool and so
 may cause problems if used recklessly, but it is not malicious.
 If you would prefer to not trust binaries, feel free to read the code and [compile Policy Plus from source](COMPILE.md).
 You can also verify that a build was created from the published code by examining the output of a GitHub Actions run:
